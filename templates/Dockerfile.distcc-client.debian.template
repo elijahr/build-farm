@@ -1,0 +1,19 @@
+FROM {arch}/{distro}
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+  apt-get install -y \
+    build-essential g++ git curl distcc ccache && \
+  apt-get clean
+
+WORKDIR /root
+
+COPY ./scripts/distcc-client/create-symlinks.sh create-symlinks.sh
+RUN ./create-symlinks.sh
+
+# Use ccache wrappers first, distcc wrappers second
+ENV PATH=/usr/lib/ccache:/usr/lib/distcc:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# If distccd can't be reached, fail
+ENV DISTCC_SKIP_LOCAL_RETRY=1

@@ -1,0 +1,132 @@
+name: Build images
+
+on:
+  push:
+    branches: [ '*' ]
+    tags: [ '*' ]
+
+jobs:
+  build_debian_host_images:
+    name: Build elijahru/distcc-host:latest-${{ matrix.distro }}-${{ matrix.arch }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        distro: [ debian-buster, debian-stretch ]
+        arch: [ amd64 ]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - name: Render templates
+        run: ./scripts/render-templates.py
+
+      - name: Build image
+        run: |
+          latest_tag=elijahru/distcc-host:latest-${{ matrix.distro }}-${{ matrix.arch }}
+          dockerfile=rendered/Dockerfile.distcc-host.${{ matrix.distro }}.${{ matrix.arch }}
+          docker pull $latest_tag || true
+          docker build . \
+            --file $dockerfile \
+            --tag $latest_tag \
+            --cache-from=$latest_tag
+
+      - name: Tag release image
+        if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/') }}
+        run: |
+          version=$(basename ${{ github.ref}})
+          latest_tag=elijahru/distcc-host:latest-${{ matrix.distro }}-${{ matrix.arch }}
+          version_tag=elijahru/distcc-host:${version}-${{ matrix.distro }}-${{ matrix.arch }}
+          docker images
+          docker tag $latest_tag $version_tag
+          docker push $latest_tag
+          docker push $version_tag
+
+  build_debian_client_images:
+    name: Build elijahru/distcc-client:latest-${{ matrix.distro }}-${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    needs: build_debian_host_images
+
+    strategy:
+      matrix:
+        distro: [ debian-buster, debian-stretch ]
+        arch: [ amd64, i386, arm32v7, arm64v8, ppc64le, s390x ]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -q -y
+          sudo apt-get -qq install -y qemu qemu-user-static curl
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+      - name: Render templates
+        run: ./scripts/render-templates.py
+
+      - name: Build image
+        run: |
+          latest_tag=elijahru/distcc-client:latest-${{ matrix.distro }}-${{ matrix.arch }}
+          dockerfile=rendered/Dockerfile.distcc-client.${{ matrix.distro }}.${{ matrix.arch }}
+          docker pull $latest_tag || true
+          docker build . \
+            --file $dockerfile \
+            --tag $latest_tag \
+            --cache-from=$latest_tag
+
+      - name: Run tests
+        env:
+          arch: ${{ matrix.arch }}
+        run: |
+          ./scripts/run-tests.sh \
+            ${{ matrix.distro }} \
+            amd64 \
+            ${{ matrix.distro }} \
+            ${{ matrix.arch }}
+
+      - name: Tag release image
+        if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/') }}
+        run: |
+          version=$(basename ${{ github.ref}})
+          latest_tag=elijahru/distcc-client:latest-${{ matrix.distro }}-${{ matrix.arch }}
+          version_tag=elijahru/distcc-client:${version}-${{ matrix.distro }}-${{ matrix.arch }}
+          docker images
+          docker tag $latest_tag $version_tag
+          docker push $latest_tag
+          docker push $version_tag
+
+  push_images:
+    name: Push images
+    if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/') }}
+
+    runs-on: ubuntu-latest
+    needs: build_debian_client_images
+
+    strategy:
+      matrix:
+        version: [ latest, ${{ github.ref }} ]
+        distro: [ debian-buster, debian-stretch ]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - name: Push manifest
+        env:
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          docker images
+          ./scripts/push-manifests.sh \
+            $(basename ${{ matrix.version }}) \
+            ${{ matrix.distro }}

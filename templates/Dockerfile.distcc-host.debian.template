@@ -1,0 +1,25 @@
+FROM {arch}/{distro}
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update; \
+  apt-get install -y \
+    build-essential g++ git curl distcc \
+    gcc-i686-linux-gnu g++-i686-linux-gnu binutils-i686-linux-gnu \
+    gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf binutils-arm-linux-gnueabihf \
+    gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu \
+    gcc-powerpc64le-linux-gnu g++-powerpc64le-linux-gnu binutils-powerpc64le-linux-gnu \
+    gcc-s390x-linux-gnu g++-s390x-linux-gnu binutils-s390x-linux-gnu; \
+  apt-get clean
+
+WORKDIR /root
+
+COPY ./rendered/etc/default/* /etc/default/
+COPY ./rendered/etc/init.d/* /etc/init.d/
+COPY ./rendered/etc/logrotate.d/* /etc/logrotate.d/
+
+COPY ./scripts/distcc-host/setup.sh setup.sh
+RUN ./setup.sh
+
+COPY ./scripts/distcc-host/run.sh run.sh
+CMD ./run.sh

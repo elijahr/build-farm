@@ -1,0 +1,27 @@
+version: '3'
+services:
+  distcc-host:
+    image: elijahru/distcc-host:latest-${host_distro_slug}-${host_arch}
+    ports:
+      # distccd for native compiling x86_64-linux-gnu listens on 3632
+      - 3632:3632
+      # distccd for cross-compiling i686-linux-gnu listens on 3633
+      - 3633:3633
+      # distccd for cross-compiling arm-linux-gnueabihf listens on 3634
+      - 3634:3634
+      # distccd for cross-compiling aarch64-linux-gnu listens on 3635
+      - 3635:3635
+      # distccd for cross-compiling powerpc64le-linux-gnu listens on 3636
+      - 3636:3636
+      # distccd for cross-compiling s390x-linux-gnu listens on 3637
+      - 3637:3637
+
+  distcc-client:
+    depends_on:
+      - distcc-host
+    image: elijahru/distcc-client:latest-${client_distro_slug}-${client_arch}
+    environment:
+      - DISTCC_HOSTS=distcc-host:${host_port}
+    volumes:
+      - .:/code
+    command: /code/scripts/build-cjson.sh

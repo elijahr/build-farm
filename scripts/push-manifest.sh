@@ -1,0 +1,110 @@
+#!/bin/bash
+
+set -uxeo pipefail
+
+version=${1-}
+distro=${2-}
+
+login () {
+  echo ${DOCKERHUB_TOKEN} | docker login \
+    -u elijahru --password-stdin
+}
+
+push_distcc_host () {
+  manifest=elijahru/distcc-host:${distro}-${version}
+  tags=( \
+    ${manifest}-amd64 \
+  )
+
+  for tag in ${tags[@]}
+  do
+    docker pull $tag || true
+  done
+
+  docker manifest create --amend \
+    $manifest \
+    ${tags[@]}
+
+  docker manifest annotate \
+    $manifest \
+    ${manifest}-amd64 \
+    --os linux --arch amd64
+
+  docker manifest push ${manifest}
+}
+
+push_distcc_client () {
+  manifest=elijahru/distcc-client:${distro}-${version}
+  tags=( \
+    ${manifest}-amd64 \
+    ${manifest}-i386 \
+    ${manifest}-arm32v7 \
+    ${manifest}-arm64v8 \
+    ${manifest}-ppc64le \
+    ${manifest}-s390x \
+  )
+
+  for tag in ${tags[@]}
+  do
+    docker pull $tag || true
+  done
+
+  docker manifest create --amend \
+    $manifest \
+    ${tags[@]}
+
+  docker manifest annotate \
+    ${manifest} \
+    ${manifest}-amd64 \
+    --os linux --arch amd64
+
+  docker manifest annotate \
+    ${manifest} \
+    ${manifest}-i386 \
+    --os linux --arch 386
+
+  docker manifest annotate \
+    ${manifest} \
+    ${manifest}-arm32v7 \
+    --os linux --arch arm --variant v7
+
+  docker manifest annotate \
+    ${manifest} \
+    ${manifest}-arm64v8 \
+    --os linux --arch arm64 --variant v8
+
+  docker manifest annotate \
+    ${manifest} \
+    ${manifest}-ppc64le \
+    --os linux --arch ppc64le
+
+  docker manifest annotate \
+    ${manifest} \
+    ${manifest}-s390x \
+    --os linux --arch s390x
+
+  docker manifest push ${manifest}
+}
+
+main () {
+  if [[ -z "${DOCKERHUB_TOKEN:-}" ]]
+  then
+    echo "Cannot push: no DOCKERHUB_TOKEN environment variable"
+    exit 1
+  fi
+  if [[ -z "$distro" ]]
+  then
+    echo "Missing distro argument"
+    exit 1
+  fi
+  if [[ -z "$version" ]]
+  then
+    echo "Missing version argument"
+    exit 1
+  fi
+  login
+  push_distcc_host
+  push_distcc_client
+}
+
+main
