@@ -112,7 +112,7 @@ jobs:
 
     strategy:
       matrix:
-        version: [ latest, ${{ github.ref }} ]
+        version: [ latest, '${{ github.ref }}' ]
         distro: [ debian-buster, debian-stretch ]
 
     steps:
