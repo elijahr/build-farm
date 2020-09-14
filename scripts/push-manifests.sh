@@ -2,11 +2,13 @@
 
 set -uxeo pipefail
 
+export DOCKER_CLI_EXPERIMENTAL=enabled
+
 version=${1-}
 distro=${2-}
 
 push_distcc_host () {
-  manifest=elijahru/distcc-host:${distro}-${version}
+  manifest=elijahru/distcc-host:${version}-${distro}
   tags=( \
     ${manifest}-amd64 \
   )
@@ -17,6 +19,9 @@ push_distcc_host () {
   done
 
   docker manifest create --amend \
+    $manifest \
+    ${tags[@]} || \
+  docker manifest create \
     $manifest \
     ${tags[@]}
 
@@ -29,7 +34,7 @@ push_distcc_host () {
 }
 
 push_distcc_client () {
-  manifest=elijahru/distcc-client:${distro}-${version}
+  manifest=elijahru/distcc-client:${version}-${distro}
   tags=( \
     ${manifest}-amd64 \
     ${manifest}-i386 \
@@ -45,6 +50,9 @@ push_distcc_client () {
   done
 
   docker manifest create --amend \
+    $manifest \
+    ${tags[@]} || \
+  docker manifest create \
     $manifest \
     ${tags[@]}
 

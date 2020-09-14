@@ -112,8 +112,8 @@ jobs:
           docker push $latest_tag
           docker push $version_tag
 
-  push_images:
-    name: Push images
+  push_manifests:
+    name: Push manifests
     if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/') }}
 
     runs-on: ubuntu-latest
