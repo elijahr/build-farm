@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        distro: [ debian-buster, debian-stretch ]
+        distro: [ debian-buster ]
         arch: [ amd64 ]
 
     steps:
@@ -44,7 +44,7 @@ jobs:
 
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
             -u elijahru --password-stdin
-          
+
           docker images
           docker tag $latest_tag $version_tag
           docker push $latest_tag
@@ -57,7 +57,7 @@ jobs:
 
     strategy:
       matrix:
-        distro: [ debian-buster, debian-stretch ]
+        distro: [ debian-buster ]
         arch: [ amd64, i386, arm32v7, arm64v8, ppc64le, s390x ]
 
     steps:
@@ -122,7 +122,7 @@ jobs:
     strategy:
       matrix:
         version: [ latest, '${{ github.ref }}' ]
-        distro: [ debian-buster, debian-stretch ]
+        distro: [ debian-buster ]
 
     steps:
       - name: Checkout repo

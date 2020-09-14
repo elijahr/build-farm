@@ -133,19 +133,6 @@ The `elijahru/distcc-host` image runs six `distcc`:
 
 The following tags are available:
 
-### debian stretch
-
-* Manifest: `elijahru/distcc-host:<version>-debian-stretch`
-  * `elijahru/distcc-host:<version>-debian-stretch-amd64`
-
-* Manifest: `elijahru/distcc-client:<version>-debian-stretch`
-  * `elijahru/distcc-client:<version>-debian-stretch-amd64`
-  * `elijahru/distcc-client:<version>-debian-stretch-i386`
-  * `elijahru/distcc-client:<version>-debian-stretch-arm32v7`
-  * `elijahru/distcc-client:<version>-debian-stretch-arm64v8`
-  * `elijahru/distcc-client:<version>-debian-stretch-ppc64le`
-  * `elijahru/distcc-client:<version>-debian-stretch-s390x`
-
 ### debian buster
 
 * Manifest: `elijahru/distcc-host:<version>-debian-buster`

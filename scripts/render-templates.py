@@ -7,10 +7,10 @@ Generate various docker and config files across a matrix of archs/distros.
 import os
 import re
 
-host_debian_distros = ( 'debian:buster', 'debian:stretch' )
+host_debian_distros = ( 'debian:buster', )
 host_archs = ( 'amd64', )
-
-client_debian_distros = ( 'debian:buster', 'debian:stretch' )
+  
+client_debian_distros = ( 'debian:buster', )
 client_archs = ( 'amd64', 'i386', 'arm32v7', 'arm64v8', 'ppc64le', 's390x' )
 
 ports_by_arch = {

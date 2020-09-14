@@ -5,7 +5,7 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
 client_archs	../scripts/render-templates.py	/^client_archs = ( 'amd64', 'i386', 'arm32v7', 'arm64v8', 'ppc64le', 's390x' )$/;"	kind:variable	line:14
-client_debian_distros	../scripts/render-templates.py	/^client_debian_distros = ( 'debian:buster', 'debian:stretch' )$/;"	kind:variable	line:13
+client_debian_distros	../scripts/render-templates.py	/^client_debian_distros = ( 'debian:buster', )$/;"	kind:variable	line:13
 flags_by_arch	../scripts/render-templates.py	/^flags_by_arch = {$/;"	kind:variable	line:34
 generate_client_dockerfiles	../scripts/render-templates.py	/^def generate_client_dockerfiles():$/;"	kind:function	line:78
 generate_distccd_config	../scripts/render-templates.py	/^def generate_distccd_config():$/;"	kind:function	line:104
@@ -13,7 +13,7 @@ generate_docker_compose	../scripts/render-templates.py	/^def generate_docker_com
 generate_host_dockerfiles	../scripts/render-templates.py	/^def generate_host_dockerfiles():$/;"	kind:function	line:67
 get_compiler_path_part_by_arch	../scripts/render-templates.py	/^def get_compiler_path_part_by_arch(arch):$/;"	kind:function	line:43
 host_archs	../scripts/render-templates.py	/^host_archs = ( 'amd64', )$/;"	kind:variable	line:11
-host_debian_distros	../scripts/render-templates.py	/^host_debian_distros = ( 'debian:buster', 'debian:stretch' )$/;"	kind:variable	line:10
+host_debian_distros	../scripts/render-templates.py	/^host_debian_distros = ( 'debian:buster', )$/;"	kind:variable	line:10
 os	../scripts/render-templates.py	/^import os$/;"	kind:namespace	line:7
 ports_by_arch	../scripts/render-templates.py	/^ports_by_arch = {$/;"	kind:variable	line:16
 re	../scripts/render-templates.py	/^import re$/;"	kind:namespace	line:8
