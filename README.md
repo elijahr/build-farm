@@ -17,22 +17,22 @@ Building projects from source can take a long time in an emulator. Instead of bu
 
 ## Simple example
 
-In this example, `builder` is an `amd64` container that exposes an `aarch64-linux-gnu` cross-compiler on port `3634`.
+In this example, `host` is a native `amd64` container which exposes an `aarch64-linux-gnu` cross-compiler on port `3634`.
 
-`client-arm64v8` is an emulated container that offloads all `gcc/g++/cc/etc` work to the `aarch64-linux-gnu` cross-compiler exposed on `builder:3634`.
+`client` is an emulated `arm64v8` container that offloads all `gcc/g++/cc/etc` work to the cross-compiler exposed on `host:3634`.
 
-The compiled object code will be cached via `ccache` and stored in a persistent volume, so that subsequent builds do not request re-compilation of unchanged code.
+The compiled object code is cached via `ccache` in a persistent volume, so that subsequent builds do not re-compile unchanged code.
 
 ```yml
 version: '3'
 services:
-  builder:
+  host:
     image: elijahru/distcc-host:latest-debian-buster-amd64
     ports:
       # distccd for cross-compiling aarch64-linux-gnu listens on 3635
       - 3635:3635
 
-  client-arm64v8:
+  client:
     image: elijahru/distcc-client:latest-debian-buster-arm64v8
     volumes:
       # Your code
