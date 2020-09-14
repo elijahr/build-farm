@@ -33,7 +33,7 @@ services:
       - 3635:3635
 
   client-arm64v8:
-    image: elijahru/distcc-client:latest-arm64v8
+    image: elijahru/distcc-client:latest-debian-buster-arm64v8
     environment:
       - DISTCC_HOSTS=builder:3635
     volumes:
@@ -66,7 +66,7 @@ services:
       - 3637:3637
 
   client-amd64:
-    image: elijahru/distcc-client:latest-amd64
+    image: elijahru/distcc-client:latest-debian-buster-amd64
     environment:
       - DISTCC_HOSTS=builder:3632
     volumes:
@@ -75,7 +75,7 @@ services:
     command: ./configure && make
 
   client-i386:
-    image: elijahru/distcc-client:latest-i386
+    image: elijahru/distcc-client:latest-debian-buster-i386
     environment:
       - DISTCC_HOSTS=builder:3633
     volumes:
@@ -84,16 +84,16 @@ services:
     command: ./configure && make
 
   client-arm32v7:
-    image: elijahru/distcc-client:latest-arm32v7
+    image: elijahru/distcc-client:latest-debian-buster-arm32v7
     environment:
       - DISTCC_HOSTS=builder:3634
     volumes:
       - .:/code
-      - ./caches/arm64v8/ccache:/root/.ccache
+      - ./caches/arm32v7/ccache:/root/.ccache
     command: ./configure && make
 
   client-arm64v8:
-    image: elijahru/distcc-client:latest-arm64v8
+    image: elijahru/distcc-client:latest-debian-buster-arm64v8
     environment:
       - DISTCC_HOSTS=builder:3635
     volumes:
@@ -102,7 +102,7 @@ services:
     command: ./configure && make
 
   client-ppc64le:
-    image: elijahru/distcc-client:latest-ppc64le
+    image: elijahru/distcc-client:latest-debian-buster-ppc64le
     environment:
       - DISTCC_HOSTS=builder:3636
     volumes:
@@ -111,7 +111,7 @@ services:
     command: ./configure && make
 
   client-s390x:
-    image: elijahru/distcc-client:latest-s390x
+    image: elijahru/distcc-client:latest-debian-buster-s390x
     environment:
       - DISTCC_HOSTS=builder:3637
     volumes:
@@ -122,7 +122,7 @@ services:
 
 ## Additional usage
 
-The `elijahru/distcc-host` image has six `distcc` daemons running:
+The `elijahru/distcc-host` image runs six `distcc`:
 
 * Native compiler targeting `x86_64-linux-gnu` (`amd64`) on port `3632`.
 * Cross-compiler targeting `i686-linux-gnu` (`i386`) on port `3633`.
@@ -135,44 +135,28 @@ The following tags are available:
 
 ### debian stretch
 
-* Manifest: `elijahru/distcc-host:latest-debian-stretch`
-  * `elijahru/distcc-host:latest-debian-stretch-amd64`
-* Manifest: `elijahru/distcc-host:<git_version_tag>-debian-stretch`
-  * `elijahru/distcc-host:<git_version_tag>-debian-stretch-amd64`
-* Manifest: `elijahru/distcc-client:latest-debian-stretch`
-  * `elijahru/distcc-client:latest-debian-stretch-amd64`
-  * `elijahru/distcc-client:latest-debian-stretch-i386`
-  * `elijahru/distcc-client:latest-debian-stretch-arm32v7`
-  * `elijahru/distcc-client:latest-debian-stretch-arm64v8`
-  * `elijahru/distcc-client:latest-debian-stretch-ppc64le`
-  * `elijahru/distcc-client:latest-debian-stretch-s390x`
-* Manifest: `elijahru/distcc-client:<git_version_tag>-debian-stretch`
-  * `elijahru/distcc-client:<git_version_tag>-debian-stretch-amd64`
-  * `elijahru/distcc-client:<git_version_tag>-debian-stretch-i386`
-  * `elijahru/distcc-client:<git_version_tag>-debian-stretch-arm32v7`
-  * `elijahru/distcc-client:<git_version_tag>-debian-stretch-arm64v8`
-  * `elijahru/distcc-client:<git_version_tag>-debian-stretch-ppc64le`
-  * `elijahru/distcc-client:<git_version_tag>-debian-stretch-s390x`
+* Manifest: `elijahru/distcc-host:<version>-debian-stretch`
+  * `elijahru/distcc-host:<version>-debian-stretch-amd64`
+
+* Manifest: `elijahru/distcc-client:<version>-debian-stretch`
+  * `elijahru/distcc-client:<version>-debian-stretch-amd64`
+  * `elijahru/distcc-client:<version>-debian-stretch-i386`
+  * `elijahru/distcc-client:<version>-debian-stretch-arm32v7`
+  * `elijahru/distcc-client:<version>-debian-stretch-arm64v8`
+  * `elijahru/distcc-client:<version>-debian-stretch-ppc64le`
+  * `elijahru/distcc-client:<version>-debian-stretch-s390x`
 
 ### debian buster
 
-* Manifest: `elijahru/distcc-host:latest-debian-buster`
-  * `elijahru/distcc-host:latest-debian-buster-amd64`
-* Manifest: `elijahru/distcc-host:<git_version_tag>-debian-buster`
-  * `elijahru/distcc-host:<git_version_tag>-debian-buster-amd64`
-* Manifest: `elijahru/distcc-client:latest-debian-buster`
-  * `elijahru/distcc-client:latest-debian-buster-amd64`
-  * `elijahru/distcc-client:latest-debian-buster-i386`
-  * `elijahru/distcc-client:latest-debian-buster-arm32v7`
-  * `elijahru/distcc-client:latest-debian-buster-arm64v8`
-  * `elijahru/distcc-client:latest-debian-buster-ppc64le`
-  * `elijahru/distcc-client:latest-debian-buster-s390x`
-* Manifest: `elijahru/distcc-client:<git_version_tag>-debian-buster`
-  * `elijahru/distcc-client:<git_version_tag>-debian-buster-amd64`
-  * `elijahru/distcc-client:<git_version_tag>-debian-buster-i386`
-  * `elijahru/distcc-client:<git_version_tag>-debian-buster-arm32v7`
-  * `elijahru/distcc-client:<git_version_tag>-debian-buster-arm64v8`
-  * `elijahru/distcc-client:<git_version_tag>-debian-buster-ppc64le`
-  * `elijahru/distcc-client:<git_version_tag>-debian-buster-s390x`
+* Manifest: `elijahru/distcc-host:<version>-debian-buster`
+  * `elijahru/distcc-host:<version>-debian-buster-amd64`
 
-Where `<git_version_tag>` corresponds to a git tag in this repository, such as `v0.1.0`.
+* Manifest: `elijahru/distcc-client:<version>-debian-buster`
+  * `elijahru/distcc-client:<version>-debian-buster-amd64`
+  * `elijahru/distcc-client:<version>-debian-buster-i386`
+  * `elijahru/distcc-client:<version>-debian-buster-arm32v7`
+  * `elijahru/distcc-client:<version>-debian-buster-arm64v8`
+  * `elijahru/distcc-client:<version>-debian-buster-ppc64le`
+  * `elijahru/distcc-client:<version>-debian-buster-s390x`
+
+Where `<version>` is either `latest` or a git tag in this repository, such as `v0.1.0`.

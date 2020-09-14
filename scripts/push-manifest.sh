@@ -5,11 +5,6 @@ set -uxeo pipefail
 version=${1-}
 distro=${2-}
 
-login () {
-  echo ${DOCKERHUB_TOKEN} | docker login \
-    -u elijahru --password-stdin
-}
-
 push_distcc_host () {
   manifest=elijahru/distcc-host:${distro}-${version}
   tags=( \
@@ -87,11 +82,6 @@ push_distcc_client () {
 }
 
 main () {
-  if [[ -z "${DOCKERHUB_TOKEN:-}" ]]
-  then
-    echo "Cannot push: no DOCKERHUB_TOKEN environment variable"
-    exit 1
-  fi
   if [[ -z "$distro" ]]
   then
     echo "Missing distro argument"
@@ -102,7 +92,6 @@ main () {
     echo "Missing version argument"
     exit 1
   fi
-  login
   push_distcc_host
   push_distcc_client
 }
