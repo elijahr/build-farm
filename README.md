@@ -34,8 +34,6 @@ services:
 
   client-arm64v8:
     image: elijahru/distcc-client:latest-debian-buster-arm64v8
-    environment:
-      - DISTCC_HOSTS=builder:3635
     volumes:
       # Your code
       - .:/code
@@ -76,8 +74,6 @@ services:
 
   client-i386:
     image: elijahru/distcc-client:latest-debian-buster-i386
-    environment:
-      - DISTCC_HOSTS=builder:3633
     volumes:
       - .:/code
       - ./caches/i386/ccache:/root/.ccache
@@ -85,8 +81,6 @@ services:
 
   client-arm32v7:
     image: elijahru/distcc-client:latest-debian-buster-arm32v7
-    environment:
-      - DISTCC_HOSTS=builder:3634
     volumes:
       - .:/code
       - ./caches/arm32v7/ccache:/root/.ccache
@@ -94,8 +88,6 @@ services:
 
   client-arm64v8:
     image: elijahru/distcc-client:latest-debian-buster-arm64v8
-    environment:
-      - DISTCC_HOSTS=builder:3635
     volumes:
       - .:/code
       - ./caches/arm64v8/ccache:/root/.ccache
@@ -103,8 +95,6 @@ services:
 
   client-ppc64le:
     image: elijahru/distcc-client:latest-debian-buster-ppc64le
-    environment:
-      - DISTCC_HOSTS=builder:3636
     volumes:
       - .:/code
       - ./caches/ppc64le/ccache:/root/.ccache
@@ -112,8 +102,6 @@ services:
 
   client-s390x:
     image: elijahru/distcc-client:latest-debian-buster-s390x
-    environment:
-      - DISTCC_HOSTS=builder:3637
     volumes:
       - .:/code
       - ./caches/s390x/ccache:/root/.ccache

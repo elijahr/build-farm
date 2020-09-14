@@ -17,3 +17,6 @@ ENV PATH=/usr/lib/ccache:/usr/lib/distcc:/usr/local/sbin:/usr/local/bin:/usr/sbi
 
 # If distccd can't be reached, fail
 ENV DISTCC_SKIP_LOCAL_RETRY=1
+
+# Connect to distccd on default docker network
+ENV DISTCC_HOSTS=172.17.0.1:{host_port}

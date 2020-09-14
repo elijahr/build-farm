@@ -9,7 +9,7 @@ import re
 
 host_debian_distros = ( 'debian:buster', )
 host_archs = ( 'amd64', )
-  
+
 client_debian_distros = ( 'debian:buster', )
 client_archs = ( 'amd64', 'i386', 'arm32v7', 'arm64v8', 'ppc64le', 's390x' )
 
@@ -79,6 +79,7 @@ def generate_client_dockerfiles():
   for arch in client_archs:
     for distro in client_debian_distros:
       distro_slug = slugify(distro)
+      host_port = ports_by_arch[arch]
       render(
         'Dockerfile.distcc-client.debian.template',
         'Dockerfile.distcc-client.{distro_slug}.{arch}',
