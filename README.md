@@ -27,7 +27,7 @@ The compiled object code will be cached via `ccache` and stored in a persistent 
 version: '3'
 services:
   builder:
-    image: elijahru/distcc-host:latest
+    image: elijahru/distcc-host:latest-debian-buster-amd64
     ports:
       # distccd for cross-compiling aarch64-linux-gnu listens on 3635
       - 3635:3635
@@ -50,7 +50,7 @@ services:
 version: '3'
 services:
   builder:
-    image: elijahru/distcc-host:latest
+    image: elijahru/distcc-host:latest-debian-buster-amd64
     ports:
       # distccd for native compiling x86_64-linux-gnu listens on 3632
       - 3632:3632
