@@ -1,6 +1,6 @@
 # distcc-cross-compiler
 
-Fast & easy cross-compiling with `distcc`.
+Fast & easy cross-compiling with `docker` and `distcc`.
 
 Supported Linux targets:
 
