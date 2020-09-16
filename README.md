@@ -17,9 +17,9 @@ Building projects from source can take a long time in an emulator. Instead of bu
 
 ## Simple example
 
-In this example, `host` is a native `amd64` container which exposes an `aarch64-linux-gnu` cross-compiler on port `3634`.
+In this example, `host` is a native `amd64` container which exposes an `aarch64-linux-gnu` cross-compiler on port `3635`.
 
-`client` is an emulated `arm64v8` container that offloads all `gcc/g++/cc/etc` work to the cross-compiler exposed on `host:3634`.
+`client` is an emulated `arm64v8` container that offloads all `gcc/g++/cc/etc` work to the cross-compiler exposed on `host:3635`.
 
 The compiled object code is cached via `ccache` in a persistent volume, so that subsequent builds do not re-compile unchanged code.
 
