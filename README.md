@@ -110,7 +110,7 @@ services:
 
 ## Additional usage
 
-The `elijahru/distcc-host` image runs six `distcc`:
+The `elijahru/distcc-host` image runs six `distcc` daemons:
 
 * Native compiler targeting `x86_64-linux-gnu` (`amd64`) on port `3632`.
 * Cross-compiler targeting `i686-linux-gnu` (`i386`) on port `3633`.
