@@ -1,0 +1,22 @@
+FROM {client_image}
+
+# Install deps
+RUN pacman -Sy distcc ccache base-devel
+
+# Clear pacman cache
+RUN pacman -Syc
+
+WORKDIR /root
+
+COPY ./scripts/distcc-client-archlinux/create-symlinks.sh create-symlinks.sh
+
+RUN ./create-symlinks.sh
+
+# Use ccache wrappers first, distcc wrappers second
+ENV PATH=/usr/lib/ccache/bin:/usr/lib/distcc/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
+
+# If distccd can't be reached, fail
+ENV DISTCC_SKIP_LOCAL_RETRY=1
+
+# Connect to distccd on default docker network
+ENV DISTCC_HOSTS=172.17.0.1:{host_port}

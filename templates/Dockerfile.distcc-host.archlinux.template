@@ -1,0 +1,31 @@
+FROM {host_image}
+
+# Install deps
+RUN pacman -Sy distcc base-devel
+
+# Clear pacman cache
+RUN pacman -Syc
+
+WORKDIR /root
+
+# Install pre-built cross-compiler toolchains, as per https://archlinuxarm.org/wiki/Distcc_Cross-Compiling
+
+# ARMv6l hard-float
+COPY ./assets/distcc-host-archlinux/x-tools6h.tar.xz x-tools6h.tar.xz
+
+# ARMv7l hard-float
+COPY ./assets/distcc-host-archlinux/x-tools7h.tar.xz x-tools7h.tar.xz
+
+# ARMv8
+COPY ./assets/distcc-host-archlinux/x-tools8.tar.xz x-tools8.tar.xz
+
+RUN bash -c "\
+    for file in x-tools*.tar.xz \
+    do \
+        tar xf $file & \
+    done \
+    wait \
+    rm -r x-tools*.tar.xz"
+
+COPY ./rendered/distcc-host-archlinux/etc/conf.d/* /etc/conf.d/
+COPY ./rendered/distcc-host-archlinux/usr/lib/systemd/system/* /usr/lib/systemd/system/

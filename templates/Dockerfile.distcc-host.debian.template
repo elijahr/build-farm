@@ -1,10 +1,10 @@
-FROM {arch}/{distro}
+FROM {host_arch}/{host_distro}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update; \
   apt-get install -y \
-    build-essential g++ git curl distcc \
+    build-essential g++ distcc \
     gcc-i686-linux-gnu g++-i686-linux-gnu binutils-i686-linux-gnu \
     gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf binutils-arm-linux-gnueabihf \
     gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu \
@@ -14,12 +14,12 @@ RUN apt-get update; \
 
 WORKDIR /root
 
-COPY ./rendered/etc/default/* /etc/default/
-COPY ./rendered/etc/init.d/* /etc/init.d/
-COPY ./rendered/etc/logrotate.d/* /etc/logrotate.d/
+COPY ./rendered/distcc-host-debian/etc/default/* /etc/default/
+COPY ./rendered/distcc-host-debian/etc/init.d/* /etc/init.d/
+COPY ./rendered/distcc-host-debian/etc/logrotate.d/* /etc/logrotate.d/
 
-COPY ./scripts/distcc-host/setup.sh setup.sh
+COPY ./scripts/distcc-host-debian/setup.sh setup.sh
 RUN ./setup.sh
 
-COPY ./scripts/distcc-host/run.sh run.sh
+COPY ./scripts/distcc-host-debian/run.sh run.sh
 CMD ./run.sh
