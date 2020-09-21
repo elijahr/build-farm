@@ -32,3 +32,5 @@ main () {
   run_distcc_client_tests
   assert_distcc_host_output
 }
+
+main
