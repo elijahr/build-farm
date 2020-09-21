@@ -10,6 +10,9 @@ WORKDIR /root
 
 # Install pre-built cross-compiler toolchains, as per https://archlinuxarm.org/wiki/Distcc_Cross-Compiling
 
+# ARMv5te soft-float
+COPY ./assets/distcc-host-archlinux/x-tools.tar.xz x-tools.tar.xz
+
 # ARMv6l hard-float
 COPY ./assets/distcc-host-archlinux/x-tools6h.tar.xz x-tools6h.tar.xz
 

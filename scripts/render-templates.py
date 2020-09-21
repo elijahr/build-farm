@@ -43,12 +43,14 @@ archlinux_host_archs = ( 'amd64', )
 archlinux_client_archs = ( 'amd64', 'arm32v6', 'arm32v7', 'arm64v8', )
 archlinux_ports_by_arch = {
   'amd64': 3732,
-  'arm32v6': 3733,
-  'arm32v7': 3734,
-  'arm64v8': 3735,
+  'arm32v5': 3733,
+  'arm32v6': 3734,
+  'arm32v7': 3735,
+  'arm64v8': 3736,
 }
 archlinux_images_by_arch = {
   'amd64': 'archlinux:20200908',
+  'arm32v5': 'lopsided/archlinux:66b26a83a39e26e2a390b5b92105f80e6042d0db79ee22b1f57d169307b87a58',
   'arm32v6': 'lopsided/archlinux:109729d4d863e14fed6faa1437f0eaee8133b26c310079c8294a4c7db6dbebb5',
   'arm32v7': 'lopsided/archlinux:fbf2d806f207a2e9a5400bd20672b80ca318a2e59fc56c1c0f90b4e9adb60f4a',
   'arm64v8': 'lopsided/archlinux:f9d68dd73a85b587539e04ef26b18d91b243bee8e1a343ad97f67183f275e548'
@@ -116,16 +118,16 @@ def generate_client_dockerfiles():
       host_port = debian_ports_by_arch[client_arch]
       render(
         'Dockerfile.distcc-client.debian.template',
-        'Dockerfile.distcc-client.{host_distro_slug}.{host_arch}',
+        'Dockerfile.distcc-client.{host_distro_slug}.{client_arch}',
         locals(),
       )
 
   for client_arch in archlinux_client_archs:
     client_image = archlinux_images_by_arch[client_arch]
-    host_port = debian_ports_by_arch[client_arch]
+    host_port = archlinux_ports_by_arch[client_arch]
     render(
       'Dockerfile.distcc-client.archlinux.template',
-      'Dockerfile.distcc-client.archlinux.{host_arch}',
+      'Dockerfile.distcc-client.archlinux.{client_arch}',
       locals(),
     )
 
@@ -145,22 +147,18 @@ def generate_docker_compose():
           )
 
   for host_arch in archlinux_host_archs:
-    for host_distro in host_archlinux_distros:
-      host_distro_slug = slugify(host_distro)
-      for client_arch in archlinux_client_archs:
-        host_port = archlinux_ports_by_arch[client_arch]
-        for client_distro in client_archlinux_distros:
-          client_distro_slug = slugify(client_distro)
-          render(
-            'docker-compose.template.yml',
-            'docker-compose.host-{host_distro_slug}-{host_arch}.client-{client_distro_slug}-{client_arch}.yml',
-            locals()
-          )
+    for client_arch in archlinux_client_archs:
+      host_port = archlinux_ports_by_arch[client_arch]
+      render(
+        'docker-compose.template.yml',
+        'docker-compose.host-archlinux-{host_arch}.client-archlinux-{client_arch}.yml',
+        locals()
+      )
 
 
 def generate_distccd_config():
   for client_arch in debian_client_archs:
-    flag = debian_flags_by_arch[arch]
+    flag = debian_flags_by_arch[client_arch]
     toolchain = debian_toolchains_by_arch[client_arch]
     host_port = debian_ports_by_arch[client_arch]
     compiler_path_part = get_debian_compiler_path_part_by_arch(client_arch)
