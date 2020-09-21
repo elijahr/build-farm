@@ -9,8 +9,9 @@ client_arch=$4
 
 run_distcc_client_tests () {
   # Compile test project in the client container
-  docker-compose run \
-    -f rendered/docker-compose.host-${host_distro}-${host_arch}.client-${client_distro}-${client_arch}.yml
+  docker-compose \
+    -f rendered/docker-compose.host-${host_distro}-${host_arch}.client-${client_distro}-${client_arch}.yml \
+    run \
     distcc-client
 }
 
