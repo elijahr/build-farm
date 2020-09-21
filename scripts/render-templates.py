@@ -98,16 +98,16 @@ def generate_host_dockerfiles():
     for host_distro in debian_host_distros:
       host_distro_slug = slugify(host_distro)
       render(
-        'Dockerfile.distcc-host-debian.template',
-        'Dockerfile.distcc-host-{host_distro_slug}.{host_arch}',
+        'Dockerfile.distcc-cross-compiler-host-debian.template',
+        'Dockerfile.distcc-cross-compiler-host-{host_distro_slug}.{host_arch}',
         locals(),
       )
 
   for host_arch in archlinux_host_archs:
     host_image = archlinux_images_by_arch[host_arch]
     render(
-      'Dockerfile.distcc-host-archlinux.template',
-      'Dockerfile.distcc-host-archlinux.{host_arch}',
+      'Dockerfile.distcc-cross-compiler-host-archlinux.template',
+      'Dockerfile.distcc-cross-compiler-host-archlinux.{host_arch}',
       locals(),
     )
 
@@ -118,8 +118,8 @@ def generate_client_dockerfiles():
       host_distro_slug = slugify(client_distro)
       host_port = debian_ports_by_arch[client_arch]
       render(
-        'Dockerfile.distcc-client-debian.template',
-        'Dockerfile.distcc-client-{host_distro_slug}.{client_arch}',
+        'Dockerfile.distcc-cross-compiler-client-debian.template',
+        'Dockerfile.distcc-cross-compiler-client-{host_distro_slug}.{client_arch}',
         locals(),
       )
 
@@ -127,8 +127,8 @@ def generate_client_dockerfiles():
     client_image = archlinux_images_by_arch[client_arch]
     host_port = archlinux_ports_by_arch[client_arch]
     render(
-      'Dockerfile.distcc-client-archlinux.template',
-      'Dockerfile.distcc-client-archlinux.{client_arch}',
+      'Dockerfile.distcc-cross-compiler-client-archlinux.template',
+      'Dockerfile.distcc-cross-compiler-client-archlinux.{client_arch}',
       locals(),
     )
 
@@ -167,18 +167,18 @@ def generate_distccd_config():
     compiler_path_part = get_debian_compiler_path_part_by_arch(client_arch)
 
     render(
-      'distcc-host-debian/etc/default/distccd-template',
-      'distcc-host-debian/etc/default/distccd-{toolchain}',
+      'distcc-cross-compiler-host-debian/etc/default/distccd-template',
+      'distcc-cross-compiler-host-debian/etc/default/distccd-{toolchain}',
       locals(),
     )
     render(
-      'distcc-host-debian/etc/init.d/distccd-template',
-      'distcc-host-debian/etc/init.d/distccd-{toolchain}',
+      'distcc-cross-compiler-host-debian/etc/init.d/distccd-template',
+      'distcc-cross-compiler-host-debian/etc/init.d/distccd-{toolchain}',
       locals(),
     )
     render(
-      'distcc-host-debian/etc/logrotate.d/distccd-template',
-      'distcc-host-debian/etc/logrotate.d/distccd-{toolchain}',
+      'distcc-cross-compiler-host-debian/etc/logrotate.d/distccd-template',
+      'distcc-cross-compiler-host-debian/etc/logrotate.d/distccd-{toolchain}',
       locals(),
     )
 
@@ -187,13 +187,13 @@ def generate_distccd_config():
     compiler_path_part = get_archlinux_compiler_path_part_by_arch(client_arch)
 
     render(
-      'distcc-host-archlinux/etc/conf.d/distccd-template',
-      'distcc-host-archlinux/etc/conf.d/distccd-{client_arch}',
+      'distcc-cross-compiler-host-archlinux/etc/conf.d/distccd-template',
+      'distcc-cross-compiler-host-archlinux/etc/conf.d/distccd-{client_arch}',
       locals(),
     )
     render(
-      'distcc-host-archlinux/usr/lib/systemd/system/distccd.service-template',
-      'distcc-host-archlinux/usr/lib/systemd/system/distccd-{client_arch}.service',
+      'distcc-cross-compiler-host-archlinux/usr/lib/systemd/system/distccd.service-template',
+      'distcc-cross-compiler-host-archlinux/usr/lib/systemd/system/distccd-{client_arch}.service',
       locals(),
     )
 

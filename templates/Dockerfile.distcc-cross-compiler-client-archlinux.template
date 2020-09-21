@@ -8,7 +8,7 @@ RUN pacman -Sc --noconfirm || true
 
 WORKDIR /root
 
-COPY ./scripts/distcc-client-archlinux/create-symlinks.sh create-symlinks.sh
+COPY ./scripts/distcc-cross-compiler-client-archlinux/create-symlinks.sh create-symlinks.sh
 
 RUN ./create-symlinks.sh
 

@@ -10,12 +10,12 @@ run_distcc_client_tests () {
   docker-compose \
     -f rendered/docker-compose.host-archlinux-${host_arch}.client-archlinux-${client_arch}.yml \
     run \
-    distcc-client
+    distcc-cross-compiler-client
 }
 
 assert_distcc_host_output () {
   # Verify distcc log output from the host container
-  id=$(docker ps --filter name=distcc-host --format "{{.ID}}")
+  id=$(docker ps --filter name=distcc-cross-compiler-host --format "{{.ID}}")
   line1=$(docker exec -it $id journalctl -u distcc-{client_arch}.service | tail -n 2 | head -n 1)
   [[ "$line1" =~ distccd[\[0-9\]+]\ .*\ COMPILE_OK\ .*\ cJSON.c ]]
 

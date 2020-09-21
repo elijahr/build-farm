@@ -9,7 +9,7 @@ RUN apt-get update && \
 
 WORKDIR /root
 
-COPY ./scripts/distcc-client-debian/create-symlinks.sh create-symlinks.sh
+COPY ./scripts/distcc-cross-compiler-client-debian/create-symlinks.sh create-symlinks.sh
 RUN ./create-symlinks.sh
 
 # Use ccache wrappers first, distcc wrappers second

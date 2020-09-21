@@ -2,7 +2,7 @@ cJSON-master
 caches
 rendered/
 .vscode/
-assets/distcc-host-archlinux/x-tools/
-assets/distcc-host-archlinux/x-tools6h/
-assets/distcc-host-archlinux/x-tools7h/
-assets/distcc-host-archlinux/x-tools8/
+assets/distcc-cross-compiler-host-archlinux/x-tools/
+assets/distcc-cross-compiler-host-archlinux/x-tools6h/
+assets/distcc-cross-compiler-host-archlinux/x-tools7h/
+assets/distcc-cross-compiler-host-archlinux/x-tools8/

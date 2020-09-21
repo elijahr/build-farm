@@ -14,12 +14,12 @@ RUN apt-get update; \
 
 WORKDIR /root
 
-COPY ./rendered/distcc-host-debian/etc/default/* /etc/default/
-COPY ./rendered/distcc-host-debian/etc/init.d/* /etc/init.d/
-COPY ./rendered/distcc-host-debian/etc/logrotate.d/* /etc/logrotate.d/
+COPY ./rendered/distcc-cross-compiler-host-debian/etc/default/* /etc/default/
+COPY ./rendered/distcc-cross-compiler-host-debian/etc/init.d/* /etc/init.d/
+COPY ./rendered/distcc-cross-compiler-host-debian/etc/logrotate.d/* /etc/logrotate.d/
 
-COPY ./scripts/distcc-host-debian/setup.sh setup.sh
+COPY ./scripts/distcc-cross-compiler-host-debian/setup.sh setup.sh
 RUN ./setup.sh
 
-COPY ./scripts/distcc-host-debian/run.sh run.sh
+COPY ./scripts/distcc-cross-compiler-host-debian/run.sh run.sh
 CMD ./run.sh

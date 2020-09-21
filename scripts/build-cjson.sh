@@ -13,7 +13,7 @@ main () {
   # Assert that ccache wrappers wrap distcc wrappers
   [[ "$((gcc 2>&1 || true) | tail -n 1)" =~ ^distcc[\[0-9\]+] ]]
 
-  # Compile cJSON, will make two requests to distcc-host
+  # Compile cJSON, will make two requests to distcc-cross-compiler-host
   rm -Rf /tmp/cJSON
   mkdir /tmp/cJSON
   tar xzf test-data/cJSON-master.tar.gz -C /tmp/cJSON
@@ -21,7 +21,7 @@ main () {
   make
   make test
 
-  # Run make again, should use ccached object files instead of making requests to distcc-host
+  # Run make again, should use ccached object files instead of making requests to distcc-cross-compiler-host
   make clean
   make
   make test

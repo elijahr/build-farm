@@ -35,13 +35,13 @@ The compiled object code is cached via `ccache` in a persistent volume, so that 
 version: '3'
 services:
   host:
-    image: elijahru/distcc-host-debian-buster:latest-amd64
+    image: elijahru/distcc-cross-compiler-host-debian-buster:latest-amd64
     ports:
       # distccd for cross-compiling aarch64-linux-gnu listens on 3635
       - 3635:3635
 
   client:
-    image: elijahru/distcc-client-debian-buster:latest-arm64v8
+    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-arm64v8
     volumes:
       # Your code
       - .:/code
@@ -56,7 +56,7 @@ services:
 version: '3'
 services:
   builder:
-    image: elijahru/distcc-host-debian-buster:latest-amd64
+    image: elijahru/distcc-cross-compiler-host-debian-buster:latest-amd64
     ports:
       # distccd for native compiling x86_64
       - 3633:3633
@@ -72,7 +72,7 @@ services:
       - 3638:3638
 
   client-amd64:
-    image: elijahru/distcc-client-debian-buster:latest-amd64
+    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-amd64
     environment:
       - DISTCC_HOSTS=builder:3632
     volumes:
@@ -81,35 +81,35 @@ services:
     command: ./configure && make
 
   client-i386:
-    image: elijahru/distcc-client-debian-buster:latest-i386
+    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-i386
     volumes:
       - .:/code
       - ./caches/i386/ccache:/root/.ccache
     command: ./configure && make
 
   client-ppc64le:
-    image: elijahru/distcc-client-debian-buster:latest-ppc64le
+    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-ppc64le
     volumes:
       - .:/code
       - ./caches/ppc64le/ccache:/root/.ccache
     command: ./configure && make
 
   client-s390x:
-    image: elijahru/distcc-client-debian-buster:latest-s390x
+    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-s390x
     volumes:
       - .:/code
       - ./caches/s390x/ccache:/root/.ccache
     command: ./configure && make
 
   client-arm32v7:
-    image: elijahru/distcc-client-debian-buster:latest-arm32v7
+    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-arm32v7
     volumes:
       - .:/code
       - ./caches/arm32v7/ccache:/root/.ccache
     command: ./configure && make
 
   client-arm64v8:
-    image: elijahru/distcc-client-debian-buster:latest-arm64v8
+    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-arm64v8
     volumes:
       - .:/code
       - ./caches/arm64v8/ccache:/root/.ccache
@@ -122,7 +122,7 @@ services:
 version: '3'
 services:
   builder:
-    image: elijahru/distcc-host-archlinux:latest-amd64
+    image: elijahru/distcc-cross-compiler-host-archlinux:latest-amd64
     ports:
       # distccd for native compiling x86_64
       - 3704:3704
@@ -136,14 +136,14 @@ services:
       - 3708:3708
 
   client-amd64:
-    image: elijahru/distcc-client-archlinux:latest-amd64
+    image: elijahru/distcc-cross-compiler-client-archlinux:latest-amd64
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
 
   client-arm32v5:
-    image: elijahru/distcc-client-archlinux:latest-arm32v5
+    image: elijahru/distcc-cross-compiler-client-archlinux:latest-arm32v5
     volumes:
       - .:/code
       - ./caches/arm32v5/ccache:/root/.ccache
@@ -151,7 +151,7 @@ services:
 
 
   client-arm32v6:
-    image: elijahru/distcc-client-archlinux:latest-arm32v6
+    image: elijahru/distcc-cross-compiler-client-archlinux:latest-arm32v6
     volumes:
       - .:/code
       - ./caches/arm32v6/ccache:/root/.ccache
@@ -159,14 +159,14 @@ services:
 
 
   client-arm32v7:
-    image: elijahru/distcc-client-archlinux:latest-arm32v7
+    image: elijahru/distcc-cross-compiler-client-archlinux:latest-arm32v7
     volumes:
       - .:/code
       - ./caches/arm32v7/ccache:/root/.ccache
     command: ./configure && make
 
   client-arm64v8:
-    image: elijahru/distcc-client-archlinux:latest-arm64v8
+    image: elijahru/distcc-cross-compiler-client-archlinux:latest-arm64v8
     volumes:
       - .:/code
       - ./caches/arm64v8/ccache:/root/.ccache
@@ -179,28 +179,28 @@ The following tags are available:
 
 ### Debian Buster
 
-* Manifest: `elijahru/distcc-host-debian-buster:<version>`
-  * `elijahru/distcc-host-debian-buster:<version>-amd64`
+* Manifest: `elijahru/distcc-cross-compiler-host-debian-buster:<version>`
+  * `elijahru/distcc-cross-compiler-host-debian-buster:<version>-amd64`
 
-* Manifest: `elijahru/distcc-client-debian-buster:<version>`
-  * `elijahru/distcc-client-debian-buster:<version>-amd64`
-  * `elijahru/distcc-client-debian-buster:<version>-i386`
-  * `elijahru/distcc-client-debian-buster:<version>-arm32v7`
-  * `elijahru/distcc-client-debian-buster:<version>-arm64v8`
-  * `elijahru/distcc-client-debian-buster:<version>-ppc64le`
-  * `elijahru/distcc-client-debian-buster:<version>-s390x`
+* Manifest: `elijahru/distcc-cross-compiler-client-debian-buster:<version>`
+  * `elijahru/distcc-cross-compiler-client-debian-buster:<version>-amd64`
+  * `elijahru/distcc-cross-compiler-client-debian-buster:<version>-i386`
+  * `elijahru/distcc-cross-compiler-client-debian-buster:<version>-arm32v7`
+  * `elijahru/distcc-cross-compiler-client-debian-buster:<version>-arm64v8`
+  * `elijahru/distcc-cross-compiler-client-debian-buster:<version>-ppc64le`
+  * `elijahru/distcc-cross-compiler-client-debian-buster:<version>-s390x`
 
 ### Arch Linux
 
-* Manifest: `elijahru/distcc-host-archlinux:<version>`
-  * `elijahru/distcc-host-archlinux:<version>-amd64`
+* Manifest: `elijahru/distcc-cross-compiler-host-archlinux:<version>`
+  * `elijahru/distcc-cross-compiler-host-archlinux:<version>-amd64`
 
-* Manifest: `elijahru/distcc-client-archlinux:<version>`
-  * `elijahru/distcc-client-archlinux:<version>-amd64`
-  * `elijahru/distcc-client-archlinux:<version>-i386`
-  * `elijahru/distcc-client-archlinux:<version>-arm32v7`
-  * `elijahru/distcc-client-archlinux:<version>-arm64v8`
-  * `elijahru/distcc-client-archlinux:<version>-ppc64le`
-  * `elijahru/distcc-client-archlinux:<version>-s390x`
+* Manifest: `elijahru/distcc-cross-compiler-client-archlinux:<version>`
+  * `elijahru/distcc-cross-compiler-client-archlinux:<version>-amd64`
+  * `elijahru/distcc-cross-compiler-client-archlinux:<version>-i386`
+  * `elijahru/distcc-cross-compiler-client-archlinux:<version>-arm32v7`
+  * `elijahru/distcc-cross-compiler-client-archlinux:<version>-arm64v8`
+  * `elijahru/distcc-cross-compiler-client-archlinux:<version>-ppc64le`
+  * `elijahru/distcc-cross-compiler-client-archlinux:<version>-s390x`
 
 Where `<version>` is either `latest` or a git tag in this repository, such as `v0.1.0`.

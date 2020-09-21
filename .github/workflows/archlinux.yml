@@ -38,8 +38,8 @@ jobs:
 
       - name: Build host image
         run: |
-          latest_tag=elijahru/distcc-host-archlinux:latest-amd64
-          dockerfile=rendered/Dockerfile.distcc-host-archlinux.amd64
+          latest_tag=elijahru/distcc-cross-compiler-host-archlinux:latest-amd64
+          dockerfile=rendered/Dockerfile.distcc-cross-compiler-host-archlinux.amd64
           docker pull $latest_tag || true
           docker build . \
             --file $dockerfile \
@@ -48,8 +48,8 @@ jobs:
 
       - name: Build client image
         run: |
-          latest_tag=elijahru/distcc-client-archlinux:latest-${{ matrix.arch }}
-          dockerfile=rendered/Dockerfile.distcc-client-archlinux.${{ matrix.arch }}
+          latest_tag=elijahru/distcc-cross-compiler-client-archlinux:latest-${{ matrix.arch }}
+          dockerfile=rendered/Dockerfile.distcc-cross-compiler-client-archlinux.${{ matrix.arch }}
 
           docker pull $latest_tag || true
           docker build . \
@@ -67,8 +67,8 @@ jobs:
         if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/') && matrix.host_releaser }}
         run: |
           version=$(basename ${{ github.ref}})
-          latest_tag=elijahru/distcc-host-archlinux:latest-amd64
-          version_tag=elijahru/distcc-host-archlinux:${version}-amd64
+          latest_tag=elijahru/distcc-cross-compiler-host-archlinux:latest-amd64
+          version_tag=elijahru/distcc-cross-compiler-host-archlinux:${version}-amd64
 
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
             -u elijahru --password-stdin
@@ -82,8 +82,8 @@ jobs:
         if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/') }}
         run: |
           version=$(basename ${{ github.ref}})
-          latest_tag=elijahru/distcc-client-archlinux:latest-${{ matrix.arch }}
-          version_tag=elijahru/distcc-client-archlinux:${version}-${{ matrix.arch }}
+          latest_tag=elijahru/distcc-cross-compiler-client-archlinux:latest-${{ matrix.arch }}
+          version_tag=elijahru/distcc-cross-compiler-client-archlinux:${version}-${{ matrix.arch }}
 
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
             -u elijahru --password-stdin
