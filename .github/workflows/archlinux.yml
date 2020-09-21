@@ -53,7 +53,7 @@ jobs:
 
           docker pull $latest_tag || true
           docker build . \
-            --file $dockerfile \archlinux
+            --file $dockerfile \
             --tag $latest_tag \
             --cache-from=$latest_tag
 
