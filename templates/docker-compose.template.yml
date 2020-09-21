@@ -1,7 +1,7 @@
 version: '3'
 services:
   distcc-host:
-    image: elijahru/distcc-host:latest-${host_distro_slug}-${host_arch}
+    image: elijahru/distcc-host:latest-{host_distro_slug}-{host_arch}
     ports:
       # distccd for native compiling x86_64-linux-gnu listens on 3632
       - 3632:3632
@@ -19,9 +19,9 @@ services:
   distcc-client:
     depends_on:
       - distcc-host
-    image: elijahru/distcc-client:latest-${client_distro_slug}-${client_arch}
+    image: elijahru/distcc-client:latest-{client_distro_slug}-{client_arch}
     environment:
-      - DISTCC_HOSTS=distcc-host:${host_port}
+      - DISTCC_HOSTS=distcc-host:{host_port}
     volumes:
       - .:/code
     command: /code/scripts/build-cjson.sh
