@@ -1,10 +1,10 @@
 FROM {client_image}
 
 # Install deps
-RUN pacman -Sy --noconfirm distcc ccache base-devel
+RUN pacman -Syu --noconfirm distcc ccache base-devel
 
 # Clear pacman cache
-RUN pacman -Syc --noconfirm
+RUN pacman -Sc --noconfirm
 
 WORKDIR /root
 
