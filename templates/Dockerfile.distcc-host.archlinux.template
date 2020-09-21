@@ -1,10 +1,10 @@
 FROM {host_image}
 
 # Install deps
-RUN pacman -Sy distcc base-devel
+RUN pacman -Sy --noconfirm distcc base-devel
 
 # Clear pacman cache
-RUN pacman -Syc
+RUN pacman -Syc --noconfirm
 
 WORKDIR /root
 
