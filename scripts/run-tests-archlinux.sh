@@ -2,15 +2,13 @@
 
 set -uxeo pipefail
 
-host_distro=$1
-host_arch=$2
-client_distro=$3
-client_arch=$4
+host_arch=$1
+client_arch=$2
 
 run_distcc_client_tests () {
   # Compile test project in the client container
   docker-compose \
-    -f rendered/docker-compose.host-${host_distro}-${host_arch}.client-${client_distro}-${client_arch}.yml \
+    -f rendered/docker-compose.host-archlinux-${host_arch}.client-archlinux-${client_arch}.yml \
     run \
     distcc-client
 }
