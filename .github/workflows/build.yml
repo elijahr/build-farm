@@ -91,7 +91,7 @@ jobs:
         env:
           arch: ${{ matrix.arch }}
         run: |
-          ./scripts/run-tests.sh \
+          ./scripts/run-tests-debian.sh \
             ${{ matrix.distro }} \
             amd64 \
             ${{ matrix.distro }} \
@@ -197,7 +197,7 @@ jobs:
         env:
           arch: ${{ matrix.arch }}
         run: |
-          ./scripts/run-tests.sh \
+          ./scripts/run-tests-archlinux.sh \
             ${{ matrix.distro }} \
             amd64 \
             ${{ matrix.distro }} \

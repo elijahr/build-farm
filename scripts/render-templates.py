@@ -138,7 +138,7 @@ def generate_docker_compose():
       host_distro_slug = slugify(host_distro)
       for client_arch in debian_client_archs:
         host_port = debian_ports_by_arch[client_arch]
-        for client_distro in debian_client_distros:
+        for client_distro in debian_client_distros:##
           client_distro_slug = slugify(client_distro)
           render(
             'docker-compose.template.yml',
