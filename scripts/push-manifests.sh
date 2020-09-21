@@ -8,7 +8,7 @@ version=${1-}
 distro=${2-}
 
 push_distcc_host () {
-  manifest=elijahru/distcc-cross-compiler-host:${version}-${distro}
+  manifest=elijahru/distcc-cross-compiler-host-${distro}:${version}
   tags=( \
     ${manifest}-amd64 \
   )
@@ -34,7 +34,7 @@ push_distcc_host () {
 }
 
 push_distcc_client () {
-  manifest=elijahru/distcc-cross-compiler-client:${version}-${distro}
+  manifest=elijahru/distcc-cross-compiler-client-${distro}:${version}
   tags=( \
     ${manifest}-amd64 \
     ${manifest}-i386 \
