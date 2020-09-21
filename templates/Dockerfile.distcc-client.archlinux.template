@@ -4,7 +4,7 @@ FROM {client_image}
 RUN pacman -Syu --noconfirm distcc ccache base-devel
 
 # Clear pacman cache
-RUN pacman -Sc --noconfirm
+RUN pacman -Sc --noconfirm || true
 
 WORKDIR /root
 
