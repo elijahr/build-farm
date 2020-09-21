@@ -13,40 +13,40 @@ debian_host_archs = ( 'amd64', )
 debian_client_distros = ( 'debian:buster', )
 debian_client_archs = ( 'amd64', 'i386', 'arm32v7', 'arm64v8', 'ppc64le', 's390x' )
 debian_ports_by_arch = {
-  'amd64': 3632,
-  'i386': 3633,
-  'arm32v7': 3634,
-  'arm64v8': 3635,
-  'ppc64le': 3636,
-  's390x': 3637,
+  'amd64': 3633,
+  'i386': 3634,
+  'ppc64le': 3635,
+  's390x': 3636,
+  'arm32v7': 3637,
+  'arm64v8': 3638,
 }
 debian_toolchains_by_arch = {
   'amd64': 'x86_64-linux-gnu',
   'i386': 'i686-linux-gnu',
-  'arm32v7': 'arm-linux-gnueabihf',
-  'arm64v8': 'aarch64-linux-gnu',
   'ppc64le': 'powerpc64le-linux-gnu',
   's390x': 's390x-linux-gnu',
+  'arm32v7': 'arm-linux-gnueabihf',
+  'arm64v8': 'aarch64-linux-gnu',
 }
 debian_flags_by_arch = {
   'amd64': 'START_DISTCC_X86_64_LINUX_GNU',
   'i386': 'START_DISTCC_I686_LINUX_GNU',
-  'arm32v7': 'START_DISTCC_ARM_LINUX_GNUEABIHF',
-  'arm64v8': 'START_DISTCC_AARCH64_LINUX_GNU',
   'ppc64le': 'START_DISTCC_PPC64LE_LINUX_GNU',
   's390x': 'START_DISTCC_S390X_LINUX_GNU',
+  'arm32v7': 'START_DISTCC_ARM_LINUX_GNUEABIHF',
+  'arm64v8': 'START_DISTCC_AARCH64_LINUX_GNU',
 }
 
 
 # Arch Linux
 archlinux_host_archs = ( 'amd64', )
-archlinux_client_archs = ( 'amd64', 'arm32v6', 'arm32v7', 'arm64v8', )
+archlinux_client_archs = ( 'amd64', 'arm32v5', 'arm32v6', 'arm32v7', 'arm64v8', )
 archlinux_ports_by_arch = {
-  'amd64': 3732,
-  'arm32v5': 3733,
-  'arm32v6': 3734,
-  'arm32v7': 3735,
-  'arm64v8': 3736,
+  'amd64': 3704,
+  'arm32v5': 3705,
+  'arm32v6': 3706,
+  'arm32v7': 3707,
+  'arm64v8': 3708,
 }
 archlinux_images_by_arch = {
   'amd64': 'archlinux:20200908',
@@ -56,6 +56,7 @@ archlinux_images_by_arch = {
   'arm64v8': 'lopsided/archlinux@sha256:f9d68dd73a85b587539e04ef26b18d91b243bee8e1a343ad97f67183f275e548'
 }
 archlinux_toolchains_by_arch = {
+  'arm32v5': 'x-tools/arm-unknown-linux-gnueabi',
   'arm32v6': 'x-tool6h/arm-unknown-linux-gnueabihf',
   'arm32v7': 'x-tool7h/arm-unknown-linux-gnueabihf',
   'arm64v8': 'x-tool8/aarch64-unknown-linux-gnu',
@@ -97,16 +98,16 @@ def generate_host_dockerfiles():
     for host_distro in debian_host_distros:
       host_distro_slug = slugify(host_distro)
       render(
-        'Dockerfile.distcc-host.debian.template',
-        'Dockerfile.distcc-host.{host_distro_slug}.{host_arch}',
+        'Dockerfile.distcc-host-debian.template',
+        'Dockerfile.distcc-host-{host_distro_slug}.{host_arch}',
         locals(),
       )
 
   for host_arch in archlinux_host_archs:
     host_image = archlinux_images_by_arch[host_arch]
     render(
-      'Dockerfile.distcc-host.archlinux.template',
-      'Dockerfile.distcc-host.archlinux.{host_arch}',
+      'Dockerfile.distcc-host-archlinux.template',
+      'Dockerfile.distcc-host-archlinux.{host_arch}',
       locals(),
     )
 
@@ -117,8 +118,8 @@ def generate_client_dockerfiles():
       host_distro_slug = slugify(client_distro)
       host_port = debian_ports_by_arch[client_arch]
       render(
-        'Dockerfile.distcc-client.debian.template',
-        'Dockerfile.distcc-client.{host_distro_slug}.{client_arch}',
+        'Dockerfile.distcc-client-debian.template',
+        'Dockerfile.distcc-client-{host_distro_slug}.{client_arch}',
         locals(),
       )
 
@@ -126,8 +127,8 @@ def generate_client_dockerfiles():
     client_image = archlinux_images_by_arch[client_arch]
     host_port = archlinux_ports_by_arch[client_arch]
     render(
-      'Dockerfile.distcc-client.archlinux.template',
-      'Dockerfile.distcc-client.archlinux.{client_arch}',
+      'Dockerfile.distcc-client-archlinux.template',
+      'Dockerfile.distcc-client-archlinux.{client_arch}',
       locals(),
     )
 

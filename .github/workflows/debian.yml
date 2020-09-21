@@ -39,8 +39,8 @@ jobs:
 
       - name: Build host image
         run: |
-          latest_tag=elijahru/distcc-host:latest-debian-buster-amd64
-          dockerfile=rendered/Dockerfile.distcc-host.debian-buster.amd64
+          latest_tag=elijahru/distcc-host-debian-buster:latest-amd64
+          dockerfile=rendered/Dockerfile.distcc-host-debian-buster.amd64
           docker pull $latest_tag || true
           docker build . \
             --file $dockerfile \
@@ -49,8 +49,8 @@ jobs:
 
       - name: Build client image
         run: |
-          latest_tag=elijahru/distcc-client:latest-debian-buster-${{ matrix.arch }}
-          dockerfile=rendered/Dockerfile.distcc-client.debian-buster.${{ matrix.arch }}
+          latest_tag=elijahru/distcc-client-debian-buster:latest-${{ matrix.arch }}
+          dockerfile=rendered/Dockerfile.distcc-client-debian-buster.${{ matrix.arch }}
 
           docker pull $latest_tag || true
           docker build . \
@@ -70,8 +70,8 @@ jobs:
         if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/') && matrix.host_releaser }}
         run: |
           version=$(basename ${{ github.ref}})
-          latest_tag=elijahru/distcc-host:latest-debian-buster-amd64
-          version_tag=elijahru/distcc-host:${version}-debian-buster-amd64
+          latest_tag=elijahru/distcc-host-debian-buster:latest-amd64
+          version_tag=elijahru/distcc-host:-debian-buster:${version}-amd64
 
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
             -u elijahru --password-stdin
@@ -85,8 +85,8 @@ jobs:
         if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/') }}
         run: |
           version=$(basename ${{ github.ref}})
-          latest_tag=elijahru/distcc-client:latest-debian-buster-${{ matrix.arch }}
-          version_tag=elijahru/distcc-client:${version}-debian-buster-${{ matrix.arch }}
+          latest_tag=elijahru/distcc-client-debian-buster:latest-${{ matrix.arch }}
+          version_tag=elijahru/distcc-client:-debian-buster:${version}-${{ matrix.arch }}
 
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
             -u elijahru --password-stdin
