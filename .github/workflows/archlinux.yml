@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build archlinux-buster-${{ matrix.arch }}
+    name: Build archlinux-${{ matrix.arch }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -38,8 +38,8 @@ jobs:
 
       - name: Build host image
         run: |
-          latest_tag=elijahru/distcc-host:latest-archlinux-buster-amd64
-          dockerfile=rendered/Dockerfile.distcc-host.archlinux-buster.amd64
+          latest_tag=elijahru/distcc-host:latest-archlinux-amd64
+          dockerfile=rendered/Dockerfile.distcc-host.archlinux.amd64
           docker pull $latest_tag || true
           docker build . \
             --file $dockerfile \
@@ -48,8 +48,8 @@ jobs:
 
       - name: Build client image
         run: |
-          latest_tag=elijahru/distcc-client:latest-archlinux-buster-${{ matrix.arch }}
-          dockerfile=rendered/Dockerfile.distcc-client.archlinux-buster.${{ matrix.arch }}
+          latest_tag=elijahru/distcc-client:latest-archlinux-${{ matrix.arch }}
+          dockerfile=rendered/Dockerfile.distcc-client.archlinux.${{ matrix.arch }}
 
           docker pull $latest_tag || true
           docker build . \
@@ -67,8 +67,8 @@ jobs:
         if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/') && matrix.host_releaser }}
         run: |
           version=$(basename ${{ github.ref}})
-          latest_tag=elijahru/distcc-host:latest-archlinux-buster-amd64
-          version_tag=elijahru/distcc-host:${version}-archlinux-buster-amd64
+          latest_tag=elijahru/distcc-host:latest-archlinux-amd64
+          version_tag=elijahru/distcc-host:${version}-archlinux-amd64
 
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
             -u elijahru --password-stdin
@@ -82,8 +82,8 @@ jobs:
         if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/') }}
         run: |
           version=$(basename ${{ github.ref}})
-          latest_tag=elijahru/distcc-client:latest-archlinux-buster-${{ matrix.arch }}
-          version_tag=elijahru/distcc-client:${version}-archlinux-buster-${{ matrix.arch }}
+          latest_tag=elijahru/distcc-client:latest-archlinux-${{ matrix.arch }}
+          version_tag=elijahru/distcc-client:${version}-archlinux-${{ matrix.arch }}
 
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
             -u elijahru --password-stdin
@@ -118,4 +118,4 @@ jobs:
           docker images
           ./scripts/push-manifests.sh \
             $(basename ${{ matrix.version }}) \
-            archlinux-buster
+            archlinux
