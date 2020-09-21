@@ -22,13 +22,9 @@ COPY ./assets/distcc-host-archlinux/x-tools7h.tar.xz x-tools7h.tar.xz
 # ARMv8
 COPY ./assets/distcc-host-archlinux/x-tools8.tar.xz x-tools8.tar.xz
 
-RUN bash -c "\
-    for file in x-tools*.tar.xz \
-    do \
-        tar xf $file & \
-    done \
-    wait \
-    rm -r x-tools*.tar.xz"
+COPY ./scripts/distcc-host-archlinux/setup.sh setup.sh
+
+RUN chmod +x setup.sh && ./setup.sh
 
 COPY ./rendered/distcc-host-archlinux/etc/conf.d/* /etc/conf.d/
 COPY ./rendered/distcc-host-archlinux/usr/lib/systemd/system/* /usr/lib/systemd/system/
