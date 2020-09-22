@@ -19,11 +19,19 @@ do
   mkdir -p /usr/local/${target}/bin
   for file in "/usr/bin/${target}-"*
   do
-    ln -s $file /usr/local/${target}/bin/$(basename $file | sed "s/${target}-//")
+    link=/usr/local/${target}/bin/$(basename $file | sed "s/${target}-//")
+    if [[ ! -f $link ]]
+    then
+      ln -s $file $link
+    fi
   done
 
   # distcc provides gcc and g++ wrappers, but not cc, so create an additional symlink
-  ln -s /usr/bin/${target}-gcc /usr/local/${target}/bin/cc
+  link=/usr/local/${target}/bin/cc
+  if [[ ! -f $link ]]
+  then
+    ln -s /usr/bin/${target}-gcc $link
+  fi
 
   update-rc.d distccd-${target} defaults
 done

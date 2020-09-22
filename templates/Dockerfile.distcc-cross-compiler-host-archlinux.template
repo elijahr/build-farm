@@ -8,23 +8,33 @@ RUN pacman -Sc --noconfirm
 
 WORKDIR /root
 
+# Replace systemctl with docker-friendly version
+COPY ./scripts/distcc-cross-compiler-host-archlinux/systemctl3.py /usr/bin/systemctl
+
 # Install pre-built cross-compiler toolchains, as per https://archlinuxarm.org/wiki/Distcc_Cross-Compiling
+COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools.tar.xz .
+COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools6h.tar.xz .
+COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools7h.tar.xz .
+COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools8.tar.xz .
 
-# ARMv5te soft-float
-COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools.tar.xz x-tools.tar.xz
+COPY ./rendered/distcc-cross-compiler-host-archlinux/etc/conf.d/distccd-arm32v5 /etc/conf.d/
+COPY ./rendered/distcc-cross-compiler-host-archlinux/etc/conf.d/distccd-arm32v6 /etc/conf.d/
+COPY ./rendered/distcc-cross-compiler-host-archlinux/etc/conf.d/distccd-arm32v7 /etc/conf.d/
+COPY ./rendered/distcc-cross-compiler-host-archlinux/etc/conf.d/distccd-arm64v8 /etc/conf.d/
+COPY ./rendered/distcc-cross-compiler-host-archlinux/etc/conf.d/distccd-amd64 /etc/conf.d/
 
-# ARMv6l hard-float
-COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools6h.tar.xz x-tools6h.tar.xz
+COPY ./rendered/distcc-cross-compiler-host-archlinux/usr/lib/systemd/system/distccd-arm32v5.service /usr/lib/systemd/system/
+COPY ./rendered/distcc-cross-compiler-host-archlinux/usr/lib/systemd/system/distccd-arm32v6.service /usr/lib/systemd/system/
+COPY ./rendered/distcc-cross-compiler-host-archlinux/usr/lib/systemd/system/distccd-arm32v7.service /usr/lib/systemd/system/
+COPY ./rendered/distcc-cross-compiler-host-archlinux/usr/lib/systemd/system/distccd-arm64v8.service /usr/lib/systemd/system/
+COPY ./rendered/distcc-cross-compiler-host-archlinux/usr/lib/systemd/system/distccd-amd64.service /usr/lib/systemd/system/
 
-# ARMv7l hard-float
-COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools7h.tar.xz x-tools7h.tar.xz
-
-# ARMv8
-COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools8.tar.xz x-tools8.tar.xz
-
+COPY ./scripts/distcc-cross-compiler-host-archlinux/run.sh run.sh
 COPY ./scripts/distcc-cross-compiler-host-archlinux/setup.sh setup.sh
 
-RUN chmod +x setup.sh && ./setup.sh
+RUN \
+  chmod +x run.sh && \
+  chmod +x setup.sh && \
+  ./setup.sh
 
-COPY ./rendered/distcc-cross-compiler-host-archlinux/etc/conf.d/* /etc/conf.d/
-COPY ./rendered/distcc-cross-compiler-host-archlinux/usr/lib/systemd/system/* /usr/lib/systemd/system/
+CMD ./run.sh

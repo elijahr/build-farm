@@ -13,12 +13,12 @@ debian_host_archs = ( 'amd64', )
 debian_client_distros = ( 'debian:buster', )
 debian_client_archs = ( 'amd64', 'i386', 'arm32v7', 'arm64v8', 'ppc64le', 's390x' )
 debian_ports_by_arch = {
-  'amd64': 3633,
-  'i386': 3634,
-  'ppc64le': 3635,
-  's390x': 3636,
-  'arm32v7': 3637,
-  'arm64v8': 3638,
+  'i386': 3603,
+  'amd64': 3604,
+  'arm32v7': 3607,
+  'arm64v8': 3608,
+  's390x': 3609,
+  'ppc64le': 3610,
 }
 debian_toolchains_by_arch = {
   'amd64': 'x86_64-linux-gnu',
@@ -142,7 +142,7 @@ def generate_docker_compose():
         for client_distro in debian_client_distros:##
           client_distro_slug = slugify(client_distro)
           render(
-            'docker-compose.template.yml',
+            'docker-compose.debian.template.yml',
             'docker-compose.host-{host_distro_slug}-{host_arch}.client-{client_distro_slug}-{client_arch}.yml',
             locals()
           )
@@ -153,7 +153,7 @@ def generate_docker_compose():
     for client_arch in archlinux_client_archs:
       host_port = archlinux_ports_by_arch[client_arch]
       render(
-        'docker-compose.template.yml',
+        'docker-compose.archlinux.template.yml',
         'docker-compose.host-{host_distro_slug}-{host_arch}.client-{client_distro_slug}-{client_arch}.yml',
         locals()
       )

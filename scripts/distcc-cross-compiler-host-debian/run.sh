@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -uxeo pipefail
+
 declare -a pids
 
 services=( "distccd-x86_64-linux-gnu" "distccd-i686-linux-gnu" \
@@ -10,7 +12,7 @@ on_sigint () {
   echo "Interrupted..."
   for pid in ${pids[@]}
   do
-    kill $pid
+    kill $pid || true
   done
 }
 
@@ -18,16 +20,16 @@ on_sigterm () {
   echo "Terminated..."
   for pid in ${pids[@]}
   do
-    kill -TERM $pid
+    kill -TERM $pid || true
   done
 }
 
 main () {
   for service in ${services[@]}
   do
-    service $service start
-    pids+=($(cat/var/run/$service.pid))
-    tail -f /var/log/$service.log &
+    /etc/init.d/$service start
+    pids+=($(cat /var/run/$service.pid))
+    tail -f /var/log/$service.log 1>&2 &
     pids+=($!)
   done
   wait

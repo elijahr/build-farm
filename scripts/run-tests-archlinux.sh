@@ -5,26 +5,38 @@ set -uxeo pipefail
 host_arch=$1
 client_arch=$2
 
+docker_compose=rendered/docker-compose.host-archlinux-${host_arch}.client-archlinux-${client_arch}.yml
+
 run_distcc_client_tests () {
   # Compile test project in the client container
+
+  # Clear logs
+  image_id=$(docker images elijahru/distcc-cross-compiler-host-archlinux:latest-${host_arch} --format "{{.ID}}")
+  docker run -it --rm --privileged --pid=host $image_id nsenter -t 1 -m -u -n -i -- \
+    sh -c 'find /var/lib/docker/containers/ -name "*-json.log" -exec truncate -s0 {} \;'
   docker-compose \
-    -f rendered/docker-compose.host-archlinux-${host_arch}.client-archlinux-${client_arch}.yml \
+    -f $docker_compose \
+    up -d \
+    distcc-cross-compiler-host
+  sleep 5
+
+  docker-compose \
+    -f $docker_compose \
     run \
     distcc-cross-compiler-client
 }
 
 assert_distcc_host_output () {
   # Verify distcc log output from the host container
-  id=$(docker ps --filter name=distcc-cross-compiler-host --format "{{.ID}}")
-  line1=$(docker exec -it $id journalctl -u distcc-{client_arch}.service | tail -n 2 | head -n 1)
+  line1=$(docker-compose -f $docker_compose logs distcc-cross-compiler-host | tail -n 2 | head -n 1)
   [[ "$line1" =~ distccd[\[0-9\]+]\ .*\ COMPILE_OK\ .*\ cJSON.c ]]
 
-  line2=$(docker exec -it $id journalctl -u distcc-{client_arch}.service | tail -n 1)
+  line2=$(docker-compose -f $docker_compose logs distcc-cross-compiler-host | tail -n 1)
   [[ "$line2" =~ distccd[\[0-9\]+]\ .*\ COMPILE_OK\ .*\ cJSON_Utils.c ]]
 
-  # Verify only 2 compile requests were made; the second make should have used ccache
-  dcc_job_summary_count=$(docker exec -it $id journalctl -u distcc-{client_arch}.service | grep -i -c dcc_job_summary)
-  test "$dcc_job_summary_count" == 2
+  # Verify <= 3 compile requests were made; subsequent makes should have used ccache
+  dcc_job_summary_count=$(docker-compose -f $docker_compose logs distcc-cross-compiler-host | grep -i -c dcc_job_summary)
+  test "$dcc_job_summary_count" -le 2
 }
 
 main () {
@@ -32,5 +44,13 @@ main () {
   run_distcc_client_tests
   assert_distcc_host_output
 }
+
+on_exit () {
+  docker-compose \
+    -f $docker_compose \
+    down
+}
+
+trap on_exit EXIT
 
 main

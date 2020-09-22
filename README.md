@@ -58,18 +58,18 @@ services:
   builder:
     image: elijahru/distcc-cross-compiler-host-debian-buster:latest-amd64
     ports:
-      # distccd for native compiling x86_64
-      - 3633:3633
-      # distccd for cross-compiling i686
-      - 3634:3634
-      # distccd for cross-compiling powerpc64le
-      - 3635:3635
-      # distccd for cross-compiling s390x
-      - 3636:3636
-      # distccd for cross-compiling arm32v7
-      - 3637:3637
-      # distccd for cross-compiling arm64v8
-      - 3638:3638
+      # i686-linux-gnu
+      - 3603:3603
+      # x86_64-linux-gnu
+      - 3604:3604
+      # arm-linux-gnueabihf
+      - 3607:3607
+      # aarch64-linux-gnu
+      - 3608:3608
+      # s390x-linux-gnux
+      - 3609:3609
+      # powerpc64le-linux-gnu
+      - 3610:3610
 
   client-amd64:
     image: elijahru/distcc-cross-compiler-client-debian-buster:latest-amd64
@@ -124,15 +124,15 @@ services:
   builder:
     image: elijahru/distcc-cross-compiler-host-archlinux:latest-amd64
     ports:
-      # distccd for native compiling x86_64
+      # amd64
       - 3704:3704
-      # distccd for cross-compiling arm32v5
+      # arm32v5
       - 3705:3705
-      # distccd for cross-compiling arm32v6
+      # arm32v6
       - 3706:3706
-      # distccd for cross-compiling arm32v7
+      # arm32v7
       - 3707:3707
-      # distccd for cross-compiling arm64v8
+      # arm64v8
       - 3708:3708
 
   client-amd64:
@@ -149,14 +149,12 @@ services:
       - ./caches/arm32v5/ccache:/root/.ccache
     command: ./configure && make
 
-
   client-arm32v6:
     image: elijahru/distcc-cross-compiler-client-archlinux:latest-arm32v6
     volumes:
       - .:/code
       - ./caches/arm32v6/ccache:/root/.ccache
     command: ./configure && make
-
 
   client-arm32v7:
     image: elijahru/distcc-cross-compiler-client-archlinux:latest-arm32v7
@@ -204,3 +202,17 @@ The following tags are available:
   * `elijahru/distcc-cross-compiler-client-archlinux:<version>-s390x`
 
 Where `<version>` is either `latest` or a git tag in this repository, such as `v0.1.0`.
+
+### Contributing
+
+Adding new target operating systems should be more or less straightforward by following the existing patterns for Debian and Arch. Please do submit pull requests!
+
+The images can be built and tested locally using the `scripts/build-debian-buster.sh` and `scripts/build-archlinux.sh` scripts, respectively.
+
+The build essentially does the following:
+
+* Render templates to produce a matrix of `docker-compose.yml` and `Dockerfiles`
+* Build the host and clients images using the rendered templates
+* Run the tests for each client image, one at a time
+
+The tests verify that an arbitrary project (cJSON) is compiled using distcc, and that the resulting executable is valid. The tests then verify that subsequent builds use ccache to avoid repeat compilation.
