@@ -27,13 +27,10 @@ run_distcc_client_tests () {
 
 assert_distcc_host_output () {
   # Verify distcc log output from the host container
-  echo ">>>>>"
-  docker-compose -f $docker_compose logs distcc-cross-compiler-host
-  echo "<<<<<"
-  line1=$(docker-compose -f $docker_compose logs distcc-cross-compiler-host | tail -n 2 | head -n 1)
+  line1=$(docker-compose -f $docker_compose logs distcc-cross-compiler-host | grep dcc_job_summary | tail -n 2 | head -n 1)
   [[ "$line1" =~ distccd[\[0-9\]+]\ .*\ COMPILE_OK\ .*\ cJSON.c ]]
 
-  line2=$(docker-compose -f $docker_compose logs distcc-cross-compiler-host | tail -n 1)
+  line2=$(docker-compose -f $docker_compose logs distcc-cross-compiler-host | grep dcc_job_summary | tail -n 1)
   [[ "$line2" =~ distccd[\[0-9\]+]\ .*\ COMPILE_OK\ .*\ cJSON_Utils.c ]]
 
   # Verify <= 3 compile requests were made; subsequent makes should have used ccache
