@@ -2,13 +2,13 @@
 
 Fast & easy cross-compiling with `docker` and `distcc`.
 
-## Use cases
+### Use cases
 
 * Cross-compiling for embedded systems
 * Parallel build farm
 * Continuous integration across a matrix of architectures
 
-## Supported targets
+### Supported targets
 
 | OS            | Architecture          | Image on Docker Hub                                                  | Host port |
 |---------------|-----------------------|----------------------------------------------------------------------|-----------|
@@ -24,7 +24,7 @@ Fast & easy cross-compiling with `docker` and `distcc`.
 | Debian Buster | `s390x`               | `elijahru/distcc-cross-compiler-client-debian-buster:latest-s390x`   | 3609      |
 | Debian Buster | `ppc64le`             | `elijahru/distcc-cross-compiler-client-debian-buster:latest-ppc64le` | 3610      |
 
-## Simple example
+### Simple example
 
 In this example, `host` is a native Debian `amd64` container which exposes an `arm64v8` cross-compiler on port `3608`.
 
@@ -50,7 +50,7 @@ services:
     command: ./configure && make
 ```
 
-## Example with all available Debian build targets
+### Example with all available Debian build targets
 
 ```yml
 version: '3'
@@ -114,7 +114,7 @@ services:
     command: ./configure && make
 ```
 
-## Example with all available Arch Linux build targets
+### Example with all available Arch Linux build targets
 
 ```yml
 version: '3'
