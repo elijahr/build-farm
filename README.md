@@ -10,19 +10,19 @@ Fast & easy cross-compiling with `docker` and `distcc`.
 
 ## Supported targets
 
-| OS            | Architecture          | Image                                                                   | Host port |
-|---------------|-----------------------|-------------------------------------------------------------------------|-----------|
-| Arch Linux    | `amd64`               | `elijahru/distcc-cross-compiler-client-archlinux:<version>-amd64`       | 3704      |
-| Arch Linux    | `arm32v5`             | `elijahru/distcc-cross-compiler-client-archlinux:<version>-arm32v5`     | 3705      |
-| Arch Linux    | `arm32v6`             | `elijahru/distcc-cross-compiler-client-archlinux:<version>-arm32v6`     | 3706      |
-| Arch Linux    | `arm32v7`             | `elijahru/distcc-cross-compiler-client-archlinux:<version>-arm32v7`     | 3707      |
-| Arch Linux    | `arm64v8` (`aarch64`) | `elijahru/distcc-cross-compiler-client-archlinux:<version>-arm64v8`     | 3708      |
-| Debian Buster | `i386` (`i686`)       | `elijahru/distcc-cross-compiler-client-debian-buster:<version>-i386`    | 3603      |
-| Debian Buster | `amd64` (`x86_64`)    | `elijahru/distcc-cross-compiler-client-debian-buster:<version>-amd64`   | 3604      |
-| Debian Buster | `arm32v7`             | `elijahru/distcc-cross-compiler-client-debian-buster:<version>-arm32v7` | 3607      |
-| Debian Buster | `arm64v8` (`aarch64`) | `elijahru/distcc-cross-compiler-client-debian-buster:<version>-arm64v8` | 3608      |
-| Debian Buster | `s390x`               | `elijahru/distcc-cross-compiler-client-debian-buster:<version>-s390x`   | 3609      |
-| Debian Buster | `ppc64le`             | `elijahru/distcc-cross-compiler-client-debian-buster:<version>-ppc64le` | 3610      |
+| OS            | Architecture          | Image on Docker Hub                                                  | Host port |
+|---------------|-----------------------|----------------------------------------------------------------------|-----------|
+| Arch Linux    | `amd64`               | `elijahru/distcc-cross-compiler-client-archlinux:latest-amd64`       | 3704      |
+| Arch Linux    | `arm32v5`             | `elijahru/distcc-cross-compiler-client-archlinux:latest-arm32v5`     | 3705      |
+| Arch Linux    | `arm32v6`             | `elijahru/distcc-cross-compiler-client-archlinux:latest-arm32v6`     | 3706      |
+| Arch Linux    | `arm32v7`             | `elijahru/distcc-cross-compiler-client-archlinux:latest-arm32v7`     | 3707      |
+| Arch Linux    | `arm64v8` (`aarch64`) | `elijahru/distcc-cross-compiler-client-archlinux:latest-arm64v8`     | 3708      |
+| Debian Buster | `i386` (`i686`)       | `elijahru/distcc-cross-compiler-client-debian-buster:latest-i386`    | 3603      |
+| Debian Buster | `amd64` (`x86_64`)    | `elijahru/distcc-cross-compiler-client-debian-buster:latest-amd64`   | 3604      |
+| Debian Buster | `arm32v7`             | `elijahru/distcc-cross-compiler-client-debian-buster:latest-arm32v7` | 3607      |
+| Debian Buster | `arm64v8` (`aarch64`) | `elijahru/distcc-cross-compiler-client-debian-buster:latest-arm64v8` | 3608      |
+| Debian Buster | `s390x`               | `elijahru/distcc-cross-compiler-client-debian-buster:latest-s390x`   | 3609      |
+| Debian Buster | `ppc64le`             | `elijahru/distcc-cross-compiler-client-debian-buster:latest-ppc64le` | 3610      |
 
 ## Simple example
 
