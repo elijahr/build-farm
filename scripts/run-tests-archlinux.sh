@@ -12,7 +12,7 @@ run_distcc_client_tests () {
 
   # Clear logs
   image_id=$(docker images elijahru/distcc-cross-compiler-host-archlinux:latest-${host_arch} --format "{{.ID}}")
-  
+
   docker-compose \
     -f $docker_compose \
     up -d \
@@ -27,6 +27,9 @@ run_distcc_client_tests () {
 
 assert_distcc_host_output () {
   # Verify distcc log output from the host container
+  echo ">>>>>"
+  docker-compose -f $docker_compose logs distcc-cross-compiler-host
+  echo "<<<<<"
   line1=$(docker-compose -f $docker_compose logs distcc-cross-compiler-host | tail -n 2 | head -n 1)
   [[ "$line1" =~ distccd[\[0-9\]+]\ .*\ COMPILE_OK\ .*\ cJSON.c ]]
 
