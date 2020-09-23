@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build debian-buster-${{ matrix.arch }}
+    name: Build debian-buster ${{ matrix.arch }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -119,6 +119,6 @@ jobs:
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
             -u elijahru --password-stdin
           docker images
-          ./scripts/push-manifests.sh \
+          ./scripts/push-manifests-debian.sh \
             $(basename ${{ matrix.version }}) \
             debian-buster

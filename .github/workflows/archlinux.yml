@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build archlinux-${{ matrix.arch }}
+    name: Build archlinux ${{ matrix.arch }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -116,6 +116,5 @@ jobs:
           echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
             -u elijahru --password-stdin
           docker images
-          ./scripts/push-manifests.sh \
-            $(basename ${{ matrix.version }}) \
-            archlinux
+          ./scripts/push-manifests-archlinux.sh \
+            $(basename ${{ matrix.version }})
