@@ -4,9 +4,9 @@ Fast & easy cross-compiling with `docker` and `distcc`.
 
 ## Use cases
 
-* Parallel build cluster
 * Cross-compiling for embedded systems
-* Continuous Integration across a matrix of targets
+* Parallel build farm
+* Continuous integration across a matrix of architectures
 
 ## Supported targets
 
@@ -80,8 +80,6 @@ services:
 
   client-amd64:
     image: elijahru/distcc-cross-compiler-client-debian-buster:latest-amd64
-    environment:
-      - DISTCC_HOSTS=builder:3632
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -171,16 +169,45 @@ services:
     command: ./configure && make
 ```
 
+### Build farm
+
+Assuming several nodes, each configured as follows:
+
+```yml
+version: '3'
+services:
+  builder:
+    image: elijahru/distcc-cross-compiler-host-archlinux:latest-amd64
+    ports:
+      - 3704:3704
+```
+
+A client can distribute compilation across each node by using the `DISTCC_HOSTS` environment variable:
+
+```yml
+version: '3'
+services:
+  client:
+    environment:
+      - DISTCC_HOSTS=builder1:3704 builder2:3704 builder3:3704
+    image: elijahru/distcc-cross-compiler-client-archlinux:latest-amd64
+    volumes:
+      - .:/code
+    command: ./configure && make
+```
+
+See the [distcc man page](https://linux.die.net/man/1/distcc) for further details on `DISTCC_HOSTS`.
+
 ### Contributing
 
 Adding new target operating systems should be fairly straightforward by following the existing patterns for Debian and Arch Linux. Please do submit pull requests!
 
 The images can be built and tested locally using the `scripts/build-debian-buster.sh` and `scripts/build-archlinux.sh` scripts, respectively.
 
-The build essentially does the following:
+The build scripts essentially do the following:
 
 * Render templates to produce a matrix of `docker-compose.yml` and `Dockerfiles`
-* Build the host and clients images using the rendered templates
+* Build the host and client images using the rendered templates
 * Run the tests for each client image, one at a time
 
 The tests verify that an arbitrary project (cJSON) is compiled using distcc, and that the resulting executable is valid. The tests then verify that subsequent builds use ccache to avoid repeat compilation.
