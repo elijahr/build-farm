@@ -12,8 +12,7 @@ run_distcc_client_tests () {
 
   # Clear logs
   image_id=$(docker images elijahru/distcc-cross-compiler-host-archlinux:latest-${host_arch} --format "{{.ID}}")
-  docker run -it --rm --privileged --pid=host $image_id nsenter -t 1 -m -u -n -i -- \
-    sh -c 'find /var/lib/docker/containers/ -name "*-json.log" -exec truncate -s0 {} \;'
+  
   docker-compose \
     -f $docker_compose \
     up -d \
