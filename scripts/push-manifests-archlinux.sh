@@ -36,11 +36,10 @@ push_distcc_client () {
   manifest=elijahru/distcc-cross-compiler-client-archlinux:${version}
   tags=( \
     ${manifest}-amd64 \
-    ${manifest}-i386 \
+    ${manifest}-arm32v5 \
+    ${manifest}-arm32v6 \
     ${manifest}-arm32v7 \
     ${manifest}-arm64v8 \
-    ${manifest}-ppc64le \
-    ${manifest}-s390x \
   )
 
   for tag in ${tags[@]}

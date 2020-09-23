@@ -2,32 +2,33 @@
 
 Fast & easy cross-compiling with `docker` and `distcc`.
 
-Supported Debian Buster targets:
+## Use cases
 
-* `arm64v8` aka `aarch64`
-* `arm32v7` aka `armhf`
-* `ppc64le` aka `powerpc64le` aka `powerpc64el`
-* `s390x`
-* `amd64` aka `x86_64`
-* `i686` aka `i386`
+* Parallel build cluster
+* Cross-compiling for embedded systems
+* Continuous Integration across a matrix of targets
 
-Supported Arch Linux targets:
+## Supported targets
 
-* `arm64v8` aka `aarch64`
-* `arm32v7` aka `armhf`
-* `arm32v6`
-* `arm32v5`
-* `amd64` aka `x86_64`
-
-## Why?
-
-Building projects from source can take a long time in an emulator. Instead of building in an emulated container, we can offload compilation to a native container configured for cross-compilation. This can speed up builds dramatically.
+| OS            | Architecture          | Image                                                                   | Host port |
+|---------------|-----------------------|-------------------------------------------------------------------------|-----------|
+| Arch Linux    | `amd64`               | `elijahru/distcc-cross-compiler-client-archlinux:<version>-amd64`       | 3704      |
+| Arch Linux    | `arm32v5`             | `elijahru/distcc-cross-compiler-client-archlinux:<version>-arm32v5`     | 3705      |
+| Arch Linux    | `arm32v6`             | `elijahru/distcc-cross-compiler-client-archlinux:<version>-arm32v6`     | 3706      |
+| Arch Linux    | `arm32v7`             | `elijahru/distcc-cross-compiler-client-archlinux:<version>-arm32v7`     | 3707      |
+| Arch Linux    | `arm64v8` (`aarch64`) | `elijahru/distcc-cross-compiler-client-archlinux:<version>-arm64v8`     | 3708      |
+| Debian Buster | `i386` (`i686`)       | `elijahru/distcc-cross-compiler-client-debian-buster:<version>-i386`    | 3603      |
+| Debian Buster | `amd64` (`x86_64`)    | `elijahru/distcc-cross-compiler-client-debian-buster:<version>-amd64`   | 3604      |
+| Debian Buster | `arm32v7`             | `elijahru/distcc-cross-compiler-client-debian-buster:<version>-arm32v7` | 3607      |
+| Debian Buster | `arm64v8` (`aarch64`) | `elijahru/distcc-cross-compiler-client-debian-buster:<version>-arm64v8` | 3608      |
+| Debian Buster | `s390x`               | `elijahru/distcc-cross-compiler-client-debian-buster:<version>-s390x`   | 3609      |
+| Debian Buster | `ppc64le`             | `elijahru/distcc-cross-compiler-client-debian-buster:<version>-ppc64le` | 3610      |
 
 ## Simple example
 
-In this example, `host` is a native Debian `amd64` container which exposes an `aarch64-linux-gnu` cross-compiler on port `3635`.
+In this example, `host` is a native Debian `amd64` container which exposes an `arm64v8` cross-compiler on port `3608`.
 
-`client` is an emulated `arm64v8` container that offloads all `gcc/g++/cc/etc` work to the cross-compiler exposed on `host:3635`.
+`client` is an emulated `arm64v8` container that offloads all `gcc/g++/cc/etc` work to the cross-compiler exposed on `host:3608`.
 
 The compiled object code is cached via `ccache` in a persistent volume, so that subsequent builds do not re-compile unchanged code.
 
@@ -37,8 +38,7 @@ services:
   host:
     image: elijahru/distcc-cross-compiler-host-debian-buster:latest-amd64
     ports:
-      # distccd for cross-compiling aarch64-linux-gnu listens on 3635
-      - 3635:3635
+      - 3608:3608
 
   client:
     image: elijahru/distcc-cross-compiler-client-debian-buster:latest-arm64v8
@@ -58,27 +58,18 @@ services:
   builder:
     image: elijahru/distcc-cross-compiler-host-debian-buster:latest-amd64
     ports:
-      # i686-linux-gnu
+      # i386
       - 3603:3603
-      # x86_64-linux-gnu
+      # amd64
       - 3604:3604
-      # arm-linux-gnueabihf
+      # arm32v7
       - 3607:3607
-      # aarch64-linux-gnu
+      # arm64v8
       - 3608:3608
-      # s390x-linux-gnux
+      # s390x
       - 3609:3609
-      # powerpc64le-linux-gnu
+      # ppc64le
       - 3610:3610
-
-  client-amd64:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-amd64
-    environment:
-      - DISTCC_HOSTS=builder:3632
-    volumes:
-      - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
-    command: ./configure && make
 
   client-i386:
     image: elijahru/distcc-cross-compiler-client-debian-buster:latest-i386
@@ -87,18 +78,13 @@ services:
       - ./caches/i386/ccache:/root/.ccache
     command: ./configure && make
 
-  client-ppc64le:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-ppc64le
+  client-amd64:
+    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-amd64
+    environment:
+      - DISTCC_HOSTS=builder:3632
     volumes:
       - .:/code
-      - ./caches/ppc64le/ccache:/root/.ccache
-    command: ./configure && make
-
-  client-s390x:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-s390x
-    volumes:
-      - .:/code
-      - ./caches/s390x/ccache:/root/.ccache
+      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
 
   client-arm32v7:
@@ -113,6 +99,20 @@ services:
     volumes:
       - .:/code
       - ./caches/arm64v8/ccache:/root/.ccache
+    command: ./configure && make
+
+  client-s390x:
+    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-s390x
+    volumes:
+      - .:/code
+      - ./caches/s390x/ccache:/root/.ccache
+    command: ./configure && make
+
+  client-ppc64le:
+    image: elijahru/distcc-cross-compiler-client-debian-buster:latest-ppc64le
+    volumes:
+      - .:/code
+      - ./caches/ppc64le/ccache:/root/.ccache
     command: ./configure && make
 ```
 
@@ -171,41 +171,9 @@ services:
     command: ./configure && make
 ```
 
-## Additional usage
-
-The following tags are available:
-
-### Debian Buster
-
-* Manifest: `elijahru/distcc-cross-compiler-host-debian-buster:<version>`
-  * `elijahru/distcc-cross-compiler-host-debian-buster:<version>-amd64`
-
-* Manifest: `elijahru/distcc-cross-compiler-client-debian-buster:<version>`
-  * `elijahru/distcc-cross-compiler-client-debian-buster:<version>-amd64`
-  * `elijahru/distcc-cross-compiler-client-debian-buster:<version>-i386`
-  * `elijahru/distcc-cross-compiler-client-debian-buster:<version>-arm32v7`
-  * `elijahru/distcc-cross-compiler-client-debian-buster:<version>-arm64v8`
-  * `elijahru/distcc-cross-compiler-client-debian-buster:<version>-ppc64le`
-  * `elijahru/distcc-cross-compiler-client-debian-buster:<version>-s390x`
-
-### Arch Linux
-
-* Manifest: `elijahru/distcc-cross-compiler-host-archlinux:<version>`
-  * `elijahru/distcc-cross-compiler-host-archlinux:<version>-amd64`
-
-* Manifest: `elijahru/distcc-cross-compiler-client-archlinux:<version>`
-  * `elijahru/distcc-cross-compiler-client-archlinux:<version>-amd64`
-  * `elijahru/distcc-cross-compiler-client-archlinux:<version>-i386`
-  * `elijahru/distcc-cross-compiler-client-archlinux:<version>-arm32v7`
-  * `elijahru/distcc-cross-compiler-client-archlinux:<version>-arm64v8`
-  * `elijahru/distcc-cross-compiler-client-archlinux:<version>-ppc64le`
-  * `elijahru/distcc-cross-compiler-client-archlinux:<version>-s390x`
-
-Where `<version>` is either `latest` or a git tag in this repository, such as `v0.1.0`.
-
 ### Contributing
 
-Adding new target operating systems should be more or less straightforward by following the existing patterns for Debian and Arch. Please do submit pull requests!
+Adding new target operating systems should be fairly straightforward by following the existing patterns for Debian and Arch Linux. Please do submit pull requests!
 
 The images can be built and tested locally using the `scripts/build-debian-buster.sh` and `scripts/build-archlinux.sh` scripts, respectively.
 

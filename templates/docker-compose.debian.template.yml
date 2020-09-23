@@ -3,17 +3,17 @@ services:
   distcc-cross-compiler-host:
     image: elijahru/distcc-cross-compiler-host-{host_distro_slug}:latest-{host_arch}
     ports:
-      # i686-linux-gnu
+      # i386
       - 3603:3603
-      # x86_64-linux-gnu
+      # amd64
       - 3604:3604
-      # arm-linux-gnueabihf
+      # arm32v7
       - 3607:3607
-      # aarch64-linux-gnu
+      # arm64v8
       - 3608:3608
-      # s390x-linux-gnux
+      # s390x
       - 3609:3609
-      # powerpc64le-linux-gnu
+      # ppc64le
       - 3610:3610
 
   distcc-cross-compiler-client:
