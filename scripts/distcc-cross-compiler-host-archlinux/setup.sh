@@ -2,16 +2,21 @@
 
 set -uxeo pipefail
 
+# Extract cross-compiler toolchains
+cd /toolchains
 for file in x-tools*.tar.xz
 do
   tar xf $file &
 done
 wait
 rm -r x-tools*.tar.xz
+cd -
 
-client_archs=( "amd64" "arm32v5" "arm32v6" "arm32v7" "arm64v8" )
-
-for client_arch in ${client_archs[@]}
+# Whitelist binaries for specific toolchains
+toolchains=( "armv5tel-unknown-linux-gnueabi" "armv6l-unknown-linux-gnueabihf" \
+             "armv7l-unknown-linux-gnueabihf" "aarch64-unknown-linux-gnu")
+for toolchain in ${toolchains[@]}
 do
-  systemctl disable distccd-${client_arch}.service
+  ln -s /usr/bin/distcc /usr/lib/distcc/${toolchain}-gcc
+  ln -s /usr/bin/distcc /usr/lib/distcc/${toolchain}-g++
 done

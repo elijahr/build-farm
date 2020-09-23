@@ -4,7 +4,6 @@ Documentation=man:distccd(1)
 After=network.target
 
 [Service]
-User=nobody
 EnvironmentFile=/etc/conf.d/distccd-{client_arch}
 ExecStart=/usr/bin/distccd --no-detach --daemon $DISTCCD_ARGS
 

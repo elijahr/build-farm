@@ -6,16 +6,15 @@ RUN pacman -Syu --noconfirm distcc base-devel
 # Clear pacman cache
 RUN pacman -Sc --noconfirm
 
-WORKDIR /root
-
 # Replace systemctl with docker-friendly version
 COPY ./scripts/distcc-cross-compiler-host-archlinux/systemctl3.py /usr/bin/systemctl
 
 # Install pre-built cross-compiler toolchains, as per https://archlinuxarm.org/wiki/Distcc_Cross-Compiling
-COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools.tar.xz .
-COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools6h.tar.xz .
-COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools7h.tar.xz .
-COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools8.tar.xz .
+RUN mkdir /toolchains
+COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools.tar.xz /toolchains/
+COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools6h.tar.xz /toolchains/
+COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools7h.tar.xz /toolchains/
+COPY ./assets/distcc-cross-compiler-host-archlinux/x-tools8.tar.xz ./toolchains/
 
 COPY ./rendered/distcc-cross-compiler-host-archlinux/etc/conf.d/distccd-arm32v5 /etc/conf.d/
 COPY ./rendered/distcc-cross-compiler-host-archlinux/etc/conf.d/distccd-arm32v6 /etc/conf.d/
@@ -28,6 +27,8 @@ COPY ./rendered/distcc-cross-compiler-host-archlinux/usr/lib/systemd/system/dist
 COPY ./rendered/distcc-cross-compiler-host-archlinux/usr/lib/systemd/system/distccd-arm32v7.service /usr/lib/systemd/system/
 COPY ./rendered/distcc-cross-compiler-host-archlinux/usr/lib/systemd/system/distccd-arm64v8.service /usr/lib/systemd/system/
 COPY ./rendered/distcc-cross-compiler-host-archlinux/usr/lib/systemd/system/distccd-amd64.service /usr/lib/systemd/system/
+
+WORKDIR /root
 
 COPY ./scripts/distcc-cross-compiler-host-archlinux/run.sh run.sh
 COPY ./scripts/distcc-cross-compiler-host-archlinux/setup.sh setup.sh

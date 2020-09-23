@@ -8,9 +8,9 @@ RUN pacman -Sc --noconfirm || true
 
 WORKDIR /root
 
-COPY ./scripts/distcc-cross-compiler-client-archlinux/create-symlinks.sh create-symlinks.sh
+COPY ./scripts/distcc-cross-compiler-client-archlinux/setup.sh setup.sh
 
-RUN ./create-symlinks.sh
+RUN ./setup.sh
 
 # Use ccache wrappers first, distcc wrappers second
 ENV PATH=/usr/lib/ccache/bin:/usr/lib/distcc/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl

@@ -56,10 +56,10 @@ archlinux_images_by_arch = {
   'arm64v8': 'lopsided/archlinux@sha256:f9d68dd73a85b587539e04ef26b18d91b243bee8e1a343ad97f67183f275e548'
 }
 archlinux_toolchains_by_arch = {
-  'arm32v5': 'x-tools/arm-unknown-linux-gnueabi',
-  'arm32v6': 'x-tool6h/arm-unknown-linux-gnueabihf',
-  'arm32v7': 'x-tool7h/arm-unknown-linux-gnueabihf',
-  'arm64v8': 'x-tool8/aarch64-unknown-linux-gnu',
+  'arm32v5': '/toolchains/x-tools/arm-unknown-linux-gnueabi',
+  'arm32v6': '/toolchains/x-tools6h/arm-unknown-linux-gnueabihf',
+  'arm32v7': '/toolchains/x-tools7h/arm-unknown-linux-gnueabihf',
+  'arm64v8': '/toolchains/x-tools8/aarch64-unknown-linux-gnu',
 }
 
 
@@ -72,7 +72,7 @@ def get_debian_compiler_path_part_by_arch(arch):
 def get_archlinux_compiler_path_part_by_arch(arch):
   if arch == 'amd64':
     return ''
-  return '/root/'+archlinux_toolchains_by_arch[arch]+'/bin:'
+  return archlinux_toolchains_by_arch[arch]+'/bin:'
 
 
 def slugify(string):
@@ -139,7 +139,7 @@ def generate_docker_compose():
       host_distro_slug = slugify(host_distro)
       for client_arch in debian_client_archs:
         host_port = debian_ports_by_arch[client_arch]
-        for client_distro in debian_client_distros:##
+        for client_distro in debian_client_distros:
           client_distro_slug = slugify(client_distro)
           render(
             'docker-compose.debian.template.yml',
