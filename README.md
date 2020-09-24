@@ -1,3 +1,5 @@
+![Build images](https://github.com/elijahr/distcc-cross-compiler/workflows/Build%20images/badge.svg)
+
 # distcc-cross-compiler
 
 Fast & easy cross-compiling with `docker` and `distcc`.
