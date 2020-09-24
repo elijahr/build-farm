@@ -241,7 +241,7 @@ services:
 
 See the [distcc man page](https://linux.die.net/man/1/distcc) for documentation on `DISTCC_HOSTS`.
 
-## Github Actions
+### Github Actions
 
 Below is an example GitHub Actions workflow config, named say `.github/workflows/build.yml`:
 
