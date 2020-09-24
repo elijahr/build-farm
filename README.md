@@ -243,8 +243,93 @@ See the [distcc man page](https://linux.die.net/man/1/distcc) for documentation 
 
 ## Github Actions
 
-```yml
+Below is an example GitHub Actions workflow config, named say `.github/workflows/build.yml`:
 
+```yml
+name: Build project
+
+on:
+  push:
+    branches: [ '*' ]
+    tags: [ '*' ]
+
+jobs:
+  build:
+    name: Build for archlinux ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        arch: [ amd64, arm64v8 ]
+
+    steps:
+      - name: Setup cache
+        uses: actions/cache@v2
+        with:
+          # Used by ccache
+          path: caches
+          key: ${{ matrix.arch }}
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -q -y
+          sudo apt-get -qq install -y qemu qemu-user-static
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+      - name: Build
+        run: docker-compose run build-${{ matrix.arch }}
+```
+
+The above workflow config assumes the repository contains a `docker-compose.yml` as follows:
+
+```yml
+version: '3'
+services:
+  builder:
+    image: elijahru/distcc-cross-compiler-host-archlinux:latest-amd64
+    ports:
+      # amd64
+      - 3704:3704
+      # arm64v8
+      - 3708:3708
+
+  build-amd64:
+    image: elijahru/distcc-cross-compiler-client-archlinux:latest-amd64
+    depends_on: [ builder ]
+    volumes:
+      # Map GitHub Actions cache to ccache via volume
+      - ./caches/amd64/ccache:/root/.ccache
+    command: |
+      bash -c "\
+        curl -LsSf https://github.com/DaveGamble/cJSON/archive/master.tar.gz -o cJSON.tar.gz; \
+        tar xzf cJSON.tar.gz; \
+        cd cJSON-master; \
+        echo 'Waiting for builder...'; \
+        sleep 10; \
+        make; \
+        make test; "
+
+  build-arm64v8:
+    image: elijahru/distcc-cross-compiler-client-archlinux:latest-arm64v8
+    depends_on: [ builder ]
+    volumes:
+      # Map GitHub Actions cache to ccache via volume
+      - ./caches/arm64v8/ccache:/root/.ccache
+    command: |
+      bash -c "\
+        curl -LsSf https://github.com/DaveGamble/cJSON/archive/master.tar.gz -o cJSON.tar.gz; \
+        tar xzf cJSON.tar.gz; \
+        cd cJSON-master; \
+        echo 'Waiting for builder...'; \
+        sleep 10; \
+        make; \
+        make test; "
 ```
 
 ### Contributing
