@@ -1,0 +1,24 @@
+FROM {{ host_arch|image }}
+
+# Install deps
+RUN pacman -Syu --noconfirm distcc
+
+# Clear pacman cache
+RUN pacman -Sc --noconfirm
+
+# Install pre-built cross-compiler toolchains, as per https://archlinuxarm.org/wiki/Distcc_Cross-Compiling
+COPY toolchains/* /toolchains/
+COPY etc/conf.d/* /etc/conf.d/
+COPY usr/lib/systemd/system/* /usr/lib/systemd/system/
+COPY scripts/* /scripts/
+
+RUN \
+  chmod +x /scripts/* && \
+  /scripts/setup.sh
+
+# Replace systemctl with docker-friendly version
+RUN \
+  rm /usr/bin/systemctl && \
+  ln -s /scripts/systemctl3.py /usr/bin/systemctl
+
+CMD /scripts/run.sh

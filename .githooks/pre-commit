@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -ueo pipefail
+
+echo "Checking for .github/workflows/build.yml.jinja changes..."
+
+files=( $(git diff-index --cached HEAD --name-only) )
+
+for file in ${files[@]}
+do
+	if [[ "$file" == ".github/workflows/build.yml.jinja" ]]
+	then
+		echo "Change detected, re-rendering"
+		./builder.py render-github-actions
+		git add .github/workflows/*.yml || true
+	fi
+
+	case $file in
+		*.py)
+			black $file
+			git add $file
+			;;
+	esac
+done

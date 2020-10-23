@@ -1,0 +1,131 @@
+_anchors:
+  checkout_repo: &checkout_repo
+    name: Checkout repo
+    uses: actions/checkout@v2
+    with:
+      fetch-depth: 1
+      submodules: recursive
+
+  install_emulation_deps: &install_emulation_deps
+    name: Install emulation dependencies
+    run: |
+      sudo apt-get update -q -y
+      sudo apt-get -qq install -y qemu qemu-user-static
+      docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+  install_pip_requirements: &install_pip_requirements
+    name: Install pip requirements
+    run: |
+      pip3 install -r requirements.txt
+
+  dockerhub_login: &dockerhub_login
+    name: Login to Docker Hub
+    run: |
+      echo {% raw %}${{ secrets.DOCKERHUB_TOKEN }}{% endraw %} | docker login \
+        -u elijahru --password-stdin
+
+name: {{ distro }}
+
+on:
+  push:
+    branches: [ '*' ]
+    tags: [ '*' ]
+
+jobs:
+  {% for host_arch in host_archs %}
+  build-host-{{ host_arch }}:
+    name: |
+      host: {{ host_arch }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - *checkout_repo
+      - *install_emulation_deps
+      - *install_pip_requirements
+      - *dockerhub_login
+      - name: Build host image
+        run: |
+          ./builder.py build-host \
+            --distro {{ distro }} \
+            --host-arch {{ host_arch }} \
+            --tag $(basename {% raw %}${{ github.event.ref }}{% endraw %}) \
+            --push
+  {% endfor %}
+
+  {% for compiler_arch in compiler_archs %}
+  build-client-{{ compiler_arch }}:
+    name: |
+      client: {{ compiler_arch }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - *checkout_repo
+      - *install_emulation_deps
+      - *install_pip_requirements
+      - *dockerhub_login
+      - name: Build client image
+        run: |
+          ./builder.py build-client \
+            --distro {{ distro }} \
+            --client-arch {{ compiler_arch }} \
+            --tag $(basename {% raw %}${{ github.event.ref }}{% endraw %}) \
+            --push
+  {% endfor %}
+
+  {% for host_arch in host_archs %}
+  {% for compiler_arch in host_arch|compiler_archs %}
+  run-tests-{{ host_arch }}-{{ compiler_arch }}:
+    name: |
+      test (host: {{ host_arch }}, client: {{ compiler_arch }})
+    runs-on: ubuntu-latest
+    needs:
+      - build-host-{{ host_arch }}
+      - build-client-{{ compiler_arch }}
+
+    steps:
+      - *checkout_repo
+      - *install_emulation_deps
+      - *install_pip_requirements
+      - name: Run tests
+        run: |
+          ./builder.py test \
+            --distro {{ distro }} \
+            --host-arch {{ host_arch }} \
+            --client-arch {{ compiler_arch }} \
+            --tag $(basename {% raw %}${{ github.event.ref }}{% endraw %})
+  {% endfor %}
+  {% endfor %}
+
+  push_manifests:
+    name: Push manifests
+    if: {% raw %}${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/') }}{% endraw %}
+
+    runs-on: ubuntu-latest
+    needs:
+      {% for host_arch in host_archs %}
+      {% for compiler_arch in host_arch|compiler_archs %}
+      - run-tests-{{ host_arch }}-{{ compiler_arch }}
+      {% endfor %}
+      {% endfor %}
+
+    strategy:
+      matrix:
+        include:
+          - version: latest
+          - version: '{% raw %}${{ github.ref }}{% endraw %}'
+
+    steps:
+      - *checkout_repo
+      - *install_pip_requirements
+      - *dockerhub_login
+      - name: Push host manifest
+        run: |
+          ./builder.py push-host-manifest \
+            --distro {{ distro }} \
+            --tag $(basename {% raw %}${{ matrix.version }}{% endraw %})
+
+      - name: Push client manifest
+        run: |
+          ./builder.py push-client-manifest \
+            --distro {{ distro }} \
+            --tag $(basename {% raw %}${{ matrix.version }}{% endraw %})

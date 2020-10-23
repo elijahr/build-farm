@@ -1,0 +1,11 @@
+[Unit]
+Description=Distributed compilation server for C, C++ and Objective-C ({{ compiler_arch|toolchain }})
+Documentation=man:distccd(1)
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/conf.d/distccd.host-{{ host_arch }}.compiler-{{ compiler_arch }}
+ExecStart=/usr/bin/distccd --no-detach --daemon $DISTCCD_ARGS
+
+[Install]
+WantedBy=multi-user.target

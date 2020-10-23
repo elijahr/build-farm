@@ -1,4 +1,0 @@
-
-# Parameters to be passed to distccd
-DISTCCD_PATH="{compiler_path_part}/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
-DISTCCD_ARGS="--verbose --allow 0.0.0.0/0 --listen 0.0.0.0 --port {host_port} --log-stderr --log-level info"
