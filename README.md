@@ -46,7 +46,6 @@ The multi-architecture `elijahru/distcc-cross-compiler-host-debian-buster:latest
 | `arm64v8` | `i386`      | 3603          |
 | `arm64v8` | `amd64`     | 3604          |
 | `arm64v8` | `arm64v8`   | 3608          |
-| `arm64v8` | `ppc64le`   | 3610          |
 | `ppc64le` | `i386`      | 3603          |
 | `ppc64le` | `amd64`     | 3604          |
 | `ppc64le` | `arm64v8`   | 3608          |
