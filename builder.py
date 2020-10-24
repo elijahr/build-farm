@@ -342,25 +342,25 @@ class Distro(metaclass=abc.ABCMeta):
             f"elijahru/distcc-cross-compiler-host-{slugify(self.name)}:{manifest_tag}"
         )
         image = f"elijahru/distcc-cross-compiler-host-{slugify(self.name)}:{image_tag}"
-        images = [f"{image}-{host_arch}" for host_arch in self.host_archs]
+        images = {host_arch: f"{image}-{host_arch}" for host_arch in self.host_archs}
 
-        for image in images:
+        for image in images.values():
             try:
                 docker("pull", image)
             except ErrorReturnCode_1:
                 pass
 
         try:
-            docker("manifest", "create", "--amend", manifest, *images)
+            docker("manifest", "create", "--amend", manifest, *images.values())
         except ErrorReturnCode_1:
-            docker("manifest", "create", manifest, *images)
+            docker("manifest", "create", manifest, *images.values())
 
         for host_arch in self.host_archs:
             docker(
                 "manifest",
                 "annotate",
                 manifest,
-                f"{manifest}-{host_arch}",
+                images[host_arch],
                 "--os",
                 "linux",
                 *docker_manifest_args[host_arch],
@@ -376,25 +376,28 @@ class Distro(metaclass=abc.ABCMeta):
         image = (
             f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{image_tag}"
         )
-        images = [f"{image}-{compiler_arch}" for compiler_arch in self.compiler_archs]
+        images = {
+            compiler_arch: f"{image}-{compiler_arch}"
+            for compiler_arch in self.compiler_archs
+        }
 
-        for image in images:
+        for image in images.values():
             try:
                 docker("pull", image)
             except ErrorReturnCode_1:
                 pass
 
         try:
-            docker("manifest", "create", "--amend", manifest, *images)
+            docker("manifest", "create", "--amend", manifest, *images.values())
         except ErrorReturnCode_1:
-            docker("manifest", "create", manifest, *images)
+            docker("manifest", "create", manifest, *images.values())
 
         for compiler_arch in self.compiler_archs:
             docker(
                 "manifest",
                 "annotate",
                 manifest,
-                f"{manifest}-{compiler_arch}",
+                images[compiler_arch],
                 "--os",
                 "linux",
                 *docker_manifest_args[compiler_arch],
