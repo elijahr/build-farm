@@ -111,8 +111,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - version: latest
-          - version: '{% raw %}${{ github.ref }}{% endraw %}'
+          - manifest_tag: latest
+            image_tag: '{% raw %}${{ github.ref }}{% endraw %}'
+          - manifest_tag: '{% raw %}${{ github.ref }}{% endraw %}'
+            image_tag: '{% raw %}${{ github.ref }}{% endraw %}'
 
     steps:
       - *checkout_repo
@@ -122,10 +124,12 @@ jobs:
         run: |
           ./builder.py push-host-manifest \
             --distro {{ distro }} \
-            --tag $(basename {% raw %}${{ matrix.version }}{% endraw %})
+            --manifest-tag $(basename {% raw %}${{ matrix.manifest_tag }}{% endraw %}) \
+            --image-tag $(basename {% raw %}${{ matrix.image_tag }}{% endraw %})
 
       - name: Push client manifest
         run: |
           ./builder.py push-client-manifest \
             --distro {{ distro }} \
-            --tag $(basename {% raw %}${{ matrix.version }}{% endraw %})
+            --manifest-tag $(basename {% raw %}${{ matrix.manifest_tag }}{% endraw %}) \
+            --image-tag $(basename {% raw %}${{ matrix.image_tag }}{% endraw %})

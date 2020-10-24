@@ -336,10 +336,13 @@ class Distro(metaclass=abc.ABCMeta):
         if push:
             docker("push", image)
 
-    def push_host_manifest(self, tag):
+    def push_host_manifest(self, manifest_tag, image_tag):
         os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
-        manifest = f"elijahru/distcc-cross-compiler-host-{slugify(self.name)}:{tag}"
-        images = [f"{manifest}-{host_arch}" for host_arch in self.host_archs]
+        manifest = (
+            f"elijahru/distcc-cross-compiler-host-{slugify(self.name)}:{manifest_tag}"
+        )
+        image = f"elijahru/distcc-cross-compiler-host-{slugify(self.name)}:{image_tag}"
+        images = [f"{image}-{host_arch}" for host_arch in self.host_archs]
 
         for image in images:
             try:
@@ -365,12 +368,15 @@ class Distro(metaclass=abc.ABCMeta):
 
         docker("manifest", "push", manifest)
 
-    def push_client_manifest(self, tag):
+    def push_client_manifest(self, manifest_tag, image_tag):
         os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
-        manifest = f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{tag}"
-        images = [
-            f"{manifest}-{compiler_arch}" for compiler_arch in self.compiler_archs
-        ]
+        manifest = (
+            f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{manifest_tag}"
+        )
+        image = (
+            f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{image_tag}"
+        )
+        images = [f"{image}-{compiler_arch}" for compiler_arch in self.compiler_archs]
 
         for image in images:
             try:
@@ -659,12 +665,14 @@ def make_parser():
     # push-host-manifest
     parser_push_host_manifest = subparsers.add_parser("push-host-manifest")
     parser_push_host_manifest.add_argument("--distro", type=Distro.get, required=True)
-    parser_push_host_manifest.add_argument("--tag", required=True)
+    parser_push_host_manifest.add_argument("--manifest-tag", required=True)
+    parser_push_host_manifest.add_argument("--image-tag", required=True)
 
     # push-client-manifest
     parser_push_client_manifest = subparsers.add_parser("push-client-manifest")
     parser_push_client_manifest.add_argument("--distro", type=Distro.get, required=True)
-    parser_push_client_manifest.add_argument("--tag", required=True)
+    parser_push_client_manifest.add_argument("--manifest-tag", required=True)
+    parser_push_client_manifest.add_argument("--image-tag", required=True)
 
     return parser
 
@@ -703,10 +711,14 @@ def main():
         args.distro.test(args.host_arch, args.client_arch, tag=args.tag)
 
     elif args.subcommand == "push-host-manifest":
-        args.distro.push_host_manifest(tag=args.tag)
+        args.distro.push_host_manifest(
+            manifest_tag=args.manifest_tag, image_tag=args.image_tag
+        )
 
     elif args.subcommand == "push-client-manifest":
-        args.distro.push_client_manifest(tag=args.tag)
+        args.distro.push_client_manifest(
+            manifest_tag=args.manifest_tag, image_tag=args.image_tag
+        )
 
     else:
         raise ValueError(f"Unknown subcommand {args.subcommand}")

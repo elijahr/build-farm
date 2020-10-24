@@ -412,8 +412,10 @@ jobs:
     strategy:
       matrix:
         include:
-        - version: latest
-        - version: ${{ github.ref }}
+        - manifest_tag: latest
+          image_tag: ${{ github.ref }}
+        - manifest_tag: ${{ github.ref }}
+          image_tag: ${{ github.ref }}
 
     steps:
     - name: Checkout repo
@@ -435,10 +437,12 @@ jobs:
       run: |
         ./builder.py push-host-manifest \
           --distro archlinux \
-          --tag $(basename ${{ matrix.version }})
+          --manifest-tag $(basename ${{ matrix.manifest_tag }}) \
+          --image-tag $(basename ${{ matrix.image_tag }})
 
     - name: Push client manifest
       run: |-
         ./builder.py push-client-manifest \
           --distro archlinux \
-          --tag $(basename ${{ matrix.version }})
+          --manifest-tag $(basename ${{ matrix.manifest_tag }}) \
+          --image-tag $(basename ${{ matrix.image_tag }})
