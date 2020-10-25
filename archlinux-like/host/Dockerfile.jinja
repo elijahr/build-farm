@@ -1,10 +1,9 @@
 FROM {{ host_arch|image }}
 
-# Install deps
-RUN pacman -Syu --noconfirm distcc
-
-# Clear pacman cache
-RUN pacman -Sc --noconfirm
+# Install deps and clear pacman cache
+RUN \
+  pacman -Syu --noconfirm distcc; \
+  pacman -Sc --noconfirm || true;
 
 # Install pre-built cross-compiler toolchains, as per https://archlinuxarm.org/wiki/Distcc_Cross-Compiling
 COPY toolchains/* /toolchains/
@@ -18,7 +17,7 @@ RUN \
 
 # Replace systemctl with docker-friendly version
 RUN \
-  rm /usr/bin/systemctl && \
+  rm -f /usr/bin/systemctl && \
   ln -s /scripts/systemctl3.py /usr/bin/systemctl
 
 CMD /scripts/run.sh

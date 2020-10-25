@@ -1,10 +1,9 @@
 FROM {{ compiler_arch|image }}
 
-# Install deps
-RUN pacman -Syu --noconfirm distcc ccache
-
-# Clear pacman cache
-RUN pacman -Sc --noconfirm || true
+# Install deps and clear pacman cache
+RUN \
+  pacman -Syu --noconfirm distcc ccache; \
+  pacman -Sc --noconfirm || true;
 
 RUN \
   mkdir -p /scripts && \
