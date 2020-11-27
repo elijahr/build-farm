@@ -77,6 +77,10 @@ def configure_qemu():
         )
 
 
+def get_platform(arch):
+    return f"linux/{arch.replace('arm32', 'arm/').replace('arm64', 'arm64/')}"
+
+
 class Distro(metaclass=abc.ABCMeta):
     template_path = None
     registry = {}
@@ -295,7 +299,7 @@ class Distro(metaclass=abc.ABCMeta):
         image = f"elijahru/distcc-cross-compiler-host-{slugify(self.name)}:{tag}-{host_arch}"
         dockerfile = self.out_path / f"host/Dockerfile.{host_arch}"
         try:
-            docker("pull", image)
+            docker("pull", image, "--platform", get_platform(host_arch))
         except ErrorReturnCode_1:
             pass
         docker(
@@ -307,6 +311,8 @@ class Distro(metaclass=abc.ABCMeta):
             image,
             "--cache-from",
             image,
+            "--platform",
+            get_platform(host_arch),
         )
         if push:
             docker("push", image)
@@ -319,7 +325,7 @@ class Distro(metaclass=abc.ABCMeta):
         image = f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{tag}-{client_arch}"
         dockerfile = self.out_path / f"client/Dockerfile.{client_arch}"
         try:
-            docker("pull", image)
+            docker("pull", image, "--platform", get_platform(client_arch))
         except ErrorReturnCode_1:
             pass
 
@@ -332,12 +338,13 @@ class Distro(metaclass=abc.ABCMeta):
             image,
             "--cache-from",
             image,
+            "--platform",
+            get_platform(client_arch),
         )
         if push:
             docker("push", image)
 
     def push_host_manifest(self, manifest_tag, image_tag):
-        os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
         manifest = (
             f"elijahru/distcc-cross-compiler-host-{slugify(self.name)}:{manifest_tag}"
         )
@@ -369,7 +376,6 @@ class Distro(metaclass=abc.ABCMeta):
         docker("manifest", "push", manifest)
 
     def push_client_manifest(self, manifest_tag, image_tag):
-        os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
         manifest = (
             f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{manifest_tag}"
         )

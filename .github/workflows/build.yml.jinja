@@ -24,6 +24,13 @@ _anchors:
       echo {% raw %}${{ secrets.DOCKERHUB_TOKEN }}{% endraw %} | docker login \
         -u elijahru --password-stdin
 
+  enable_docker_experimental_features: &enable_docker_experimental_features
+    name: Enable Docker experimental features
+    run: |
+      echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+      sudo service docker restart
+      docker version -f '{{ '{{.Server.Experimental}}' }}'
+
 name: {{ distro }}
 
 on:
@@ -42,6 +49,7 @@ jobs:
       - *checkout_repo
       - *install_emulation_deps
       - *install_pip_requirements
+      - *enable_docker_experimental_features
       - *dockerhub_login
       - name: Build host image
         run: |
@@ -62,6 +70,7 @@ jobs:
       - *checkout_repo
       - *install_emulation_deps
       - *install_pip_requirements
+      - *enable_docker_experimental_features
       - *dockerhub_login
       - name: Build client image
         run: |
@@ -86,6 +95,7 @@ jobs:
       - *checkout_repo
       - *install_emulation_deps
       - *install_pip_requirements
+      - *enable_docker_experimental_features
       - name: Run tests
         run: |
           ./builder.py test \
@@ -119,6 +129,7 @@ jobs:
     steps:
       - *checkout_repo
       - *install_pip_requirements
+      - *enable_docker_experimental_features
       - *dockerhub_login
       - name: Push host manifest
         run: |

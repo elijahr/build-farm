@@ -30,6 +30,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Login to Docker Hub
       run: |
         echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
@@ -64,6 +70,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Login to Docker Hub
       run: |
@@ -100,6 +112,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Login to Docker Hub
       run: |
         echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
@@ -134,6 +152,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Login to Docker Hub
       run: |
@@ -170,6 +194,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Login to Docker Hub
       run: |
         echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
@@ -204,6 +234,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Login to Docker Hub
       run: |
@@ -242,6 +278,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Login to Docker Hub
       run: |
         echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
@@ -276,6 +318,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Login to Docker Hub
       run: |
@@ -312,6 +360,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Login to Docker Hub
       run: |
         echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
@@ -346,6 +400,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Login to Docker Hub
       run: |
@@ -382,6 +442,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Login to Docker Hub
       run: |
         echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login \
@@ -416,6 +482,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Login to Docker Hub
       run: |
@@ -458,6 +530,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Run tests
       run: |
         ./builder.py test \
@@ -490,6 +568,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Run tests
       run: |
@@ -524,6 +608,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Run tests
       run: |
         ./builder.py test \
@@ -556,6 +646,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Run tests
       run: |
@@ -590,6 +686,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Run tests
       run: |
         ./builder.py test \
@@ -622,6 +724,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Run tests
       run: |
@@ -658,6 +766,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Run tests
       run: |
         ./builder.py test \
@@ -690,6 +804,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Run tests
       run: |
@@ -724,6 +844,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Run tests
       run: |
         ./builder.py test \
@@ -756,6 +882,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Run tests
       run: |
@@ -792,6 +924,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Run tests
       run: |
         ./builder.py test \
@@ -827,6 +965,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Run tests
       run: |
         ./builder.py test \
@@ -860,6 +1004,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Run tests
       run: |
         ./builder.py test \
@@ -892,6 +1042,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Run tests
       run: |
@@ -928,6 +1084,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Run tests
       run: |
         ./builder.py test \
@@ -960,6 +1122,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Run tests
       run: |
@@ -994,6 +1162,12 @@ jobs:
       run: |
         pip3 install -r requirements.txt
 
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
+
     - name: Run tests
       run: |
         ./builder.py test \
@@ -1026,6 +1200,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Run tests
       run: |
@@ -1061,6 +1241,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Run tests
       run: |
@@ -1147,6 +1333,12 @@ jobs:
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
+
+    - name: Enable Docker experimental features
+      run: |
+        echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
+        sudo service docker restart
+        docker version -f '{{.Server.Experimental}}'
 
     - name: Login to Docker Hub
       run: |
