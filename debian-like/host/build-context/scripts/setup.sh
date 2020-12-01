@@ -20,7 +20,7 @@ for target in ${targets[@]}
 do
   mkdir -p /usr/local/${target}/bin
   files=("/usr/bin/${target}-"*)
-  for file in ${files:-}
+  for file in ${files[@]}
   do
     link=/usr/local/${target}/bin/$(basename $file | sed "s/${target}-//")
     if [[ ! -f $link ]]
