@@ -105,11 +105,11 @@ case "$1" in
 	should_start
 	log_begin_msg "Starting $DESC: $NAME"
 	echo
-	echo + $DAEMON $DAEMON_ARGS
+	echo + /usr/bin/env PATH="$PATH" $DAEMON $DAEMON_ARGS
 
 	start-stop-daemon --start --quiet --pidfile /var/run/$NAME.pid \
-	--chuid distccd --oknodo \
-	--exec $DAEMON -- $DAEMON_ARGS ||
+		--chuid distccd --oknodo \
+		--exec /usr/bin/env -- PATH="$PATH" $DAEMON $DAEMON_ARGS ||
 	{
 	    code=$?
 	    log_warning_msg "$0: start failed with error code $code" >&2
@@ -146,7 +146,7 @@ case "$1" in
 	should_start
 	start-stop-daemon --start --quiet --pidfile /var/run/$NAME.pid \
 		--chuid distccd --oknodo \
-		--exec $DAEMON -- $DAEMON_ARGS ||
+		--exec /usr/bin/env -- PATH="$PATH" $DAEMON $DAEMON_ARGS ||
 	{
 	    code=$?
 	    rm -f /var/run/$NAME.pid >/dev/null 2>&1
