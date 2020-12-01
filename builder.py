@@ -59,7 +59,7 @@ docker_manifest_args = {
 
 
 def configure_qemu():
-    if not which("qemu-aarch64"):
+    if not which("qemu-aarch64") and not which("qemu-system-aarch64"):
         raise RuntimeError(
             "QEMU not installed, install missing package (apt: qemu,qemu-user-static | pacman: qemu-headless,qemu-headless-arch-extra | brew: qemu)."
         )
