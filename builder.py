@@ -345,7 +345,7 @@ class Distro(metaclass=abc.ABCMeta):
             docker("push", image)
 
     def push_host_manifest(self, manifest_tag, image_tag):
-        os.environ['DOCKER_CLI_EXPERIMENTAL'] = 'enabled'
+        os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
 
         manifest = (
             f"elijahru/distcc-cross-compiler-host-{slugify(self.name)}:{manifest_tag}"
@@ -378,6 +378,7 @@ class Distro(metaclass=abc.ABCMeta):
         docker("manifest", "push", manifest)
 
     def push_client_manifest(self, manifest_tag, image_tag):
+        os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
         manifest = (
             f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{manifest_tag}"
         )
