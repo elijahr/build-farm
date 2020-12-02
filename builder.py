@@ -33,7 +33,7 @@ from sh import which  # pylint: disable=no-name-in-module
 docker = functools.partial(_docker, _out=sys.stdout, _err=sys.stderr)
 docker_compose = functools.partial(_docker_compose, _out=sys.stdout, _err=sys.stderr)
 
-PROJECT_DIR = Path(os.path.dirname(__file__))
+PROJECT_DIR = Path(os.path.dirname(os.path.abspath(__file__)))
 
 
 class Dumper(yaml.RoundTripDumper):
@@ -570,11 +570,11 @@ class ArchLinuxLike(Distro):
         "arm64v8": 3708,
     }
     images_by_arch = {
-        "amd64": "lopsided/archlinux@sha256:cc39ef351ca8eb8656acb176cae8400958bf3ec345b075ea76517d9b4348a53f",
-        "arm32v5": "lopsided/archlinux@sha256:405110f7f780c7ee3e2663329ddd0d26e9e602dadf87a30e2b55ebe920848982",
-        "arm32v6": "lopsided/archlinux@sha256:f0a2a1b73d11090642f178baa43b5d815dc0163b57c78028eecb5e3f4d89ae05",
-        "arm32v7": "lopsided/archlinux@sha256:f0a2a1b73d11090642f178baa43b5d815dc0163b57c78028eecb5e3f4d89ae05",
-        "arm64v8": "lopsided/archlinux@sha256:405110f7f780c7ee3e2663329ddd0d26e9e602dadf87a30e2b55ebe920848982",
+        "amd64": "lopsided/archlinux@sha256:c2c3c4435bbe",
+        "arm32v5": "lopsided/archlinux@sha256:33790daeea37",
+        "arm32v6": "lopsided/archlinux@sha256:28e78700bbf3",
+        "arm32v7": "lopsided/archlinux@sha256:4d22e4d1fdf9",
+        "arm64v8": "lopsided/archlinux@sha256:46eda4e821ba",
     }
     toolchains_by_arch = {
         "arm32v5": "/toolchains/x-tools/arm-unknown-linux-gnueabi",
