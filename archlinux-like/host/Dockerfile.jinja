@@ -1,9 +1,9 @@
 ARG ARCH={{ host_arch }}
-FROM lopsided/archlinux:latest
+FROM lopsided/archlinux:devel
 
 # Install deps and clear pacman cache
 RUN \
-  pacman -Syu --noconfirm distcc; \
+  pacman -Syu --noconfirm distcc which; \
   pacman -Sc --noconfirm || true;
 
 # Install pre-built cross-compiler toolchains, as per https://archlinuxarm.org/wiki/Distcc_Cross-Compiling
