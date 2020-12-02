@@ -1,5 +1,5 @@
 ARG ARCH={{ host_arch }}
-FROM {{ host_arch|image }}
+FROM lopsided/archlinux:latest
 
 # Install deps and clear pacman cache
 RUN \

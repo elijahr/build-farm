@@ -569,23 +569,12 @@ class ArchLinuxLike(Distro):
         "arm32v7": 3707,
         "arm64v8": 3708,
     }
-    images_by_arch = {
-        "amd64": "lopsided/archlinux@sha256:c2c3c4435bbe",
-        "arm32v5": "lopsided/archlinux@sha256:33790daeea37",
-        "arm32v6": "lopsided/archlinux@sha256:28e78700bbf3",
-        "arm32v7": "lopsided/archlinux@sha256:4d22e4d1fdf9",
-        "arm64v8": "lopsided/archlinux@sha256:46eda4e821ba",
-    }
     toolchains_by_arch = {
         "arm32v5": "/toolchains/x-tools/arm-unknown-linux-gnueabi",
         "arm32v6": "/toolchains/x-tools6h/arm-unknown-linux-gnueabihf",
         "arm32v7": "/toolchains/x-tools7h/arm-unknown-linux-gnueabihf",
         "arm64v8": "/toolchains/x-tools8/aarch64-unknown-linux-gnu",
     }
-
-    def __init__(self, name):
-        super(ArchLinuxLike, self).__init__(name)
-        self.env.filters["image"] = self.images_by_arch.get
 
     def get_compiler_path_part(self, compiler_arch):
         if self.context["host_arch"] == compiler_arch:
