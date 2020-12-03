@@ -23,9 +23,9 @@ main () {
       test "$EXPECTED_ARCH" == arm64v8
       ;;
     *arm* )
-      test "$EXPECTED_ARCH" == arm32v5
-      || test "$EXPECTED_ARCH" == arm32v6
-      || test "$EXPECTED_ARCH" == arm32v7
+      test "$EXPECTED_ARCH" == arm32v5 \
+        || test "$EXPECTED_ARCH" == arm32v6 \
+        || test "$EXPECTED_ARCH" == arm32v7
       ;;
     ppc64* | powerpc64* )
       test "$EXPECTED_ARCH" == ppc64le
