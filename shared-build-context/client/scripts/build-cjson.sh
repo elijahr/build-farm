@@ -26,6 +26,8 @@ main () {
   make test
   make clean
   make test
+  cd ~
+  rm -Rf /tmp/cJSON
 }
 
 main

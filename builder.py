@@ -321,28 +321,28 @@ class Distro(metaclass=abc.ABCMeta):
         configure_qemu()
 
         self.render(tag=tag)
+        with self.run_host(host_arch):
+            image = f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{tag}-{client_arch}"
+            dockerfile = self.out_path / f"client/Dockerfile.{client_arch}"
+            try:
+                docker("pull", image, "--platform", get_platform(client_arch))
+            except ErrorReturnCode_1:
+                pass
 
-        image = f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{tag}-{client_arch}"
-        dockerfile = self.out_path / f"client/Dockerfile.{client_arch}"
-        try:
-            docker("pull", image, "--platform", get_platform(client_arch))
-        except ErrorReturnCode_1:
-            pass
-
-        docker(
-            "build",
-            self.out_path / "client/build-context",
-            "--file",
-            dockerfile,
-            "--tag",
-            image,
-            "--cache-from",
-            image,
-            "--platform",
-            get_platform(client_arch),
-        )
-        if push:
-            docker("push", image)
+            docker(
+                "build",
+                self.out_path / "client/build-context",
+                "--file",
+                dockerfile,
+                "--tag",
+                image,
+                "--cache-from",
+                image,
+                "--platform",
+                get_platform(client_arch),
+            )
+            if push:
+                docker("push", image)
 
     def push_host_manifest(self, manifest_tag, image_tag):
         os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
@@ -438,14 +438,6 @@ class Distro(metaclass=abc.ABCMeta):
             id = image_id()
             if id:
                 docker("kill", id, _out=None, _err=None)
-
-    def test(self, host_arch, compiler_arch, tag):
-        self.render(tag=tag)
-
-        with self.run_host(host_arch):
-            docker_compose(
-                "-f", self.docker_compose_yml_path, "run", f"client-{compiler_arch}"
-            )
 
 
 class DebianLike(Distro):
@@ -655,13 +647,6 @@ def make_parser():
 
     # clean
     subparsers.add_parser("clean")
-
-    # test
-    parser_test = subparsers.add_parser("test")
-    parser_test.add_argument("--distro", type=Distro.get, required=True)
-    parser_test.add_argument("--host-arch", required=True)
-    parser_test.add_argument("--client-arch", required=True)
-    parser_test.add_argument("--tag", required=True)
 
     # push-host-manifest
     parser_push_host_manifest = subparsers.add_parser("push-host-manifest")

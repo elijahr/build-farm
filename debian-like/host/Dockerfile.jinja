@@ -18,6 +18,7 @@ COPY scripts/* /scripts/
 RUN \
   chmod +x /etc/init.d/distccd.* && \
   chmod +x /scripts/* && \
-  /scripts/setup.sh
+  /scripts/setup.sh && \
+  /scripts/test-arch.sh {{ host_arch }} && \
+  rm -Rf /scripts/*
 
-CMD /scripts/run.sh

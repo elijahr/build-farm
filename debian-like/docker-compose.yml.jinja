@@ -11,5 +11,5 @@ services:{% for host_arch in host_archs %}
   {% for compiler_arch in compiler_archs %}
   client-{{ compiler_arch }}:
     image: elijahru/distcc-cross-compiler-client-{{ distro_slug }}:{{ tag }}-{{ compiler_arch }}
-    command: /bin/bash /scripts/build-cjson.sh
+    command: /bin/sh
   {% endfor %}

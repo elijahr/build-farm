@@ -14,11 +14,9 @@ COPY scripts/* /scripts/
 
 RUN \
   chmod +x /scripts/* && \
-  /scripts/setup.sh
-
-# Replace systemctl with docker-friendly version
-RUN \
+  /scripts/setup.sh && \
+  /scripts/test-arch.sh {{ host_arch }} && \
   rm -f /usr/bin/systemctl && \
-  ln -s /scripts/systemctl3.py /usr/bin/systemctl
-
-CMD /scripts/run.sh
+  ln -s /scripts/systemctl3.py /usr/bin/systemctl && \
+  rm -Rf /scripts/*
+  # ^ Replace systemctl with docker-friendly version

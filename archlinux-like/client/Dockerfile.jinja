@@ -13,10 +13,6 @@ RUN \
 COPY scripts/* /scripts/
 COPY root/.ccache/* /root/.ccache/
 
-RUN \
-    chmod +x /scripts/* && \
-    /scripts/setup.sh
-
 # Use ccache wrappers first, distcc wrappers second
 ENV PATH=/usr/lib/ccache/bin:/usr/lib/distcc/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
 
@@ -25,3 +21,10 @@ ENV DISTCC_FALLBACK=0
 
 # Connect to distccd on default docker network
 ENV DISTCC_HOSTS=172.17.0.1:{{ host_arch|compiler_port }}
+
+RUN \
+  chmod +x /scripts/* && \
+  /scripts/setup.sh && \
+  /scripts/test-arch.sh {{ compiler_arch }} && \
+  /scripts/build-cjson.sh && \
+  rm -Rf /scripts/*
