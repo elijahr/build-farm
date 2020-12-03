@@ -2,6 +2,8 @@
 
 set -uxeo pipefail
 
+useradd distcc
+
 # Extract cross-compiler toolchains
 cd /toolchains
 for file in x-tools*.tar.xz

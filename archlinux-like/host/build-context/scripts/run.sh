@@ -1,10 +1,9 @@
 #!/bin/bash
 
 set -uxeo pipefail
+shopt -s nullglob
 
 declare -a pids
-
-archs=( "amd64" "arm32v5" "arm32v6" "arm32v7" "arm64v8" )
 
 on_sigint () {
   echo "Interrupted..."
@@ -23,11 +22,12 @@ on_sigterm () {
 }
 
 main () {
-  for arch in ${archs[@]}
+  for service in /usr/lib/systemd/system/distccd.host-*.service
   do
-    systemctl start distccd-${arch}.service
-    pids+=($(cat /var/run/distccd-${arch}.service.status | sed 's/MainPID=//g'))
-    tail -f /var/log/journal/distccd-${arch}.service.log 1>&2 &
+    service=$(basename $service)
+    systemctl start $service
+    pids+=($(cat /var/run/${service}.status | sed 's/MainPID=//g'))
+    tail -f /var/log/journal/${service}.log 1>&2 &
     pids+=($!)
   done
   wait
