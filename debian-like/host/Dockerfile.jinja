@@ -19,6 +19,8 @@ RUN \
   chmod +x /etc/init.d/distccd.* && \
   chmod +x /scripts/* && \
   /scripts/setup.sh && \
+  rm /scripts/setup.sh && \
   /scripts/test-arch.sh {{ host_arch }} && \
-  rm -Rf /scripts/*
+  rm /scripts/test-arch.sh
 
+CMD /scripts/run.sh
