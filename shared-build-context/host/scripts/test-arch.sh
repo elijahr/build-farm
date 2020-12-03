@@ -7,9 +7,9 @@ EXPECTED_ARCH=${1:-}
 main () {
   if type -p dpkg &> /dev/null
   then
-      ACTUAL_ARCH=$(dpkg --print-architecture)
+    ACTUAL_ARCH=$(dpkg --print-architecture)
   else
-      ACTUAL_ARCH=$(uname -m)
+    ACTUAL_ARCH=$(uname -m)
   fi
 
   case $ACTUAL_ARCH in
@@ -29,6 +29,9 @@ main () {
       ;;
     ppc64* | powerpc64* )
       test "$EXPECTED_ARCH" == ppc64le
+      ;;
+    s390x )
+      test "$EXPECTED_ARCH" == s390x
       ;;
     *)
       echo "Unhandled arch $ACTUAL_ARCH"
