@@ -321,7 +321,9 @@ class Distro(metaclass=abc.ABCMeta):
         configure_qemu()
 
         self.render(tag=tag)
-        with self.run_host(host_arch):
+
+        # TODO - determine host_arch
+        with self.run_host(host_arch="amd64"):
             image = f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{tag}-{client_arch}"
             dockerfile = self.out_path / f"client/Dockerfile.{client_arch}"
             try:
