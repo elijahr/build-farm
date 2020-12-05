@@ -276,7 +276,6 @@ class Distro(metaclass=abc.ABCMeta):
                             shutil.copyfile(root / f, new_root / f)
                             print(f"Copied {root / f} -> {new_root / f}")
 
-
     def render_dockerfile_host(self):
         for host_arch in self.host_archs:
             with self.set_context(host_arch=host_arch):
@@ -522,14 +521,14 @@ class DebianLike(Distro):
         "mips64le": "gcc-mipsel-linux-gnu g++-mipsel-linux-gnu binutils-mipsel-linux-gnu",
     }
     ports_by_arch = {
-        "i386": '3603',
-        "amd64": '3604',
-        "arm32v5": '3605',
-        "arm32v7": '3607',
-        "arm64v8": '3608',
-        "s390x": '3609',
-        "ppc64le": '3610',
-        "mips64le": '3611',
+        "i386": "3603",
+        "amd64": "3604",
+        "arm32v5": "3605",
+        "arm32v7": "3607",
+        "arm64v8": "3608",
+        "s390x": "3609",
+        "ppc64le": "3610",
+        "mips64le": "3611",
     }
     toolchains_by_arch = {
         "amd64": "x86_64-linux-gnu",
