@@ -946,7 +946,7 @@ jobs:
       run: |
         ./builder.py push-host-manifest \
           --distro debian:buster-slim \
-          --version ${{ github.ref }}
+          --version $(basename ${{ github.event.ref }})
 
     - name: Push client manifest
       run: |
@@ -994,10 +994,10 @@ jobs:
       run: |
         ./builder.py push-host-latest \
           --distro debian:buster-slim \
-          --version ${{ github.ref }}
+          --version $(basename ${{ github.event.ref }})
 
     - name: Tag client latest
       run: |-
         ./builder.py tag-client-latest \
           --distro debian:buster-slim \
-          --version ${{ github.ref }}
+          --version $(basename ${{ github.event.ref }})

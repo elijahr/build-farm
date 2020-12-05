@@ -114,7 +114,7 @@ jobs:
         run: |
           ./builder.py push-host-manifest \
             --distro {{ distro }} \
-            --version {% raw %}${{ github.ref }}{% endraw %}
+            --version $(basename {% raw %}${{ github.event.ref }}{% endraw %})
 
       - name: Push client manifest
         run: |
@@ -140,10 +140,10 @@ jobs:
         run: |
           ./builder.py push-host-latest \
             --distro {{ distro }} \
-            --version {% raw %}${{ github.ref }}{% endraw %}
+            --version $(basename {% raw %}${{ github.event.ref }}{% endraw %})
 
       - name: Tag client latest
         run: |
           ./builder.py tag-client-latest \
             --distro {{ distro }} \
-            --version {% raw %}${{ github.ref }}{% endraw %}
+            --version $(basename {% raw %}${{ github.event.ref }}{% endraw %})
