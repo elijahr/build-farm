@@ -92,8 +92,10 @@ class Distro(metaclass=abc.ABCMeta):
     toolchains_by_arch = {}
     compiler_archs_by_host_arch = {}
 
-    def __init__(self, name):
+    def __init__(self, name, host_image, client_image):
         self.name = name
+        self.host_image = host_image
+        self.client_image = client_image
         self.registry[name] = self
         self._context = None
         self.env = Environment(autoescape=False, undefined=StrictUndefined)
@@ -207,6 +209,8 @@ class Distro(metaclass=abc.ABCMeta):
         context.update(
             dict(
                 distro=self.name,
+                host_image=self.host_image,
+                client_image=self.client_image,
                 distro_slug=slugify(self.name),
                 host_archs=self.host_archs,
                 compiler_archs=self.compiler_archs,
@@ -313,7 +317,7 @@ class Distro(metaclass=abc.ABCMeta):
 
         self.render(tag=tag)
 
-        image = f"elijahru/distcc-cross-compiler-host-{slugify(self.name)}:{tag}-{host_arch}"
+        image = f"{self.host_image}{tag}-{host_arch}"
         dockerfile = self.out_path / f"host/Dockerfile.{host_arch}"
         try:
             docker("pull", image, "--platform", get_platform(host_arch))
@@ -341,7 +345,7 @@ class Distro(metaclass=abc.ABCMeta):
 
         # TODO - determine host_arch
         with self.run_host(host_arch="amd64"):
-            image = f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{tag}-{client_arch}"
+            image = f"{self.client_image}{tag}-{client_arch}"
             dockerfile = self.out_path / f"client/Dockerfile.{client_arch}"
             try:
                 docker("pull", image, "--platform", get_platform(client_arch))
@@ -366,10 +370,8 @@ class Distro(metaclass=abc.ABCMeta):
     def push_host_manifest(self, manifest_tag, image_tag):
         os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
 
-        manifest = (
-            f"elijahru/distcc-cross-compiler-host-{slugify(self.name)}:{manifest_tag}"
-        )
-        image = f"elijahru/distcc-cross-compiler-host-{slugify(self.name)}:{image_tag}"
+        manifest = f"{self.host_image}{manifest_tag}"
+        image = f"{self.host_image}{image_tag}"
         images = {host_arch: f"{image}-{host_arch}" for host_arch in self.host_archs}
 
         for image in images.values():
@@ -398,12 +400,8 @@ class Distro(metaclass=abc.ABCMeta):
 
     def push_client_manifest(self, manifest_tag, image_tag):
         os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
-        manifest = (
-            f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{manifest_tag}"
-        )
-        image = (
-            f"elijahru/distcc-cross-compiler-client-{slugify(self.name)}:{image_tag}"
-        )
+        manifest = f"{self.client_image}{manifest_tag}"
+        image = f"{self.client_image}{image_tag}"
         images = {
             compiler_arch: f"{image}-{compiler_arch}"
             for compiler_arch in self.compiler_archs
@@ -551,8 +549,8 @@ class DebianLike(Distro):
         "mips64le": "START_DISTCC_MIPS64LE_LINUX_GNU",
     }
 
-    def __init__(self, name):
-        super(DebianLike, self).__init__(name)
+    def __init__(self, name, host_image, client_image):
+        super(DebianLike, self).__init__(name, host_image, client_image)
         self.env.filters["flag"] = self.flags_by_arch.get
         self.env.filters["apt_packages"] = self.get_apt_packages
 
@@ -664,20 +662,36 @@ class ArchLinuxLike(Distro):
 
 
 # Register supported distributions
-debian_buster = DebianLike("debian:buster")
-debian_buster_slim = DebianLike("debian:buster-slim")
-archlinux = ArchLinuxLike("archlinux")
+debian_buster = DebianLike(
+    name="debian:buster",
+    host_image="elijahru/distcc-cross-compiler-host-debian-buster",
+    client_image="elijahru/distcc-cross-compiler-client-debian-buster",
+)
+debian_buster_slim = DebianLike(
+    name="debian:buster-slim",
+    host_image="elijahru/distcc-cross-compiler-host-debian-buster-slim",
+    client_image="elijahru/distcc-cross-compiler-client-debian-buster-slim",
+)
+archlinux = ArchLinuxLike(
+    name="archlinux",
+    host_image="elijahru/distcc-cross-compiler-host-archlinux",
+    client_image="elijahru/distcc-cross-compiler-client-archlinux",
+)
 
 
 def render_readme(version):
     env = Environment(autoescape=False, undefined=StrictUndefined)
+    env.filters["slugify"] = slugify
     with PROJECT_DIR:
         with open("README.md.jinja", "r") as f:
             rendered = env.from_string(f.read()).render(
+                project_name="distcc-cross-compiler",
+                repo="elijahr/distcc-cross-compiler",
                 debian_buster=debian_buster,
                 debian_buster_slim=debian_buster_slim,
                 archlinux=archlinux,
                 version=version,
+                Distro=Distro,
             )
         with open("README.md", "w") as f:
             f.write(rendered)

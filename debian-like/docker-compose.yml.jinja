@@ -1,7 +1,7 @@
 version: '3'
 services:{% for host_arch in host_archs %}
   host-{{ host_arch }}:
-    image: elijahru/distcc-cross-compiler-host-{{ distro_slug }}:{{ tag }}-{{ host_arch }}
+    image: {{ host_image }}:{{ tag }}-{{ host_arch }}
     ports:
       {% for compiler_arch in host_arch|compiler_archs %}
       # {{ compiler_arch }}
@@ -10,6 +10,6 @@ services:{% for host_arch in host_archs %}
 
   {% for compiler_arch in compiler_archs %}
   client-{{ compiler_arch }}:
-    image: elijahru/distcc-cross-compiler-client-{{ distro_slug }}:{{ tag }}-{{ compiler_arch }}
+    image: {{ client_image }}:{{ tag }}-{{ compiler_arch }}
     command: /bin/sh
   {% endfor %}

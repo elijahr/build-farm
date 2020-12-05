@@ -1,6 +1,8 @@
-![Build images](https://github.com/elijahr/distcc-cross-compiler/workflows/Build%20images/badge.svg)
+{% for distro in Distro.registry.values() %}
+![{{ distro.name }}](https://github.com/{{ repo }}/workflows/{{ distro.name | slugify | urlencode }}/badge.svg)
+{% endfor %}
 
-# distcc-cross-compiler
+# {{ project_name }}
 
 Fast & easy cross-compiling with `docker` and `distcc`.
 
@@ -16,7 +18,7 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Arch Linux
 
-The `elijahru/distcc-cross-compiler-host-archlinux:{{ version }}` image exposes the following compilers:
+The `{{ archlinux.host_image }}:{{ version }}` image exposes the following compilers:
 
 | Host arch | Target arch | Compiler port |
 |-----------|-------------|---------------|
@@ -28,7 +30,7 @@ The `elijahru/distcc-cross-compiler-host-archlinux:{{ version }}` image exposes 
 
 #### Debian Buster
 
-The multi-architecture `elijahru/distcc-cross-compiler-host-debian-buster:{{ version }}` image exposes the following compilers:
+The multi-architecture `{{ debian_buster.host_image }}:{{ version }}` image exposes the following compilers:
 
 | Host arch  | Target arch | Compiler port |
 |------------|-------------|---------------|{% for host_arch in debian_buster.host_archs %}{% for compiler_arch in debian_buster.compiler_archs_by_host_arch[host_arch] %}
@@ -65,17 +67,17 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
 |-----------------------|----------------------------------------------------------------------|-------------------|
-| `amd64` (`x86_64`)    | `elijahru/distcc-cross-compiler-client-archlinux:{{ version }}-amd64`       | `172.17.0.1:3704` |
-| `arm32v5`             | `elijahru/distcc-cross-compiler-client-archlinux:{{ version }}-arm32v5`     | `172.17.0.1:3705` |
-| `arm32v6`             | `elijahru/distcc-cross-compiler-client-archlinux:{{ version }}-arm32v6`     | `172.17.0.1:3706` |
-| `arm32v7`             | `elijahru/distcc-cross-compiler-client-archlinux:{{ version }}-arm32v7`     | `172.17.0.1:3707` |
-| `arm64v8` (`aarch64`) | `elijahru/distcc-cross-compiler-client-archlinux:{{ version }}-arm64v8`     | `172.17.0.1:3708` |
+| `amd64` (`x86_64`)    | `{{ archlinux.client_image }}:{{ version }}-amd64`       | `172.17.0.1:3704` |
+| `arm32v5`             | `{{ archlinux.client_image }}:{{ version }}-arm32v5`     | `172.17.0.1:3705` |
+| `arm32v6`             | `{{ archlinux.client_image }}:{{ version }}-arm32v6`     | `172.17.0.1:3706` |
+| `arm32v7`             | `{{ archlinux.client_image }}:{{ version }}-arm32v7`     | `172.17.0.1:3707` |
+| `arm64v8` (`aarch64`) | `{{ archlinux.client_image }}:{{ version }}-arm64v8`     | `172.17.0.1:3708` |
 
 #### Debian Buster
 
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
 |-----------------------|----------------------------------------------------------------------|-------------------|{% for compiler_arch in debian_buster.compiler_archs %}
-| {{ "%-21s" | format('`' + compiler_arch + '`') }} | {{ "%-68s" | format('`elijahru/distcc-cross-compiler-client-debian-buster:{{ version }}-' + compiler_arch + '`') }} | {{ "%-17s" | format('`172.17.0.1:' + debian_buster.ports_by_arch[compiler_arch] + '`') }} |{% endfor %}
+| {{ "%-21s" | format('`' + compiler_arch + '`') }} | {{ "%-68s" | format('`{{ debian_buster.client_image }}:{{ version }}-' + compiler_arch + '`') }} | {{ "%-17s" | format('`172.17.0.1:' + debian_buster.ports_by_arch[compiler_arch] + '`') }} |{% endfor %}
 
 ### Simple example: cross-compiler
 
@@ -89,12 +91,12 @@ The compiled object code is cached via `ccache` in a persistent volume, so that 
 version: '3'
 services:
   host:
-    image: elijahru/distcc-cross-compiler-host-debian-buster:{{ version }}-amd64
+    image: {{ debian_buster.host_image }}:{{ version }}-amd64
     ports:
       - 3608:3608
 
   client:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:{{ version }}-arm64v8
+    image: {{ debian_buster.client_image }}:{{ version }}-arm64v8
     volumes:
       # Your code
       - .:/code
@@ -108,8 +110,8 @@ services:
 ```yml
 version: '3'
 services:
-  builder:
-    image: elijahru/distcc-cross-compiler-host-debian-buster:{{ version }}-amd64
+  build-farm:
+    image: {{ debian_buster.host_image }}:{{ version }}-amd64
     ports:
       # i386
       - 3603:3603
@@ -125,42 +127,42 @@ services:
       - 3610:3610
 
   client-i386:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:{{ version }}-i386
+    image: {{ debian_buster.client_image }}:{{ version }}-i386
     volumes:
       - .:/code
       - ./caches/i386/ccache:/root/.ccache
     command: ./configure && make
 
   client-amd64:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:{{ version }}-amd64
+    image: {{ debian_buster.client_image }}:{{ version }}-amd64
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
 
   client-arm32v7:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:{{ version }}-arm32v7
+    image: {{ debian_buster.client_image }}:{{ version }}-arm32v7
     volumes:
       - .:/code
       - ./caches/arm32v7/ccache:/root/.ccache
     command: ./configure && make
 
   client-arm64v8:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:{{ version }}-arm64v8
+    image: {{ debian_buster.client_image }}:{{ version }}-arm64v8
     volumes:
       - .:/code
       - ./caches/arm64v8/ccache:/root/.ccache
     command: ./configure && make
 
   client-s390x:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:{{ version }}-s390x
+    image: {{ debian_buster.client_image }}:{{ version }}-s390x
     volumes:
       - .:/code
       - ./caches/s390x/ccache:/root/.ccache
     command: ./configure && make
 
   client-ppc64le:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:{{ version }}-ppc64le
+    image: {{ debian_buster.client_image }}:{{ version }}-ppc64le
     volumes:
       - .:/code
       - ./caches/ppc64le/ccache:/root/.ccache
@@ -173,53 +175,21 @@ services:
 version: '3'
 services:
   builder:
-    image: elijahru/distcc-cross-compiler-host-archlinux:{{ version }}-amd64
+    image: {{ archlinux.host_image }}:{{ version }}-amd64
     ports:
-      # amd64
-      - 3704:3704
-      # arm32v5
-      - 3705:3705
-      # arm32v6
-      - 3706:3706
-      # arm32v7
-      - 3707:3707
-      # arm64v8
-      - 3708:3708
+      {% for compiler_arch in archlinux.compiler_archs_by_host_arch['amd64'] %}
+      # {{ compiler_arch }}
+      - {{ archlinux.ports_by_arch[compiler_arch] }}:{{ archlinux.ports_by_arch[compiler_arch] }}
+      {% endfor %}
 
-  client-amd64:
-    image: elijahru/distcc-cross-compiler-client-archlinux:{{ version }}-amd64
+  {% for compiler_arch in archlinux.compiler_archs_by_host_arch['amd64'] %}
+  build-farm-client-{{ compiler_arch }}:
+    image: {{ archlinux.client_image }}:{{ version }}-{{ compiler_arch }}
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
-
-  client-arm32v5:
-    image: elijahru/distcc-cross-compiler-client-archlinux:{{ version }}-arm32v5
-    volumes:
-      - .:/code
-      - ./caches/arm32v5/ccache:/root/.ccache
-    command: ./configure && make
-
-  client-arm32v6:
-    image: elijahru/distcc-cross-compiler-client-archlinux:{{ version }}-arm32v6
-    volumes:
-      - .:/code
-      - ./caches/arm32v6/ccache:/root/.ccache
-    command: ./configure && make
-
-  client-arm32v7:
-    image: elijahru/distcc-cross-compiler-client-archlinux:{{ version }}-arm32v7
-    volumes:
-      - .:/code
-      - ./caches/arm32v7/ccache:/root/.ccache
-    command: ./configure && make
-
-  client-arm64v8:
-    image: elijahru/distcc-cross-compiler-client-archlinux:{{ version }}-arm64v8
-    volumes:
-      - .:/code
-      - ./caches/arm64v8/ccache:/root/.ccache
-    command: ./configure && make
+  {% endfor %}
 ```
 
 ### Build farm
@@ -230,7 +200,7 @@ Assuming several nodes, configured as follows:
 version: '3'
 services:
   builder:
-    image: elijahru/distcc-cross-compiler-host-archlinux:{{ version }}
+    image: {{ archlinux.host_image }}:{{ version }}
     ports:
       - 3704:3704
 ```
@@ -243,7 +213,7 @@ services:
   client:
     environment:
       - DISTCC_HOSTS=builder1:3704 builder2:3704 builder3:3704
-    image: elijahru/distcc-cross-compiler-client-archlinux:{{ version }}
+    image: {{ archlinux.client_image }}:{{ version }}
     volumes:
       - .:/code
     command: ./configure && make
@@ -302,7 +272,7 @@ The above workflow config assumes the repository contains a `docker-compose.yml`
 version: '3'
 services:
   builder:
-    image: elijahru/distcc-cross-compiler-host-archlinux:{{ version }}
+    image: {{ archlinux.host_image }}:{{ version }}
     ports:
       # amd64
       - 3704:3704
@@ -310,7 +280,7 @@ services:
       - 3708:3708
 
   build-amd64:
-    image: elijahru/distcc-cross-compiler-client-archlinux:{{ version }}-amd64
+    image: {{ archlinux.client_image }}:{{ version }}-amd64
     depends_on: [ builder ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
@@ -326,7 +296,7 @@ services:
         make test; "
 
   build-arm64v8:
-    image: elijahru/distcc-cross-compiler-client-archlinux:{{ version }}-arm64v8
+    image: {{ archlinux.client_image }}:{{ version }}-arm64v8
     depends_on: [ builder ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
@@ -364,3 +334,11 @@ If you are looking for an idea, contributions for the following are especially w
 * Make ccache optional in the client containers via an environment variable
 * A GitHub Action for GitHub Marketplace to make using these containers in CI easier
 * Windows arm64v8 or NetBSD/* toolchains?
+
+### Changelog
+
+* v0.6.0 - 2020-12-04
+  * Consolidated hosts to new container [`elijahru/build-farm`]().
+  * Consolidated clients to new container `elijahru/build-farm-client`.
+  * Added `debian:buster-slim` based containers.
+  * Added `mips64le` and `arm32v5` architectures for `debian`.
