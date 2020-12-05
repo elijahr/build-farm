@@ -53,8 +53,10 @@ docker_manifest_args = {
     "arm32v6": ["--arch", "arm", "--variant", "v6"],
     "arm32v7": ["--arch", "arm", "--variant", "v7"],
     "arm64v8": ["--arch", "arm64", "--variant", "v8"],
+    "ppc": ["--arch", "ppc"],
     "ppc64le": ["--arch", "ppc64le"],
     "s390x": ["--arch", "s390x"],
+    "mips64le": ["--arch", "mips64le"],
 }
 
 
@@ -259,6 +261,22 @@ class Distro(metaclass=abc.ABCMeta):
                         shutil.copyfile(root / f, new_root / f)
                         print(f"Copied {root / f} -> {new_root / f}")
 
+                for root, _, files in os.walk(Path("shared-build-context") / "shared"):
+                    root = Path(root)
+                    for container_type in ("host", "client"):
+                        new_root = Path(
+                            root.replace(
+                                "shared-build-context/shared",
+                                self.out_path / container_type / "build-context",
+                            )
+                        )
+                        for f in files:
+                            if not os.path.exists(os.path.dirname(new_root / f)):
+                                os.makedirs(os.path.dirname(new_root / f))
+                            shutil.copyfile(root / f, new_root / f)
+                            print(f"Copied {root / f} -> {new_root / f}")
+
+
     def render_dockerfile_host(self):
         for host_arch in self.host_archs:
             with self.set_context(host_arch=host_arch):
@@ -445,47 +463,93 @@ class Distro(metaclass=abc.ABCMeta):
 class DebianLike(Distro):
     template_path = Path("debian-like")
 
-    host_archs = ("amd64", "i386", "arm32v7", "arm64v8", "ppc64le", "s390x")
-    compiler_archs = ("amd64", "i386", "arm32v7", "arm64v8", "ppc64le", "s390x")
+    host_archs = (
+        "amd64",
+        "i386",
+        "arm32v5",
+        "arm32v7",
+        "arm64v8",
+        "ppc64le",
+        "s390x",
+        "mips64le",
+    )
+    compiler_archs = (
+        "amd64",
+        "i386",
+        "arm32v5",
+        "arm32v7",
+        "arm64v8",
+        "ppc64le",
+        "s390x",
+        "mips64le",
+    )
     compiler_archs_by_host_arch = {
-        "amd64": ("amd64", "i386", "arm32v7", "arm64v8", "ppc64le", "s390x"),
-        "i386": ("amd64", "i386", "arm64v8", "ppc64le"),
+        "amd64": (
+            "amd64",
+            "i386",
+            "arm32v5",
+            "arm32v7",
+            "arm64v8",
+            "ppc64le",
+            "s390x",
+            "mips64le",
+        ),
+        "i386": (
+            "amd64",
+            "i386",
+            "arm32v5",
+            "arm32v7",
+            "arm64v8",
+            "ppc64le",
+            "s390x",
+            "mips64le",
+        ),
+        "arm32v5": ("arm32v5",),
         "arm32v7": ("arm32v7",),
-        "arm64v8": ("amd64", "i386", "arm64v8"),
+        "arm64v8": ("amd64", "i386", "arm32v5", "arm32v7", "arm64v8"),
         "ppc64le": ("amd64", "i386", "arm64v8", "ppc64le"),
         "s390x": ("s390x",),
+        "mips64le": ("mips64le",),
     }
     packages_by_arch = {
         "amd64": "gcc-x86-64-linux-gnu g++-x86-64-linux-gnu binutils-x86-64-linux-gnu",
         "i386": "gcc-i686-linux-gnu g++-i686-linux-gnu binutils-i686-linux-gnu",
+        "arm32v5": "gcc-arm-linux-gnueabi g++-arm-linux-gnueabi binutils-arm-linux-gnueabi",
         "arm32v7": "gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf binutils-arm-linux-gnueabihf",
         "arm64v8": "gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu",
         "ppc64le": "gcc-powerpc64le-linux-gnu g++-powerpc64le-linux-gnu binutils-powerpc64le-linux-gnu",
         "s390x": "gcc-s390x-linux-gnu g++-s390x-linux-gnu binutils-s390x-linux-gnu",
+        "mips64le": "gcc-mipsel-linux-gnu g++-mipsel-linux-gnu binutils-mipsel-linux-gnu",
     }
     ports_by_arch = {
-        "i386": 3603,
-        "amd64": 3604,
-        "arm32v7": 3607,
-        "arm64v8": 3608,
-        "s390x": 3609,
-        "ppc64le": 3610,
+        "i386": '3603',
+        "amd64": '3604',
+        "arm32v5": '3605',
+        "arm32v7": '3607',
+        "arm64v8": '3608',
+        "s390x": '3609',
+        "ppc64le": '3610',
+        "mips64le": '3611',
     }
     toolchains_by_arch = {
         "amd64": "x86_64-linux-gnu",
         "i386": "i686-linux-gnu",
-        "ppc64le": "powerpc64le-linux-gnu",
-        "s390x": "s390x-linux-gnu",
+        "arm32v5": "arm-linux-gnueabi",
         "arm32v7": "arm-linux-gnueabihf",
         "arm64v8": "aarch64-linux-gnu",
+        "ppc64le": "powerpc64le-linux-gnu",
+        "s390x": "s390x-linux-gnu",
+        "mips64le": "mipsel-linux-gnu",
     }
     flags_by_arch = {
         "amd64": "START_DISTCC_X86_64_LINUX_GNU",
         "i386": "START_DISTCC_I686_LINUX_GNU",
-        "ppc64le": "START_DISTCC_PPC64LE_LINUX_GNU",
-        "s390x": "START_DISTCC_S390X_LINUX_GNU",
+        "arm32v5": "START_DISTCC_ARM_LINUX_GNUEABI",
         "arm32v7": "START_DISTCC_ARM_LINUX_GNUEABIHF",
         "arm64v8": "START_DISTCC_AARCH64_LINUX_GNU",
+        "ppc64le": "START_DISTCC_PPC64LE_LINUX_GNU",
+        "s390x": "START_DISTCC_S390X_LINUX_GNU",
+        "mips64le": "START_DISTCC_MIPS64LE_LINUX_GNU",
     }
 
     def __init__(self, name):
@@ -602,7 +666,23 @@ class ArchLinuxLike(Distro):
 
 # Register supported distributions
 debian_buster = DebianLike("debian:buster")
+debian_buster_slim = DebianLike("debian:buster-slim")
 archlinux = ArchLinuxLike("archlinux")
+
+
+def render_readme(version):
+    env = Environment(autoescape=False, undefined=StrictUndefined)
+    with PROJECT_DIR:
+        with open("README.md.jinja", "r") as f:
+            rendered = env.from_string(f.read()).render(
+                debian_buster=debian_buster,
+                debian_buster_slim=debian_buster_slim,
+                archlinux=archlinux,
+                version=version,
+            )
+        with open("README.md", "w") as f:
+            f.write(rendered)
+        print("Rendered README.md.jinja -> README.md")
 
 
 def make_parser():
@@ -662,6 +742,10 @@ def make_parser():
     parser_push_client_manifest.add_argument("--manifest-tag", required=True)
     parser_push_client_manifest.add_argument("--image-tag", required=True)
 
+    # render-readme
+    parser_render_readme = subparsers.add_parser("render-readme")
+    parser_render_readme.add_argument("--version", required=True)
+
     return parser
 
 
@@ -707,6 +791,9 @@ def main():
         args.distro.push_client_manifest(
             manifest_tag=args.manifest_tag, image_tag=args.image_tag
         )
+
+    elif args.subcommand == "render-readme":
+        render_readme(args.version)
 
     else:
         raise ValueError(f"Unknown subcommand {args.subcommand}")

@@ -1,6 +1,6 @@
 # Rendered from .github/workflows/build.yml.jinja
 
-name: debian:buster
+name: debian:buster-slim
 
 on:
   push:
@@ -44,7 +44,7 @@ jobs:
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --host-arch amd64 \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -85,7 +85,7 @@ jobs:
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --host-arch i386 \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -126,7 +126,7 @@ jobs:
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --host-arch arm32v5 \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -167,7 +167,7 @@ jobs:
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --host-arch arm32v7 \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -208,7 +208,7 @@ jobs:
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --host-arch arm64v8 \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -249,7 +249,7 @@ jobs:
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --host-arch ppc64le \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -290,7 +290,7 @@ jobs:
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --host-arch s390x \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -331,7 +331,7 @@ jobs:
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --host-arch mips64le \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -392,7 +392,7 @@ jobs:
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --client-arch amd64 \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -451,7 +451,7 @@ jobs:
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --client-arch i386 \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -510,7 +510,7 @@ jobs:
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --client-arch arm32v5 \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -569,7 +569,7 @@ jobs:
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --client-arch arm32v7 \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -628,7 +628,7 @@ jobs:
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --client-arch arm64v8 \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -687,7 +687,7 @@ jobs:
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --client-arch ppc64le \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -746,7 +746,7 @@ jobs:
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --client-arch s390x \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -805,7 +805,7 @@ jobs:
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --client-arch mips64le \
           --tag $(basename ${{ github.event.ref }}) \
           --push
@@ -868,13 +868,13 @@ jobs:
     - name: Push host manifest
       run: |
         ./builder.py push-host-manifest \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --manifest-tag $(basename ${{ matrix.manifest_tag }}) \
           --image-tag $(basename ${{ matrix.image_tag }})
 
     - name: Push client manifest
       run: |-
         ./builder.py push-client-manifest \
-          --distro debian:buster \
+          --distro debian:buster-slim \
           --manifest-tag $(basename ${{ matrix.manifest_tag }}) \
           --image-tag $(basename ${{ matrix.image_tag }})
