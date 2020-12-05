@@ -99,11 +99,11 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
 |-----------------------|----------------------------------------------------------------------|-------------------|
-| `amd64` (`x86_64`)    | `elijahru/build-farm-client:archlinux-amd64`       | `172.17.0.1:3704` |
-| `arm32v5`             | `elijahru/build-farm-client:archlinux-arm32v5`     | `172.17.0.1:3705` |
-| `arm32v6`             | `elijahru/build-farm-client:archlinux-arm32v6`     | `172.17.0.1:3706` |
-| `arm32v7`             | `elijahru/build-farm-client:archlinux-arm32v7`     | `172.17.0.1:3707` |
-| `arm64v8` (`aarch64`) | `elijahru/build-farm-client:archlinux-arm64v8`     | `172.17.0.1:3708` |
+| `amd64` (`x86_64`)    | `elijahru/build-farm-client:archlinux--amd64`       | `172.17.0.1:3704` |
+| `arm32v5`             | `elijahru/build-farm-client:archlinux--arm32v5`     | `172.17.0.1:3705` |
+| `arm32v6`             | `elijahru/build-farm-client:archlinux--arm32v6`     | `172.17.0.1:3706` |
+| `arm32v7`             | `elijahru/build-farm-client:archlinux--arm32v7`     | `172.17.0.1:3707` |
+| `arm64v8` (`aarch64`) | `elijahru/build-farm-client:archlinux--arm64v8`     | `172.17.0.1:3708` |
 
 #### Debian Buster
 

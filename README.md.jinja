@@ -67,11 +67,11 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
 |-----------------------|----------------------------------------------------------------------|-------------------|
-| `amd64` (`x86_64`)    | `{{ archlinux.client_image }}:archlinux-amd64`       | `172.17.0.1:3704` |
-| `arm32v5`             | `{{ archlinux.client_image }}:archlinux-arm32v5`     | `172.17.0.1:3705` |
-| `arm32v6`             | `{{ archlinux.client_image }}:archlinux-arm32v6`     | `172.17.0.1:3706` |
-| `arm32v7`             | `{{ archlinux.client_image }}:archlinux-arm32v7`     | `172.17.0.1:3707` |
-| `arm64v8` (`aarch64`) | `{{ archlinux.client_image }}:archlinux-arm64v8`     | `172.17.0.1:3708` |
+| `amd64` (`x86_64`)    | `{{ archlinux.client_image_latest_tag('amd64') }}`       | `172.17.0.1:3704` |
+| `arm32v5`             | `{{ archlinux.client_image_latest_tag('arm32v5') }}`     | `172.17.0.1:3705` |
+| `arm32v6`             | `{{ archlinux.client_image_latest_tag('arm32v6') }}`     | `172.17.0.1:3706` |
+| `arm32v7`             | `{{ archlinux.client_image_latest_tag('arm32v7') }}`     | `172.17.0.1:3707` |
+| `arm64v8` (`aarch64`) | `{{ archlinux.client_image_latest_tag('arm64v8') }}`     | `172.17.0.1:3708` |
 
 #### Debian Buster
 
