@@ -339,7 +339,7 @@ class Distro(metaclass=abc.ABCMeta):
 
         self.render(version=version)
 
-        image = f"{self.host_image}{version}-{host_arch}"
+        image = self.host_image_tag(version, host_arch)
         dockerfile = self.out_path / f"host/Dockerfile.{host_arch}"
         try:
             docker("pull", image, "--platform", get_platform(host_arch))
