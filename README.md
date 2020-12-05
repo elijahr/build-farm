@@ -416,7 +416,7 @@ If you are looking for an idea, contributions for the following are especially w
 ### Changelog
 
 * 2020-12-05
-  * Consolidated hosts to new container [`elijahru/build-farm`](https://hub.docker.com/repository/docker/elijahru/build-farm).
-  * Consolidated clients to new container [`elijahru/build-farm-client`](https://hub.docker.com/repository/docker/elijahru/build-farm-client).
+  * Consolidated hosts to new container [`elijahru/build-farm`](https://hub.docker.com/r/elijahru/build-farm).
+  * Consolidated clients to new container [`elijahru/build-farm-client`](https://hub.docker.com/r/elijahru/build-farm-client).
   * Added `debian:buster-slim` based containers.
   * Added `mips64le` and `arm32v5` architectures for `debian`.
