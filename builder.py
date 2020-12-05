@@ -467,6 +467,7 @@ class Distro(metaclass=abc.ABCMeta):
         }
 
         for image, latest in images.values():
+            docker("pull", image)
             docker("tag", image, latest)
             docker("push", latest)
 
@@ -482,6 +483,7 @@ class Distro(metaclass=abc.ABCMeta):
         }
 
         for image, latest in images.values():
+            docker("pull", image)
             docker("tag", image, latest)
             docker("push", latest)
 
