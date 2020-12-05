@@ -145,24 +145,24 @@ class Distro(metaclass=abc.ABCMeta):
 
     def host_manifest_tags(self, version):
         return (
-            f"{self.host_image}:{version}--{slugify(self.name)}",
+            f"{self.host_image}:{slugify(self.name)}--{version}",
             f"{self.host_image}:{slugify(self.name)}",
         )
 
     def host_image_tag(self, version, arch):
-        return f"{self.host_image}:{version}--{slugify(self.name)}--{arch}"
+        return f"{self.host_image}:{slugify(self.name)}--{arch}--{version}"
 
     def host_image_latest_tag(self, arch):
         return f"{self.host_image}:{slugify(self.name)}--{arch}"
 
     def client_manifest_tags(self, version):
         return (
-            f"{self.client_image}:{version}--{slugify(self.name)}",
+            f"{self.client_image}:{slugify(self.name)}--{version}",
             f"{self.client_image}:{slugify(self.name)}",
         )
 
     def client_image_tag(self, version, arch):
-        return f"{self.client_image}:{version}--{slugify(self.name)}--{arch}"
+        return f"{self.client_image}:{slugify(self.name)}--{arch}--{version}"
 
     def client_image_latest_tag(self, arch):
         return f"{self.client_image}:{slugify(self.name)}--{arch}"
