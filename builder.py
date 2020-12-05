@@ -143,8 +143,11 @@ class Distro(metaclass=abc.ABCMeta):
             raise RuntimeError("Distro context not entered")
         return self._context
 
-    def host_manifest_tag(self, version):
-        return f"{self.host_image}:{version}--{slugify(self.name)}"
+    def host_manifest_tags(self, version):
+        return (
+            f"{self.host_image}:{version}--{slugify(self.name)}",
+            f"{self.host_image}:{slugify(self.name)}",
+        )
 
     def host_image_tag(self, version, arch):
         return f"{self.host_image}:{version}--{slugify(self.name)}--{arch}"
@@ -152,8 +155,11 @@ class Distro(metaclass=abc.ABCMeta):
     def host_image_latest_tag(self, arch):
         return f"{self.host_image}:{slugify(self.name)}--{arch}"
 
-    def client_manifest_tag(self, version):
-        return f"{self.client_image}:{version}--{slugify(self.name)}"
+    def client_manifest_tas(self, version):
+        return (
+            f"{self.client_image}:{version}--{slugify(self.name)}",
+            f"{self.client_image}:{slugify(self.name)}",
+        )
 
     def client_image_tag(self, version, arch):
         return f"{self.client_image}:{version}--{slugify(self.name)}--{arch}"
@@ -400,7 +406,7 @@ class Distro(metaclass=abc.ABCMeta):
         for image in images.values():
             docker("pull", image)
 
-        for manifest in (self.host_manifest_tag(version), slugify(self.name)):
+        for manifest in self.host_manifest_tags(version):
             try:
                 docker("manifest", "create", "--amend", manifest, *images.values())
             except ErrorReturnCode_1:
@@ -430,7 +436,7 @@ class Distro(metaclass=abc.ABCMeta):
         for image in images.values():
             docker("pull", image)
 
-        for manifest in (self.client_manifest_tag(version), slugify(self.name)):
+        for manifest in self.client_manifest_tags(version):
             try:
                 docker("manifest", "create", "--amend", manifest, *images.values())
             except ErrorReturnCode_1:
