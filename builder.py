@@ -430,7 +430,7 @@ class Distro(metaclass=abc.ABCMeta):
 
         images = {
             compiler_arch: self.client_image_tag(version, compiler_arch)
-            for compiler_arch in self.compiler_arch
+            for compiler_arch in self.compiler_archs
         }
 
         for image in images.values():
