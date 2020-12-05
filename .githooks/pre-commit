@@ -10,14 +10,19 @@ for file in ${files[@]}
 do
 	if [[ "$file" == ".github/workflows/build.yml.jinja" ]]
 	then
-		echo "Change detected, re-rendering"
-		./builder.py render-github-actions
+		echo "Change detected, re-rendering GitHub Actions"
+		pipenv run ./builder.py render-github-actions
 		git add .github/workflows/*.yml || true
+	elif [[ "$file" == "README.md.jinja" ]]
+	then
+			echo "Change detected, re-rendering README"
+		pipenv run ./builder.py render-readme --version $(git describe --tags | sed 's/-.*//')
+		git add README.md || true
 	fi
 
 	case $file in
 		*.py)
-			black $file
+			pipenv run black $file
 			git add $file
 			;;
 	esac
