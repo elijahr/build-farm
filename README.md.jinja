@@ -90,12 +90,12 @@ The compiled object code is cached via `ccache` in a persistent volume, so that 
 ```yml
 version: '3'
 services:
-  host:
+  build-host:
     image: {{ debian_buster.host_image_latest_tag('amd64') }}
     ports:
       - 3608:3608
 
-  client:
+  build-client:
     image: {{ debian_buster.client_image_latest_tag('arm64v8') }}
     volumes:
       # Your code
@@ -112,12 +112,9 @@ version: '3'
 services:
   build-host:
     image: {{ debian_buster.host_image_latest_tag('amd64') }}
-    ports:
-      {% for compiler_arch in archlinux.compiler_archs_by_host_arch['amd64'] %}
+    ports:{% for compiler_arch in archlinux.compiler_archs_by_host_arch['amd64'] %}
       # {{ compiler_arch }}
-      - {{ archlinux.ports_by_arch[compiler_arch] }}:{{ archlinux.ports_by_arch[compiler_arch] }}
-      {% endfor %}
-
+      - {{ archlinux.ports_by_arch[compiler_arch] }}:{{ archlinux.ports_by_arch[compiler_arch] }}{% endfor %}
   {% for compiler_arch in debian_buster.compiler_archs_by_host_arch['amd64'] %}
   build-client-{{ compiler_arch }}:
     image: {{ debian_buster.client_image_latest_tag(compiler_arch) }}
@@ -135,12 +132,9 @@ version: '3'
 services:
   build-host:
     image: {{ archlinux.host_image_latest_tag('amd64') }}
-    ports:
-      {% for compiler_arch in archlinux.compiler_archs_by_host_arch['amd64'] %}
+    ports:{% for compiler_arch in archlinux.compiler_archs_by_host_arch['amd64'] %}
       # {{ compiler_arch }}
-      - {{ archlinux.ports_by_arch[compiler_arch] }}:{{ archlinux.ports_by_arch[compiler_arch] }}
-      {% endfor %}
-
+      - {{ archlinux.ports_by_arch[compiler_arch] }}:{{ archlinux.ports_by_arch[compiler_arch] }}{% endfor %}
   {% for compiler_arch in archlinux.compiler_archs_by_host_arch['amd64'] %}
   build-client-{{ compiler_arch }}:
     image: {{ archlinux.client_image_latest_tag(compiler_arch) }}
@@ -171,7 +165,7 @@ version: '3'
 services:
   client:
     environment:
-      - DISTCC_HOSTS=build-host1:3704 build-host2:3704 build-host3:3704
+      - DISTCC_HOSTS="build-host1:3704 build-host2:3704 build-host3:3704"
     image: {{ archlinux.client_image_latest_tag('amd64') }}
     volumes:
       - .:/code
@@ -240,7 +234,7 @@ services:
 
   build-amd64:
     image: {{ archlinux.client_image_latest_tag('amd64') }}
-    depends_on: [ builder ]
+    depends_on: [ build-host ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
       - ./caches/amd64/ccache:/root/.ccache
@@ -256,7 +250,7 @@ services:
 
   build-arm64v8:
     image: {{ archlinux.client_image_latest_tag('arm64v8') }}
-    depends_on: [ builder ]
+    depends_on: [ build-host ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
       - ./caches/arm64v8/ccache:/root/.ccache

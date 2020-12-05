@@ -129,12 +129,12 @@ The compiled object code is cached via `ccache` in a persistent volume, so that 
 ```yml
 version: '3'
 services:
-  host:
+  build-host:
     image: elijahru/build-farm:debian-buster--amd64
     ports:
       - 3608:3608
 
-  client:
+  build-client:
     image: elijahru/build-farm-client:debian-buster--arm64v8
     volumes:
       # Your code
@@ -152,23 +152,16 @@ services:
   build-host:
     image: elijahru/build-farm:debian-buster--amd64
     ports:
-      
       # amd64
       - 3704:3704
-      
       # arm32v5
       - 3705:3705
-      
       # arm32v6
       - 3706:3706
-      
       # arm32v7
       - 3707:3707
-      
       # arm64v8
       - 3708:3708
-      
-
   
   build-client-amd64:
     image: elijahru/build-farm-client:debian-buster--amd64
@@ -236,23 +229,16 @@ services:
   build-host:
     image: elijahru/build-farm:archlinux--amd64
     ports:
-      
       # amd64
       - 3704:3704
-      
       # arm32v5
       - 3705:3705
-      
       # arm32v6
       - 3706:3706
-      
       # arm32v7
       - 3707:3707
-      
       # arm64v8
       - 3708:3708
-      
-
   
   build-client-amd64:
     image: elijahru/build-farm-client:archlinux--amd64
@@ -311,7 +297,7 @@ version: '3'
 services:
   client:
     environment:
-      - DISTCC_HOSTS=build-host1:3704 build-host2:3704 build-host3:3704
+      - DISTCC_HOSTS="build-host1:3704 build-host2:3704 build-host3:3704"
     image: elijahru/build-farm-client:archlinux--amd64
     volumes:
       - .:/code
@@ -380,7 +366,7 @@ services:
 
   build-amd64:
     image: elijahru/build-farm-client:archlinux--amd64
-    depends_on: [ builder ]
+    depends_on: [ build-host ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
       - ./caches/amd64/ccache:/root/.ccache
@@ -396,7 +382,7 @@ services:
 
   build-arm64v8:
     image: elijahru/build-farm-client:archlinux--arm64v8
-    depends_on: [ builder ]
+    depends_on: [ build-host ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
       - ./caches/arm64v8/ccache:/root/.ccache
