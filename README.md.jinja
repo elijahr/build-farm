@@ -316,24 +316,15 @@ services:
 
 Adding new target operating systems should be fairly straightforward by following the existing patterns for Debian and Arch Linux. Please do submit pull requests.
 
-The images can be built and tested locally using `scripts/build-debian-buster.sh` and `scripts/build-archlinux.sh`.
-
-The build scripts essentially do the following:
-
-* Render templates to produce a matrix of `docker-compose.yml` and `Dockerfiles`
-* Build the host and client images using the rendered templates
-* Run the tests for each client image, one at a time
-
-The tests verify that an arbitrary C project (cJSON) is compiled using distcc, and that the resulting executable is valid. The tests then verify that subsequent builds use ccache to avoid repeat compilation.
+Most of the work happens via `builder.py build-host` and `builder.py build-client`. Pass `--help` for usage.
 
 There are some useful git hooks that can be enabled by running `git config --local core.hooksPath .githooks/`.
 
 If you are looking for an idea, contributions for the following are especially welcome:
 
-* Project name suggestions (distcc-cross-compiler is a mouthful)
 * Make ccache optional in the client containers via an environment variable
 * A GitHub Action for GitHub Marketplace to make using these containers in CI easier
-* Windows arm64v8 or NetBSD/* toolchains?
+* Windows arm64v8 toolchain?
 
 ### Changelog
 

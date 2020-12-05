@@ -56,7 +56,7 @@ jobs:
           ./builder.py build-host \
             --distro {{ distro }} \
             --host-arch {{ host_arch }} \
-            --tag $(basename {% raw %}${{ github.event.ref }}{% endraw %}) \
+            --version $(basename {% raw %}${{ github.event.ref }}{% endraw %}) \
             --push
   {% endfor %}
 
@@ -82,7 +82,7 @@ jobs:
           ./builder.py build-client \
             --distro {{ distro }} \
             --client-arch {{ compiler_arch }} \
-            --tag $(basename {% raw %}${{ github.event.ref }}{% endraw %}) \
+            --version $(basename {% raw %}${{ github.event.ref }}{% endraw %}) \
             --push
   {% endfor %}
 
@@ -96,14 +96,6 @@ jobs:
       - build-client-{{ compiler_arch }}
       {% endfor %}
 
-    strategy:
-      matrix:
-        include:
-          - manifest_tag: latest
-            image_tag: '{% raw %}${{ github.ref }}{% endraw %}'
-          - manifest_tag: '{% raw %}${{ github.ref }}{% endraw %}'
-            image_tag: '{% raw %}${{ github.ref }}{% endraw %}'
-
     steps:
       - *checkout_repo
       - *install_pip_requirements
@@ -113,12 +105,10 @@ jobs:
         run: |
           ./builder.py push-host-manifest \
             --distro {{ distro }} \
-            --manifest-tag $(basename {% raw %}${{ matrix.manifest_tag }}{% endraw %}) \
-            --image-tag $(basename {% raw %}${{ matrix.image_tag }}{% endraw %})
+            --version {% raw %}${{ github.ref }}{% endraw %}
 
       - name: Push client manifest
         run: |
           ./builder.py push-client-manifest \
             --distro {{ distro }} \
-            --manifest-tag $(basename {% raw %}${{ matrix.manifest_tag }}{% endraw %}) \
-            --image-tag $(basename {% raw %}${{ matrix.image_tag }}{% endraw %})
+            --version {% raw %}${{ github.ref }}{% endraw %}

@@ -46,7 +46,7 @@ jobs:
         ./builder.py build-host \
           --distro archlinux \
           --host-arch amd64 \
-          --tag $(basename ${{ github.event.ref }}) \
+          --version $(basename ${{ github.event.ref }}) \
           --push
 
 
@@ -93,7 +93,7 @@ jobs:
         ./builder.py build-client \
           --distro archlinux \
           --client-arch amd64 \
-          --tag $(basename ${{ github.event.ref }}) \
+          --version $(basename ${{ github.event.ref }}) \
           --push
 
   build-client-arm32v5:
@@ -138,7 +138,7 @@ jobs:
         ./builder.py build-client \
           --distro archlinux \
           --client-arch arm32v5 \
-          --tag $(basename ${{ github.event.ref }}) \
+          --version $(basename ${{ github.event.ref }}) \
           --push
 
   build-client-arm32v6:
@@ -183,7 +183,7 @@ jobs:
         ./builder.py build-client \
           --distro archlinux \
           --client-arch arm32v6 \
-          --tag $(basename ${{ github.event.ref }}) \
+          --version $(basename ${{ github.event.ref }}) \
           --push
 
   build-client-arm32v7:
@@ -228,7 +228,7 @@ jobs:
         ./builder.py build-client \
           --distro archlinux \
           --client-arch arm32v7 \
-          --tag $(basename ${{ github.event.ref }}) \
+          --version $(basename ${{ github.event.ref }}) \
           --push
 
   build-client-arm64v8:
@@ -273,7 +273,7 @@ jobs:
         ./builder.py build-client \
           --distro archlinux \
           --client-arch arm64v8 \
-          --tag $(basename ${{ github.event.ref }}) \
+          --version $(basename ${{ github.event.ref }}) \
           --push
 
 
@@ -294,14 +294,6 @@ jobs:
 
     - build-client-arm64v8
 
-
-    strategy:
-      matrix:
-        include:
-        - manifest_tag: latest
-          image_tag: ${{ github.ref }}
-        - manifest_tag: ${{ github.ref }}
-          image_tag: ${{ github.ref }}
 
     steps:
     - name: Checkout repo
@@ -329,12 +321,10 @@ jobs:
       run: |
         ./builder.py push-host-manifest \
           --distro archlinux \
-          --manifest-tag $(basename ${{ matrix.manifest_tag }}) \
-          --image-tag $(basename ${{ matrix.image_tag }})
+          --version ${{ github.ref }}
 
     - name: Push client manifest
       run: |-
         ./builder.py push-client-manifest \
           --distro archlinux \
-          --manifest-tag $(basename ${{ matrix.manifest_tag }}) \
-          --image-tag $(basename ${{ matrix.image_tag }})
+          --version ${{ github.ref }}

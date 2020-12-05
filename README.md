@@ -1,12 +1,12 @@
 
-![debian:buster](https://github.com/elijahr/distcc-cross-compiler/workflows/debian-buster/badge.svg)
+![debian:buster](https://github.com/elijahr/build-farm/workflows/debian-buster/badge.svg)
 
-![debian:buster-slim](https://github.com/elijahr/distcc-cross-compiler/workflows/debian-buster-slim/badge.svg)
+![debian:buster-slim](https://github.com/elijahr/build-farm/workflows/debian-buster-slim/badge.svg)
 
-![archlinux](https://github.com/elijahr/distcc-cross-compiler/workflows/archlinux/badge.svg)
+![archlinux](https://github.com/elijahr/build-farm/workflows/archlinux/badge.svg)
 
 
-# distcc-cross-compiler
+# build-farm
 
 Fast & easy cross-compiling with `docker` and `distcc`.
 
@@ -22,7 +22,7 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Arch Linux
 
-The `elijahru/distcc-cross-compiler-host-archlinux:v0.5.1` image exposes the following compilers:
+The `elijahru/build-farm:v0.5.1` image exposes the following compilers:
 
 | Host arch | Target arch | Compiler port |
 |-----------|-------------|---------------|
@@ -34,7 +34,7 @@ The `elijahru/distcc-cross-compiler-host-archlinux:v0.5.1` image exposes the fol
 
 #### Debian Buster
 
-The multi-architecture `elijahru/distcc-cross-compiler-host-debian-buster:v0.5.1` image exposes the following compilers:
+The multi-architecture `elijahru/build-farm:v0.5.1` image exposes the following compilers:
 
 | Host arch  | Target arch | Compiler port |
 |------------|-------------|---------------|
@@ -99,11 +99,11 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
 |-----------------------|----------------------------------------------------------------------|-------------------|
-| `amd64` (`x86_64`)    | `elijahru/distcc-cross-compiler-client-archlinux:v0.5.1-amd64`       | `172.17.0.1:3704` |
-| `arm32v5`             | `elijahru/distcc-cross-compiler-client-archlinux:v0.5.1-arm32v5`     | `172.17.0.1:3705` |
-| `arm32v6`             | `elijahru/distcc-cross-compiler-client-archlinux:v0.5.1-arm32v6`     | `172.17.0.1:3706` |
-| `arm32v7`             | `elijahru/distcc-cross-compiler-client-archlinux:v0.5.1-arm32v7`     | `172.17.0.1:3707` |
-| `arm64v8` (`aarch64`) | `elijahru/distcc-cross-compiler-client-archlinux:v0.5.1-arm64v8`     | `172.17.0.1:3708` |
+| `amd64` (`x86_64`)    | `elijahru/build-farm-client:v0.5.1-amd64`       | `172.17.0.1:3704` |
+| `arm32v5`             | `elijahru/build-farm-client:v0.5.1-arm32v5`     | `172.17.0.1:3705` |
+| `arm32v6`             | `elijahru/build-farm-client:v0.5.1-arm32v6`     | `172.17.0.1:3706` |
+| `arm32v7`             | `elijahru/build-farm-client:v0.5.1-arm32v7`     | `172.17.0.1:3707` |
+| `arm64v8` (`aarch64`) | `elijahru/build-farm-client:v0.5.1-arm64v8`     | `172.17.0.1:3708` |
 
 #### Debian Buster
 
@@ -130,12 +130,12 @@ The compiled object code is cached via `ccache` in a persistent volume, so that 
 version: '3'
 services:
   host:
-    image: elijahru/distcc-cross-compiler-host-debian-buster:v0.5.1-amd64
+    image: elijahru/build-farm:v0.5.1-amd64
     ports:
       - 3608:3608
 
   client:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:v0.5.1-arm64v8
+    image: elijahru/build-farm-client:v0.5.1-arm64v8
     volumes:
       # Your code
       - .:/code
@@ -150,7 +150,7 @@ services:
 version: '3'
 services:
   build-farm:
-    image: elijahru/distcc-cross-compiler-host-debian-buster:v0.5.1-amd64
+    image: elijahru/build-farm:v0.5.1-amd64
     ports:
       # i386
       - 3603:3603
@@ -166,42 +166,42 @@ services:
       - 3610:3610
 
   client-i386:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:v0.5.1-i386
+    image: elijahru/build-farm-client:v0.5.1-i386
     volumes:
       - .:/code
       - ./caches/i386/ccache:/root/.ccache
     command: ./configure && make
 
   client-amd64:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:v0.5.1-amd64
+    image: elijahru/build-farm-client:v0.5.1-amd64
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
 
   client-arm32v7:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:v0.5.1-arm32v7
+    image: elijahru/build-farm-client:v0.5.1-arm32v7
     volumes:
       - .:/code
       - ./caches/arm32v7/ccache:/root/.ccache
     command: ./configure && make
 
   client-arm64v8:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:v0.5.1-arm64v8
+    image: elijahru/build-farm-client:v0.5.1-arm64v8
     volumes:
       - .:/code
       - ./caches/arm64v8/ccache:/root/.ccache
     command: ./configure && make
 
   client-s390x:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:v0.5.1-s390x
+    image: elijahru/build-farm-client:v0.5.1-s390x
     volumes:
       - .:/code
       - ./caches/s390x/ccache:/root/.ccache
     command: ./configure && make
 
   client-ppc64le:
-    image: elijahru/distcc-cross-compiler-client-debian-buster:v0.5.1-ppc64le
+    image: elijahru/build-farm-client:v0.5.1-ppc64le
     volumes:
       - .:/code
       - ./caches/ppc64le/ccache:/root/.ccache
@@ -214,7 +214,7 @@ services:
 version: '3'
 services:
   builder:
-    image: elijahru/distcc-cross-compiler-host-archlinux:v0.5.1-amd64
+    image: elijahru/build-farm:v0.5.1-amd64
     ports:
       
       # amd64
@@ -235,35 +235,35 @@ services:
 
   
   build-farm-client-amd64:
-    image: elijahru/distcc-cross-compiler-client-archlinux:v0.5.1-amd64
+    image: elijahru/build-farm-client:v0.5.1-amd64
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-farm-client-arm32v5:
-    image: elijahru/distcc-cross-compiler-client-archlinux:v0.5.1-arm32v5
+    image: elijahru/build-farm-client:v0.5.1-arm32v5
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-farm-client-arm32v6:
-    image: elijahru/distcc-cross-compiler-client-archlinux:v0.5.1-arm32v6
+    image: elijahru/build-farm-client:v0.5.1-arm32v6
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-farm-client-arm32v7:
-    image: elijahru/distcc-cross-compiler-client-archlinux:v0.5.1-arm32v7
+    image: elijahru/build-farm-client:v0.5.1-arm32v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-farm-client-arm64v8:
-    image: elijahru/distcc-cross-compiler-client-archlinux:v0.5.1-arm64v8
+    image: elijahru/build-farm-client:v0.5.1-arm64v8
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -279,7 +279,7 @@ Assuming several nodes, configured as follows:
 version: '3'
 services:
   builder:
-    image: elijahru/distcc-cross-compiler-host-archlinux:v0.5.1
+    image: elijahru/build-farm:v0.5.1
     ports:
       - 3704:3704
 ```
@@ -292,7 +292,7 @@ services:
   client:
     environment:
       - DISTCC_HOSTS=builder1:3704 builder2:3704 builder3:3704
-    image: elijahru/distcc-cross-compiler-client-archlinux:v0.5.1
+    image: elijahru/build-farm-client:v0.5.1
     volumes:
       - .:/code
     command: ./configure && make
@@ -351,7 +351,7 @@ The above workflow config assumes the repository contains a `docker-compose.yml`
 version: '3'
 services:
   builder:
-    image: elijahru/distcc-cross-compiler-host-archlinux:v0.5.1
+    image: elijahru/build-farm:v0.5.1
     ports:
       # amd64
       - 3704:3704
@@ -359,7 +359,7 @@ services:
       - 3708:3708
 
   build-amd64:
-    image: elijahru/distcc-cross-compiler-client-archlinux:v0.5.1-amd64
+    image: elijahru/build-farm-client:v0.5.1-amd64
     depends_on: [ builder ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
@@ -375,7 +375,7 @@ services:
         make test; "
 
   build-arm64v8:
-    image: elijahru/distcc-cross-compiler-client-archlinux:v0.5.1-arm64v8
+    image: elijahru/build-farm-client:v0.5.1-arm64v8
     depends_on: [ builder ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
@@ -395,24 +395,15 @@ services:
 
 Adding new target operating systems should be fairly straightforward by following the existing patterns for Debian and Arch Linux. Please do submit pull requests.
 
-The images can be built and tested locally using `scripts/build-debian-buster.sh` and `scripts/build-archlinux.sh`.
-
-The build scripts essentially do the following:
-
-* Render templates to produce a matrix of `docker-compose.yml` and `Dockerfiles`
-* Build the host and client images using the rendered templates
-* Run the tests for each client image, one at a time
-
-The tests verify that an arbitrary C project (cJSON) is compiled using distcc, and that the resulting executable is valid. The tests then verify that subsequent builds use ccache to avoid repeat compilation.
+Most of the work happens via `builder.py build-host` and `builder.py build-client`. Pass `--help` for usage.
 
 There are some useful git hooks that can be enabled by running `git config --local core.hooksPath .githooks/`.
 
 If you are looking for an idea, contributions for the following are especially welcome:
 
-* Project name suggestions (distcc-cross-compiler is a mouthful)
 * Make ccache optional in the client containers via an environment variable
 * A GitHub Action for GitHub Marketplace to make using these containers in CI easier
-* Windows arm64v8 or NetBSD/* toolchains?
+* Windows arm64v8 toolchain?
 
 ### Changelog
 

@@ -103,6 +103,8 @@ class Distro(metaclass=abc.ABCMeta):
         self.env.filters["compiler_port"] = self.ports_by_arch.get
         self.env.filters["toolchain"] = self.toolchains_by_arch.get
         self.env.filters["compiler_path_part"] = self.get_compiler_path_part
+        self.env.filters["host_image_tag"] = self.host_image_tag
+        self.env.filters["client_image_tag"] = self.client_image_tag
 
     def __repr__(self):
         return f"{self.__class__.__name__}({repr(self.name)})"
@@ -126,18 +128,32 @@ class Distro(metaclass=abc.ABCMeta):
             distro.render(**context)
 
     @classmethod
-    def build_all(cls, tag, push=False):
+    def build_all(cls, version, push=False):
         for distro in cls.registry.values():
             for host_arch in distro.host_archs:
-                distro.build_host(host_arch, tag=tag, push=push)
+                distro.build_host(host_arch, version=version, push=push)
                 for compiler_arch in distro.compiler_archs_by_host_arch[host_arch]:
-                    distro.build_client(host_arch, compiler_arch, tag=tag, push=push)
+                    distro.build_client(
+                        host_arch, compiler_arch, version=version, push=push
+                    )
 
     @property
     def context(self):
         if self._context is None:
             raise RuntimeError("Distro context not entered")
         return self._context
+
+    def host_manifest_tag(self, version):
+        return f"{self.host_image}:{version}--{slugify(self.name)}"
+
+    def host_image_tag(self, version, arch):
+        return f"{self.host_image}:{version}--{slugify(self.name)}--{arch}"
+
+    def client_manifest_tag(self, version):
+        return f"{self.client_image}:{version}--{slugify(self.name)}"
+
+    def client_image_tag(self, version, arch):
+        return f"{self.client_image}:{version}--{slugify(self.name)}--{arch}"
 
     @contextlib.contextmanager
     def set_context(self, **context):
@@ -312,12 +328,12 @@ class Distro(metaclass=abc.ABCMeta):
             # Replace YAML aliases in rendered jinja output
             self.interpolate_yaml(self.github_actions_yml_path)
 
-    def build_host(self, host_arch, tag, push=False):
+    def build_host(self, host_arch, version, push=False):
         configure_qemu()
 
-        self.render(tag=tag)
+        self.render(version=version)
 
-        image = f"{self.host_image}{tag}-{host_arch}"
+        image = f"{self.host_image}{version}-{host_arch}"
         dockerfile = self.out_path / f"host/Dockerfile.{host_arch}"
         try:
             docker("pull", image, "--platform", get_platform(host_arch))
@@ -338,14 +354,14 @@ class Distro(metaclass=abc.ABCMeta):
         if push:
             docker("push", image)
 
-    def build_client(self, client_arch, tag, push=False):
+    def build_client(self, client_arch, version, push=False):
         configure_qemu()
 
-        self.render(tag=tag)
+        self.render(version=version)
 
         # TODO - determine host_arch
         with self.run_host(host_arch="amd64"):
-            image = f"{self.client_image}{tag}-{client_arch}"
+            image = self.client_image_tag(version, client_arch)
             dockerfile = self.out_path / f"client/Dockerfile.{client_arch}"
             try:
                 docker("pull", image, "--platform", get_platform(client_arch))
@@ -367,44 +383,12 @@ class Distro(metaclass=abc.ABCMeta):
             if push:
                 docker("push", image)
 
-    def push_host_manifest(self, manifest_tag, image_tag):
+    def push_host_manifest(self, version):
         os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
 
-        manifest = f"{self.host_image}{manifest_tag}"
-        image = f"{self.host_image}{image_tag}"
-        images = {host_arch: f"{image}-{host_arch}" for host_arch in self.host_archs}
-
-        for image in images.values():
-            try:
-                docker("pull", image)
-            except ErrorReturnCode_1:
-                pass
-
-        try:
-            docker("manifest", "create", "--amend", manifest, *images.values())
-        except ErrorReturnCode_1:
-            docker("manifest", "create", manifest, *images.values())
-
-        for host_arch in self.host_archs:
-            docker(
-                "manifest",
-                "annotate",
-                manifest,
-                images[host_arch],
-                "--os",
-                "linux",
-                *docker_manifest_args[host_arch],
-            )
-
-        docker("manifest", "push", manifest)
-
-    def push_client_manifest(self, manifest_tag, image_tag):
-        os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
-        manifest = f"{self.client_image}{manifest_tag}"
-        image = f"{self.client_image}{image_tag}"
         images = {
-            compiler_arch: f"{image}-{compiler_arch}"
-            for compiler_arch in self.compiler_archs
+            host_arch: self.host_image_tag(version, host_arch)
+            for host_arch in self.host_archs
         }
 
         for image in images.values():
@@ -413,23 +397,57 @@ class Distro(metaclass=abc.ABCMeta):
             except ErrorReturnCode_1:
                 pass
 
-        try:
-            docker("manifest", "create", "--amend", manifest, *images.values())
-        except ErrorReturnCode_1:
-            docker("manifest", "create", manifest, *images.values())
+        for manifest in (self.host_manifest_tag(version), slugify(self.name)):
+            try:
+                docker("manifest", "create", "--amend", manifest, *images.values())
+            except ErrorReturnCode_1:
+                docker("manifest", "create", manifest, *images.values())
 
-        for compiler_arch in self.compiler_archs:
-            docker(
-                "manifest",
-                "annotate",
-                manifest,
-                images[compiler_arch],
-                "--os",
-                "linux",
-                *docker_manifest_args[compiler_arch],
-            )
+            for host_arch in self.host_archs:
+                docker(
+                    "manifest",
+                    "annotate",
+                    manifest,
+                    images[host_arch],
+                    "--os",
+                    "linux",
+                    *docker_manifest_args[host_arch],
+                )
 
-        docker("manifest", "push", manifest)
+            docker("manifest", "push", manifest)
+
+    def push_client_manifest(self, version):
+        os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
+
+        images = {
+            compiler_arch: self.client_image_tag(version, compiler_arch)
+            for compiler_arch in self.compiler_arch
+        }
+
+        for image in images.values():
+            try:
+                docker("pull", image)
+            except ErrorReturnCode_1:
+                pass
+
+        for manifest in (self.client_manifest_tag(version), slugify(self.name)):
+            try:
+                docker("manifest", "create", "--amend", manifest, *images.values())
+            except ErrorReturnCode_1:
+                docker("manifest", "create", manifest, *images.values())
+
+            for compiler_arch in self.compiler_archs:
+                docker(
+                    "manifest",
+                    "annotate",
+                    manifest,
+                    images[compiler_arch],
+                    "--os",
+                    "linux",
+                    *docker_manifest_args[compiler_arch],
+                )
+
+            docker("manifest", "push", manifest)
 
     @contextlib.contextmanager
     def run_host(self, host_arch):
@@ -664,18 +682,18 @@ class ArchLinuxLike(Distro):
 # Register supported distributions
 debian_buster = DebianLike(
     name="debian:buster",
-    host_image="elijahru/distcc-cross-compiler-host-debian-buster",
-    client_image="elijahru/distcc-cross-compiler-client-debian-buster",
+    host_image="elijahru/build-farm",
+    client_image="elijahru/build-farm-client",
 )
 debian_buster_slim = DebianLike(
     name="debian:buster-slim",
-    host_image="elijahru/distcc-cross-compiler-host-debian-buster-slim",
-    client_image="elijahru/distcc-cross-compiler-client-debian-buster-slim",
+    host_image="elijahru/build-farm",
+    client_image="elijahru/build-farm-client",
 )
 archlinux = ArchLinuxLike(
     name="archlinux",
-    host_image="elijahru/distcc-cross-compiler-host-archlinux",
-    client_image="elijahru/distcc-cross-compiler-client-archlinux",
+    host_image="elijahru/build-farm",
+    client_image="elijahru/build-farm-client",
 )
 
 
@@ -685,8 +703,8 @@ def render_readme(version):
     with PROJECT_DIR:
         with open("README.md.jinja", "r") as f:
             rendered = env.from_string(f.read()).render(
-                project_name="distcc-cross-compiler",
-                repo="elijahr/distcc-cross-compiler",
+                project_name="build-farm",
+                repo="elijahr/build-farm",
                 debian_buster=debian_buster,
                 debian_buster_slim=debian_buster_slim,
                 archlinux=archlinux,
@@ -716,7 +734,7 @@ def make_parser():
 
     # render
     parser_render = subparsers.add_parser("render")
-    parser_render.add_argument("--tag", required=True)
+    parser_render.add_argument("--version", required=True)
 
     # render
     subparsers.add_parser("render-github-actions")
@@ -725,19 +743,19 @@ def make_parser():
     parser_build_host = subparsers.add_parser("build-host")
     parser_build_host.add_argument("--distro", type=Distro.get, required=True)
     parser_build_host.add_argument("--host-arch", required=True)
-    parser_build_host.add_argument("--tag", required=True)
+    parser_build_host.add_argument("--version", required=True)
     parser_build_host.add_argument("--push", action="store_true")
 
     # build-client
     parser_build_client = subparsers.add_parser("build-client")
     parser_build_client.add_argument("--distro", type=Distro.get, required=True)
     parser_build_client.add_argument("--client-arch", required=True)
-    parser_build_client.add_argument("--tag", required=True)
+    parser_build_client.add_argument("--version", required=True)
     parser_build_client.add_argument("--push", action="store_true")
 
     # build-all
     parser_build_all = subparsers.add_parser("build-all")
-    parser_build_all.add_argument("--tag", required=True)
+    parser_build_all.add_argument("--version", required=True)
     parser_build_all.add_argument("--push", action="store_true")
 
     # clean
@@ -746,14 +764,12 @@ def make_parser():
     # push-host-manifest
     parser_push_host_manifest = subparsers.add_parser("push-host-manifest")
     parser_push_host_manifest.add_argument("--distro", type=Distro.get, required=True)
-    parser_push_host_manifest.add_argument("--manifest-tag", required=True)
-    parser_push_host_manifest.add_argument("--image-tag", required=True)
+    parser_push_host_manifest.add_argument("--version", required=True)
 
     # push-client-manifest
     parser_push_client_manifest = subparsers.add_parser("push-client-manifest")
     parser_push_client_manifest.add_argument("--distro", type=Distro.get, required=True)
-    parser_push_client_manifest.add_argument("--manifest-tag", required=True)
-    parser_push_client_manifest.add_argument("--image-tag", required=True)
+    parser_push_client_manifest.add_argument("--version", required=True)
 
     # render-readme
     parser_render_readme = subparsers.add_parser("render-readme")
@@ -774,36 +790,32 @@ def main():
         print("\n".join(args.distro.compiler_archs))
 
     elif args.subcommand == "render":
-        Distro.render_all(tag=args.tag)
+        Distro.render_all(version=args.version)
 
     elif args.subcommand == "render-github-actions":
         for distro in Distro.registry.values():
             distro.render_github_actions()
 
     elif args.subcommand == "build-host":
-        args.distro.build_host(args.host_arch, tag=args.tag, push=args.push)
+        args.distro.build_host(args.host_arch, version=args.version, push=args.push)
 
     elif args.subcommand == "build-client":
-        args.distro.build_client(args.client_arch, tag=args.tag, push=args.push)
+        args.distro.build_client(args.client_arch, version=args.version, push=args.push)
 
     elif args.subcommand == "build-all":
-        Distro.build_all(tag=args.tag, push=args.push)
+        Distro.build_all(version=args.version, push=args.push)
 
     elif args.subcommand == "clean":
         Distro.clean_all()
 
     elif args.subcommand == "test":
-        args.distro.test(args.host_arch, args.client_arch, tag=args.tag)
+        args.distro.test(args.host_arch, args.client_arch, version=args.version)
 
     elif args.subcommand == "push-host-manifest":
-        args.distro.push_host_manifest(
-            manifest_tag=args.manifest_tag, image_tag=args.image_tag
-        )
+        args.distro.push_host_manifest(version=args.version)
 
     elif args.subcommand == "push-client-manifest":
-        args.distro.push_client_manifest(
-            manifest_tag=args.manifest_tag, image_tag=args.image_tag
-        )
+        args.distro.push_client_manifest(version=args.version)
 
     elif args.subcommand == "render-readme":
         render_readme(args.version)
