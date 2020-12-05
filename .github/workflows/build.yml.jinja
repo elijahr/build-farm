@@ -120,7 +120,7 @@ jobs:
         run: |
           ./builder.py push-client-manifest \
             --distro {{ distro }} \
-            --version {% raw %}${{ github.ref }}{% endraw %}
+            --version $(basename {% raw %}${{ github.event.ref }}{% endraw %})
 
   tag_latest:
     name: Tag latest

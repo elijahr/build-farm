@@ -952,7 +952,7 @@ jobs:
       run: |
         ./builder.py push-client-manifest \
           --distro debian:buster \
-          --version ${{ github.ref }}
+          --version $(basename ${{ github.event.ref }})
 
   tag_latest:
     name: Tag latest
