@@ -1,0 +1,15 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+sh = "~=1.14.0"
+path = "~=15.0.0"
+"ruamel.yaml" = "~=0.16.12"
+Jinja2 = "~=2.11.0"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"

@@ -1,7 +1,7 @@
 
-![debian:buster](https://github.com/elijahr/build-farm/workflows/debian-buster/badge.svg)
+![debian:buster](https://github.com/elijahr/build-farm/workflows/debian%3Abuster/badge.svg)
 
-![debian:buster-slim](https://github.com/elijahr/build-farm/workflows/debian-buster-slim/badge.svg)
+![debian:buster-slim](https://github.com/elijahr/build-farm/workflows/debian%3Abuster-slim/badge.svg)
 
 ![archlinux](https://github.com/elijahr/build-farm/workflows/archlinux/badge.svg)
 
@@ -396,6 +396,8 @@ services:
 Adding new target operating systems should be fairly straightforward by following the existing patterns for Debian and Arch Linux. Please do submit pull requests.
 
 Most of the work happens via `builder.py build-host` and `builder.py build-client`. Pass `--help` for usage.
+
+The easiest way to install all requirements for building is to use pipenv. `pipenv install --python $(which python3.8)` should install the requirements, and then the build script can be run with `pipenv run ./builder.py [subcommand] [args]`.
 
 There are some useful git hooks that can be enabled by running `git config --local core.hooksPath .githooks/`.
 
