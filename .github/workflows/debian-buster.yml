@@ -992,7 +992,7 @@ jobs:
 
     - name: Tag host latest
       run: |
-        ./builder.py push-host-latest \
+        ./builder.py tag-host-latest \
           --distro debian:buster \
           --version $(basename ${{ github.event.ref }})
 

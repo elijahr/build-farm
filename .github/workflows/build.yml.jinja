@@ -138,7 +138,7 @@ jobs:
       - *dockerhub_login
       - name: Tag host latest
         run: |
-          ./builder.py push-host-latest \
+          ./builder.py tag-host-latest \
             --distro {{ distro }} \
             --version $(basename {% raw %}${{ github.event.ref }}{% endraw %})
 

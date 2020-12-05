@@ -402,7 +402,7 @@ jobs:
 
     - name: Tag host latest
       run: |
-        ./builder.py push-host-latest \
+        ./builder.py tag-host-latest \
           --distro archlinux \
           --version $(basename ${{ github.event.ref }})
 
