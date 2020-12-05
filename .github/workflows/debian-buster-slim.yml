@@ -20,11 +20,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -61,11 +66,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -102,11 +112,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -143,11 +158,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -184,11 +204,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -225,11 +250,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -266,11 +296,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -307,11 +342,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -368,11 +408,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -427,11 +472,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -486,11 +536,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -545,11 +600,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -604,11 +664,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -663,11 +728,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -722,11 +792,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -781,11 +856,16 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Configure QEMU
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y qemu qemu-user-static
+        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |
@@ -842,6 +922,11 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
+    - name: Install emulation dependencies
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y python3-setuptools
+
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
@@ -884,6 +969,11 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
+
+    - name: Install emulation dependencies
+      run: |
+        sudo apt-get update -q -y
+        sudo apt-get -qq install -y python3-setuptools
 
     - name: Install pip requirements
       run: |

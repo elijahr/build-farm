@@ -6,11 +6,17 @@ _anchors:
       fetch-depth: 1
       submodules: recursive
 
-  configure_ubuntu: &configure_ubuntu
+  install_apt_requirements: &install_apt_requirements
     name: Install emulation dependencies
     run: |
       sudo apt-get update -q -y
-      sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
+      sudo apt-get -qq install -y python3-setuptools
+
+  configure_qemu: &configure_qemu
+    name: Configure QEMU
+    run: |
+      sudo apt-get update -q -y
+      sudo apt-get -qq install -y qemu qemu-user-static
       docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
   install_pip_requirements: &install_pip_requirements
@@ -47,7 +53,8 @@ jobs:
 
     steps:
       - *checkout_repo
-      - *configure_ubuntu
+      - *configure_qemu
+      - *install_apt_requirements
       - *install_pip_requirements
       - *enable_docker_experimental_features
       - *dockerhub_login
@@ -73,7 +80,8 @@ jobs:
 
     steps:
       - *checkout_repo
-      - *configure_ubuntu
+      - *configure_qemu
+      - *install_apt_requirements
       - *install_pip_requirements
       - *enable_docker_experimental_features
       - *dockerhub_login
@@ -98,6 +106,7 @@ jobs:
 
     steps:
       - *checkout_repo
+      - *install_apt_requirements
       - *install_pip_requirements
       - *enable_docker_experimental_features
       - *dockerhub_login
@@ -123,6 +132,7 @@ jobs:
 
     steps:
       - *checkout_repo
+      - *install_apt_requirements
       - *install_pip_requirements
       - *enable_docker_experimental_features
       - *dockerhub_login
