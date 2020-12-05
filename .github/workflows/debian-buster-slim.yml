@@ -23,7 +23,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -64,7 +64,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -105,7 +105,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -146,7 +146,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -187,7 +187,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -228,7 +228,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -269,7 +269,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -310,7 +310,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -371,7 +371,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -430,7 +430,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -489,7 +489,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -548,7 +548,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -607,7 +607,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -666,7 +666,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -725,7 +725,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
@@ -784,7 +784,7 @@ jobs:
     - name: Install emulation dependencies
       run: |
         sudo apt-get update -q -y
-        sudo apt-get -qq install -y qemu qemu-user-static
+        sudo apt-get -qq install -y qemu qemu-user-static python3-setuptools
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
     - name: Install pip requirements
