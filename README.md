@@ -22,7 +22,7 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Arch Linux
 
-The `elijahru/build-farm:v0.5.1` image exposes the following compilers:
+The `elijahru/build-farm:archlinux` image exposes the following compilers:
 
 | Host arch | Target arch | Compiler port |
 |-----------|-------------|---------------|
@@ -34,7 +34,7 @@ The `elijahru/build-farm:v0.5.1` image exposes the following compilers:
 
 #### Debian Buster
 
-The multi-architecture `elijahru/build-farm:v0.5.1` image exposes the following compilers:
+The multi-architecture `elijahru/build-farm:debian-buster` and `elijahru/build-farm:debian-buster-slim` images expose the following compilers:
 
 | Host arch  | Target arch | Compiler port |
 |------------|-------------|---------------|
@@ -99,24 +99,24 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
 |-----------------------|----------------------------------------------------------------------|-------------------|
-| `amd64` (`x86_64`)    | `elijahru/build-farm-client:v0.5.1-amd64`       | `172.17.0.1:3704` |
-| `arm32v5`             | `elijahru/build-farm-client:v0.5.1-arm32v5`     | `172.17.0.1:3705` |
-| `arm32v6`             | `elijahru/build-farm-client:v0.5.1-arm32v6`     | `172.17.0.1:3706` |
-| `arm32v7`             | `elijahru/build-farm-client:v0.5.1-arm32v7`     | `172.17.0.1:3707` |
-| `arm64v8` (`aarch64`) | `elijahru/build-farm-client:v0.5.1-arm64v8`     | `172.17.0.1:3708` |
+| `amd64` (`x86_64`)    | `elijahru/build-farm-client:archlinux-amd64`       | `172.17.0.1:3704` |
+| `arm32v5`             | `elijahru/build-farm-client:archlinux-arm32v5`     | `172.17.0.1:3705` |
+| `arm32v6`             | `elijahru/build-farm-client:archlinux-arm32v6`     | `172.17.0.1:3706` |
+| `arm32v7`             | `elijahru/build-farm-client:archlinux-arm32v7`     | `172.17.0.1:3707` |
+| `arm64v8` (`aarch64`) | `elijahru/build-farm-client:archlinux-arm64v8`     | `172.17.0.1:3708` |
 
 #### Debian Buster
 
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
 |-----------------------|----------------------------------------------------------------------|-------------------|
-| `amd64`               | `{{ debian_buster.client_image }}:{{ version }}-amd64`               | `172.17.0.1:3604` |
-| `i386`                | `{{ debian_buster.client_image }}:{{ version }}-i386`                | `172.17.0.1:3603` |
-| `arm32v5`             | `{{ debian_buster.client_image }}:{{ version }}-arm32v5`             | `172.17.0.1:3605` |
-| `arm32v7`             | `{{ debian_buster.client_image }}:{{ version }}-arm32v7`             | `172.17.0.1:3607` |
-| `arm64v8`             | `{{ debian_buster.client_image }}:{{ version }}-arm64v8`             | `172.17.0.1:3608` |
-| `ppc64le`             | `{{ debian_buster.client_image }}:{{ version }}-ppc64le`             | `172.17.0.1:3610` |
-| `s390x`               | `{{ debian_buster.client_image }}:{{ version }}-s390x`               | `172.17.0.1:3609` |
-| `mips64le`            | `{{ debian_buster.client_image }}:{{ version }}-mips64le`            | `172.17.0.1:3611` |
+| `amd64`               | `elijahru/build-farm-client:debian-buster--amd64`                    | `172.17.0.1:3604` |
+| `i386`                | `elijahru/build-farm-client:debian-buster--i386`                     | `172.17.0.1:3603` |
+| `arm32v5`             | `elijahru/build-farm-client:debian-buster--arm32v5`                  | `172.17.0.1:3605` |
+| `arm32v7`             | `elijahru/build-farm-client:debian-buster--arm32v7`                  | `172.17.0.1:3607` |
+| `arm64v8`             | `elijahru/build-farm-client:debian-buster--arm64v8`                  | `172.17.0.1:3608` |
+| `ppc64le`             | `elijahru/build-farm-client:debian-buster--ppc64le`                  | `172.17.0.1:3610` |
+| `s390x`               | `elijahru/build-farm-client:debian-buster--s390x`                    | `172.17.0.1:3609` |
+| `mips64le`            | `elijahru/build-farm-client:debian-buster--mips64le`                 | `172.17.0.1:3611` |)
 
 ### Simple example: cross-compiler
 
@@ -130,12 +130,12 @@ The compiled object code is cached via `ccache` in a persistent volume, so that 
 version: '3'
 services:
   host:
-    image: elijahru/build-farm:v0.5.1-amd64
+    image: elijahru/build-farm:debian-buster--amd64
     ports:
       - 3608:3608
 
   client:
-    image: elijahru/build-farm-client:v0.5.1-arm64v8
+    image: elijahru/build-farm-client:debian-buster--arm64v8
     volumes:
       # Your code
       - .:/code
@@ -149,72 +149,8 @@ services:
 ```yml
 version: '3'
 services:
-  build-farm:
-    image: elijahru/build-farm:v0.5.1-amd64
-    ports:
-      # i386
-      - 3603:3603
-      # amd64
-      - 3604:3604
-      # arm32v7
-      - 3607:3607
-      # arm64v8
-      - 3608:3608
-      # s390x
-      - 3609:3609
-      # ppc64le
-      - 3610:3610
-
-  client-i386:
-    image: elijahru/build-farm-client:v0.5.1-i386
-    volumes:
-      - .:/code
-      - ./caches/i386/ccache:/root/.ccache
-    command: ./configure && make
-
-  client-amd64:
-    image: elijahru/build-farm-client:v0.5.1-amd64
-    volumes:
-      - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
-    command: ./configure && make
-
-  client-arm32v7:
-    image: elijahru/build-farm-client:v0.5.1-arm32v7
-    volumes:
-      - .:/code
-      - ./caches/arm32v7/ccache:/root/.ccache
-    command: ./configure && make
-
-  client-arm64v8:
-    image: elijahru/build-farm-client:v0.5.1-arm64v8
-    volumes:
-      - .:/code
-      - ./caches/arm64v8/ccache:/root/.ccache
-    command: ./configure && make
-
-  client-s390x:
-    image: elijahru/build-farm-client:v0.5.1-s390x
-    volumes:
-      - .:/code
-      - ./caches/s390x/ccache:/root/.ccache
-    command: ./configure && make
-
-  client-ppc64le:
-    image: elijahru/build-farm-client:v0.5.1-ppc64le
-    volumes:
-      - .:/code
-      - ./caches/ppc64le/ccache:/root/.ccache
-    command: ./configure && make
-```
-
-### Advanced example: cross-compiler matrix for all available Arch Linux targets
-
-```yml
-version: '3'
-services:
-  builder:
-    image: elijahru/build-farm:v0.5.1-amd64
+  build-host:
+    image: elijahru/build-farm:debian-buster--amd64
     ports:
       
       # amd64
@@ -234,36 +170,120 @@ services:
       
 
   
-  build-farm-client-amd64:
-    image: elijahru/build-farm-client:v0.5.1-amd64
+  build-client-amd64:
+    image: elijahru/build-farm-client:debian-buster--amd64
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-farm-client-arm32v5:
-    image: elijahru/build-farm-client:v0.5.1-arm32v5
+  build-client-i386:
+    image: elijahru/build-farm-client:debian-buster--i386
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-farm-client-arm32v6:
-    image: elijahru/build-farm-client:v0.5.1-arm32v6
+  build-client-arm32v5:
+    image: elijahru/build-farm-client:debian-buster--arm32v5
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-farm-client-arm32v7:
-    image: elijahru/build-farm-client:v0.5.1-arm32v7
+  build-client-arm32v7:
+    image: elijahru/build-farm-client:debian-buster--arm32v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-farm-client-arm64v8:
-    image: elijahru/build-farm-client:v0.5.1-arm64v8
+  build-client-arm64v8:
+    image: elijahru/build-farm-client:debian-buster--arm64v8
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-ppc64le:
+    image: elijahru/build-farm-client:debian-buster--ppc64le
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-s390x:
+    image: elijahru/build-farm-client:debian-buster--s390x
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-mips64le:
+    image: elijahru/build-farm-client:debian-buster--mips64le
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+```
+
+### Advanced example: cross-compiler matrix for all available Arch Linux targets
+
+```yml
+version: '3'
+services:
+  build-host:
+    image: elijahru/build-farm:archlinux--amd64
+    ports:
+      
+      # amd64
+      - 3704:3704
+      
+      # arm32v5
+      - 3705:3705
+      
+      # arm32v6
+      - 3706:3706
+      
+      # arm32v7
+      - 3707:3707
+      
+      # arm64v8
+      - 3708:3708
+      
+
+  
+  build-client-amd64:
+    image: elijahru/build-farm-client:archlinux--amd64
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-arm32v5:
+    image: elijahru/build-farm-client:archlinux--arm32v5
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-arm32v6:
+    image: elijahru/build-farm-client:archlinux--arm32v6
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-arm32v7:
+    image: elijahru/build-farm-client:archlinux--arm32v7
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-arm64v8:
+    image: elijahru/build-farm-client:archlinux--arm64v8
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -278,21 +298,21 @@ Assuming several nodes, configured as follows:
 ```yml
 version: '3'
 services:
-  builder:
-    image: elijahru/build-farm:v0.5.1
+  build-host:
+    image: elijahru/build-farm:archlinux--amd64
     ports:
       - 3704:3704
 ```
 
-Where each node can be resolved via DNS as `builder1`, `builder2`, `builder3`, etc, a client can distribute compilation across the nodes by using the `DISTCC_HOSTS` environment variable:
+Where each node can be resolved via DNS as `build-host1`, `build-host2`, `build-host3`, etc, a client can distribute compilation across the nodes by using the `DISTCC_HOSTS` environment variable:
 
 ```yml
 version: '3'
 services:
   client:
     environment:
-      - DISTCC_HOSTS=builder1:3704 builder2:3704 builder3:3704
-    image: elijahru/build-farm-client:v0.5.1
+      - DISTCC_HOSTS=build-host1:3704 build-host2:3704 build-host3:3704
+    image: elijahru/build-farm-client:archlinux--amd64
     volumes:
       - .:/code
     command: ./configure && make
@@ -315,7 +335,7 @@ on:
 jobs:
   build:
     name: Build for archlinux ${{ matrix.arch }}
-    runs-on: ubuntu-v0.5.1
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -350,8 +370,8 @@ The above workflow config assumes the repository contains a `docker-compose.yml`
 ```yml
 version: '3'
 services:
-  builder:
-    image: elijahru/build-farm:v0.5.1
+  build-host:
+    image: elijahru/build-farm:archlinux--amd64
     ports:
       # amd64
       - 3704:3704
@@ -359,7 +379,7 @@ services:
       - 3708:3708
 
   build-amd64:
-    image: elijahru/build-farm-client:v0.5.1-amd64
+    image: elijahru/build-farm-client:archlinux--amd64
     depends_on: [ builder ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
@@ -375,7 +395,7 @@ services:
         make test; "
 
   build-arm64v8:
-    image: elijahru/build-farm-client:v0.5.1-arm64v8
+    image: elijahru/build-farm-client:archlinux--arm64v8
     depends_on: [ builder ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
@@ -397,7 +417,7 @@ Adding new target operating systems should be fairly straightforward by followin
 
 Most of the work happens via `builder.py build-host` and `builder.py build-client`. Pass `--help` for usage.
 
-The easiest way to install all requirements for building is to use pipenv. `pipenv install --python $(which python3.8)` should install the requirements, and then the build script can be run with `pipenv run ./builder.py [subcommand] [args]`.
+The easiest way to install all requirements for building is to use pipenv. `pipenv install -r requirements.txt --pre` should install the requirements, and then the build script can be run with `pipenv run ./builder.py [subcommand] [args]`.
 
 There are some useful git hooks that can be enabled by running `git config --local core.hooksPath .githooks/`.
 

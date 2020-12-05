@@ -16,7 +16,7 @@ do
 	elif [[ "$file" == "README.md.jinja" ]]
 	then
 			echo "Change detected, re-rendering README"
-		pipenv run ./builder.py render-readme --version $(git describe --tags | sed 's/-.*//')
+		pipenv run ./builder.py render-readme
 		git add README.md || true
 	fi
 

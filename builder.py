@@ -149,11 +149,17 @@ class Distro(metaclass=abc.ABCMeta):
     def host_image_tag(self, version, arch):
         return f"{self.host_image}:{version}--{slugify(self.name)}--{arch}"
 
+    def host_image_latest_tag(self, arch):
+        return f"{self.host_image}:{slugify(self.name)}--{arch}"
+
     def client_manifest_tag(self, version):
         return f"{self.client_image}:{version}--{slugify(self.name)}"
 
     def client_image_tag(self, version, arch):
         return f"{self.client_image}:{version}--{slugify(self.name)}--{arch}"
+
+    def client_image_latest_tag(self, arch):
+        return f"{self.client_image}:{slugify(self.name)}--{arch}"
 
     @contextlib.contextmanager
     def set_context(self, **context):
@@ -392,10 +398,7 @@ class Distro(metaclass=abc.ABCMeta):
         }
 
         for image in images.values():
-            try:
-                docker("pull", image)
-            except ErrorReturnCode_1:
-                pass
+            docker("pull", image)
 
         for manifest in (self.host_manifest_tag(version), slugify(self.name)):
             try:
@@ -425,10 +428,7 @@ class Distro(metaclass=abc.ABCMeta):
         }
 
         for image in images.values():
-            try:
-                docker("pull", image)
-            except ErrorReturnCode_1:
-                pass
+            docker("pull", image)
 
         for manifest in (self.client_manifest_tag(version), slugify(self.name)):
             try:
@@ -448,6 +448,36 @@ class Distro(metaclass=abc.ABCMeta):
                 )
 
             docker("manifest", "push", manifest)
+
+    def tag_host_latest(self, version):
+        os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
+
+        images = {
+            host_arch: (
+                self.host_image_tag(version, host_arch),
+                self.host_image_latest_tag(host_arch),
+            )
+            for host_arch in self.host_archs
+        }
+
+        for image, latest in images.values():
+            docker("tag", image, latest)
+            docker("push", latest)
+
+    def tag_client_latest(self, version):
+        os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
+
+        images = {
+            compiler_arch: (
+                self.client_image_tag(version, compiler_arch),
+                self.client_image_latest_tag(compiler_arch),
+            )
+            for compiler_arch in self.compiler_archs
+        }
+
+        for image, latest in images.values():
+            docker("tag", image, latest)
+            docker("push", latest)
 
     @contextlib.contextmanager
     def run_host(self, host_arch):
@@ -697,7 +727,7 @@ archlinux = ArchLinuxLike(
 )
 
 
-def render_readme(version):
+def render_readme():
     env = Environment(autoescape=False, undefined=StrictUndefined)
     env.filters["slugify"] = slugify
     with PROJECT_DIR:
@@ -708,7 +738,6 @@ def render_readme(version):
                 debian_buster=debian_buster,
                 debian_buster_slim=debian_buster_slim,
                 archlinux=archlinux,
-                version=version,
                 Distro=Distro,
             )
         with open("README.md", "w") as f:
@@ -771,9 +800,18 @@ def make_parser():
     parser_push_client_manifest.add_argument("--distro", type=Distro.get, required=True)
     parser_push_client_manifest.add_argument("--version", required=True)
 
+    # tag-host-latest
+    parser_tag_host_latest = subparsers.add_parser("tag-host-latest")
+    parser_tag_host_latest.add_argument("--distro", type=Distro.get, required=True)
+    parser_tag_host_latest.add_argument("--version", required=True)
+
+    # tag-client-latest
+    parser_tag_client_latest = subparsers.add_parser("tag-client-latest")
+    parser_tag_client_latest.add_argument("--distro", type=Distro.get, required=True)
+    parser_tag_client_latest.add_argument("--version", required=True)
+
     # render-readme
-    parser_render_readme = subparsers.add_parser("render-readme")
-    parser_render_readme.add_argument("--version", required=True)
+    subparsers.add_parser("render-readme")
 
     return parser
 
@@ -817,8 +855,14 @@ def main():
     elif args.subcommand == "push-client-manifest":
         args.distro.push_client_manifest(version=args.version)
 
+    elif args.subcommand == "tag-host-latest":
+        args.distro.tag_host_latest(version=args.version)
+
+    elif args.subcommand == "tag-client-latest":
+        args.distro.tag_client_latest(version=args.version)
+
     elif args.subcommand == "render-readme":
-        render_readme(args.version)
+        render_readme()
 
     else:
         raise ValueError(f"Unknown subcommand {args.subcommand}")

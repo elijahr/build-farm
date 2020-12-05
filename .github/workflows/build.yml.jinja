@@ -112,3 +112,28 @@ jobs:
           ./builder.py push-client-manifest \
             --distro {{ distro }} \
             --version {% raw %}${{ github.ref }}{% endraw %}
+
+  tag_latest:
+    name: Tag latest
+    if: {% raw %}${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/') }}{% endraw %}
+
+    runs-on: ubuntu-latest
+    needs:
+      - push_manifests
+
+    steps:
+      - *checkout_repo
+      - *install_pip_requirements
+      - *enable_docker_experimental_features
+      - *dockerhub_login
+      - name: Tag host latest
+        run: |
+          ./builder.py push-host-latest \
+            --distro {{ distro }} \
+            --version {% raw %}${{ github.ref }}{% endraw %}
+
+      - name: Tag client latest
+        run: |
+          ./builder.py tag-client-latest \
+            --distro {{ distro }} \
+            --version {% raw %}${{ github.ref }}{% endraw %}
