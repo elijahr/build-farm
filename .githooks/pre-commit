@@ -4,26 +4,30 @@ set -ueo pipefail
 
 echo "Checking for .github/workflows/build.yml.jinja changes..."
 
-files=( $(git diff-index --cached HEAD --name-only) )
+if [[ "$(git diff-index --cached HEAD --name-only)" != "" ]]
+then
 
-for file in ${files[@]}
-do
-	if [[ "$file" == ".github/workflows/build.yml.jinja" ]]
-	then
-		echo "Change detected, re-rendering GitHub Actions"
-		pipenv run ./builder.py render-github-actions
-		git add .github/workflows/*.yml || true
-	elif [[ "$file" == "README.md.jinja" ]]
-	then
-			echo "Change detected, re-rendering README"
-		pipenv run ./builder.py render-readme
-		git add README.md || true
-	fi
+	files=( $(git diff-index --cached HEAD --name-only) )
 
-	case $file in
-		*.py)
-			pipenv run black $file
-			git add $file
-			;;
-	esac
-done
+	for file in ${files[@]}
+	do
+		if [[ "$file" == ".github/workflows/build.yml.jinja" ]]
+		then
+			echo "Change detected, re-rendering GitHub Actions"
+			pipenv run ./builder.py render-github-actions
+			git add .github/workflows/*.yml || true
+		elif [[ "$file" == "README.md.jinja" ]]
+		then
+				echo "Change detected, re-rendering README"
+			pipenv run ./builder.py render-readme
+			git add README.md || true
+		fi
+
+		case $file in
+			*.py)
+				pipenv run black $file
+				git add $file
+				;;
+		esac
+	done
+fi
