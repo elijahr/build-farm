@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -uxeo pipefail
+set -uxe
 
 main () {
   cd $(dirname $0)

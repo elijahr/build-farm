@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -uxeo pipefail
+set -uxe
 
 # ccache and distcc provides gcc/g++ wrappers, but not cc, so create additional symlinks
 if [[ ! -f /usr/lib/distcc/cc ]]

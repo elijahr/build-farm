@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -ueo pipefail
+set -ue
 
 echo "Checking for .github/workflows/build.yml.jinja changes..."
 

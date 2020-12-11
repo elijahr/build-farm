@@ -1,7 +1,6 @@
 #!/bin/bash
 
-set -uxeo pipefail
-shopt -s nullglob
+set -uxe
 
 declare -a pids
 
