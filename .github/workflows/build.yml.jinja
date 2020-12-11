@@ -74,9 +74,7 @@ jobs:
 
     runs-on: ubuntu-latest
     needs:
-      {% for host_arch in distro.host_archs %}
-      - build-host-{{ host_arch }}
-      {% endfor %}
+      - build-host-amd64
 
     steps:
       - *checkout_repo
@@ -100,6 +98,9 @@ jobs:
 
     runs-on: ubuntu-latest
     needs:
+      {% for host_arch in distro.host_archs %}
+      - build-host-{{ host_arch }}
+      {% endfor %}
       {% for compiler_arch in distro.compiler_archs %}
       - build-client-{{ compiler_arch }}
       {% endfor %}

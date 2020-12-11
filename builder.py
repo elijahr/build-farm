@@ -655,7 +655,13 @@ class DebianLike(Distro):
 class ArchLinuxLike(Distro):
     template_path = Path("archlinux-like")
 
-    host_archs = ("amd64",)
+    host_archs = (
+        "amd64",
+        "arm32v5",
+        "arm32v6",
+        "arm32v7",
+        "arm64v8",
+    )
     compiler_archs = (
         "amd64",
         "arm32v5",
@@ -671,6 +677,10 @@ class ArchLinuxLike(Distro):
             "arm32v7",
             "arm64v8",
         ),
+        "arm32v5": ("arm32v5",),
+        "arm32v6": ("arm32v6",),
+        "arm32v7": ("arm32v7",),
+        "arm64v8": ("arm64v8",),
     }
     ports_by_arch = {
         "amd64": "3704",

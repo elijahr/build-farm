@@ -340,19 +340,6 @@ jobs:
     needs:
     - build-host-amd64
 
-    - build-host-i386
-
-    - build-host-arm32v6
-
-    - build-host-arm32v7
-
-    - build-host-arm64v8
-
-    - build-host-ppc64le
-
-    - build-host-s390x
-
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
@@ -401,19 +388,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
-
-    - build-host-i386
-
-    - build-host-arm32v6
-
-    - build-host-arm32v7
-
-    - build-host-arm64v8
-
-    - build-host-ppc64le
-
-    - build-host-s390x
-
 
     steps:
     - name: Checkout repo
@@ -464,19 +438,6 @@ jobs:
     needs:
     - build-host-amd64
 
-    - build-host-i386
-
-    - build-host-arm32v6
-
-    - build-host-arm32v7
-
-    - build-host-arm64v8
-
-    - build-host-ppc64le
-
-    - build-host-s390x
-
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
@@ -525,19 +486,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
-
-    - build-host-i386
-
-    - build-host-arm32v6
-
-    - build-host-arm32v7
-
-    - build-host-arm64v8
-
-    - build-host-ppc64le
-
-    - build-host-s390x
-
 
     steps:
     - name: Checkout repo
@@ -588,19 +536,6 @@ jobs:
     needs:
     - build-host-amd64
 
-    - build-host-i386
-
-    - build-host-arm32v6
-
-    - build-host-arm32v7
-
-    - build-host-arm64v8
-
-    - build-host-ppc64le
-
-    - build-host-s390x
-
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
@@ -649,19 +584,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
-
-    - build-host-i386
-
-    - build-host-arm32v6
-
-    - build-host-arm32v7
-
-    - build-host-arm64v8
-
-    - build-host-ppc64le
-
-    - build-host-s390x
-
 
     steps:
     - name: Checkout repo
@@ -712,19 +634,6 @@ jobs:
     needs:
     - build-host-amd64
 
-    - build-host-i386
-
-    - build-host-arm32v6
-
-    - build-host-arm32v7
-
-    - build-host-arm64v8
-
-    - build-host-ppc64le
-
-    - build-host-s390x
-
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
@@ -774,6 +683,21 @@ jobs:
 
     runs-on: ubuntu-latest
     needs:
+    - build-host-amd64
+
+    - build-host-i386
+
+    - build-host-arm32v6
+
+    - build-host-arm32v7
+
+    - build-host-arm64v8
+
+    - build-host-ppc64le
+
+    - build-host-s390x
+
+
     - build-client-amd64
 
     - build-client-i386
