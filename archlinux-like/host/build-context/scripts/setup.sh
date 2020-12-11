@@ -5,6 +5,7 @@ set -uxe
 useradd distcc
 
 if [ -d /toolchains ]
+then
   # Extract cross-compiler toolchains
   cd /toolchains
   for file in x-tools*.tar.xz
