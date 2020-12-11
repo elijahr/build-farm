@@ -4,8 +4,7 @@
 # distccd will use these symlinks if /usr/local/${target}/bin is placed
 # first in PATH (the etc/init.d/distccd-* scripts do this).
 
-set -uxeo pipefail
-shopt -s nullglob
+set -uxe
 
 targets=(
   "x86_64-linux-gnu" \
@@ -37,8 +36,6 @@ do
     then
       ln -s /usr/bin/${target}-gcc $link
     fi
-
-    update-rc.d distccd-${target} defaults
   fi
 done
 

@@ -1,28 +1,25 @@
 ARG ARCH={{ compiler_arch }}
 FROM {{ distro.name }}
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && \
-  apt-get install -y \
-    build-essential g++ distcc ccache && \
-  apt-get clean
+# Install deps
+RUN \
+  apk add --no-cache distcc ccache gcc g++ make
 
 RUN \
   mkdir -p /scripts && \
   mkdir -p /root/.ccache
 
 COPY scripts/* /scripts/
-COPY root/.ccache /root/
+COPY root/.ccache/* /root/.ccache/
 
 # Use ccache wrappers first, distcc wrappers second
-ENV PATH=/usr/lib/ccache:/usr/lib/distcc:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH=/usr/lib/ccache/bin:/usr/lib/distcc/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-# If set to 0, compilation will fail when distccd can't be reached
+# If distccd can't be reached, fail
 ENV DISTCC_FALLBACK=0
 
 # Connect to distccd on default docker network
-ENV DISTCC_HOSTS=172.17.0.1:{{ compiler_arch|compiler_port }}
+ENV DISTCC_HOSTS=172.17.0.1:{{ host_arch|compiler_port }}
 
 RUN \
   chmod +x /scripts/* && \

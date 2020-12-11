@@ -37,7 +37,7 @@ _anchors:
       sudo service docker restart
       docker version -f '{{ '{{.Server.Experimental}}' }}'
 
-name: {{ distro }}
+name: {{ distro.name }}
 
 on:
   push:
@@ -45,7 +45,7 @@ on:
     tags: [ '*' ]
 
 jobs:
-  {% for host_arch in host_archs %}
+  {% for host_arch in distro.host_archs %}
   build-host-{{ host_arch }}:
     name: |
       host: {{ host_arch }}
@@ -61,22 +61,20 @@ jobs:
       - name: Build host image
         run: |
           ./builder.py build-host \
-            --distro {{ distro }} \
+            --distro {{ distro.name }} \
             --host-arch {{ host_arch }} \
             --version $(basename {% raw %}${{ github.event.ref }}{% endraw %}) \
             --push
   {% endfor %}
 
-  {% for compiler_arch in compiler_archs %}
+  {% for compiler_arch in distro.compiler_archs %}
   build-client-{{ compiler_arch }}:
     name: |
       client: {{ compiler_arch }}
 
     runs-on: ubuntu-latest
     needs:
-      {% for host_arch in host_archs %}
-      - build-host-{{ host_arch }}
-      {% endfor %}
+      - build-host-amd64
 
     steps:
       - *checkout_repo
@@ -88,7 +86,7 @@ jobs:
       - name: Build client image
         run: |
           ./builder.py build-client \
-            --distro {{ distro }} \
+            --distro {{ distro.name }} \
             --client-arch {{ compiler_arch }} \
             --version $(basename {% raw %}${{ github.event.ref }}{% endraw %}) \
             --push
@@ -100,7 +98,10 @@ jobs:
 
     runs-on: ubuntu-latest
     needs:
-      {% for compiler_arch in compiler_archs %}
+      {% for host_arch in distro.host_archs %}
+      - build-host-{{ host_arch }}
+      {% endfor %}
+      {% for compiler_arch in distro.compiler_archs %}
       - build-client-{{ compiler_arch }}
       {% endfor %}
 
@@ -113,13 +114,13 @@ jobs:
       - name: Push host manifest
         run: |
           ./builder.py push-host-manifest \
-            --distro {{ distro }} \
+            --distro {{ distro.name }} \
             --version $(basename {% raw %}${{ github.event.ref }}{% endraw %})
 
       - name: Push client manifest
         run: |
           ./builder.py push-client-manifest \
-            --distro {{ distro }} \
+            --distro {{ distro.name }} \
             --version $(basename {% raw %}${{ github.event.ref }}{% endraw %})
 
   tag_latest:
@@ -139,11 +140,11 @@ jobs:
       - name: Tag host latest
         run: |
           ./builder.py tag-host-latest \
-            --distro {{ distro }} \
+            --distro {{ distro.name }} \
             --version $(basename {% raw %}${{ github.event.ref }}{% endraw %})
 
       - name: Tag client latest
         run: |
           ./builder.py tag-client-latest \
-            --distro {{ distro }} \
+            --distro {{ distro.name }} \
             --version $(basename {% raw %}${{ github.event.ref }}{% endraw %})

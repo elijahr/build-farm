@@ -1,5 +1,5 @@
 ARG ARCH={{ host_arch }}
-FROM {{ distro }}
+FROM {{ distro.name }}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -8,16 +8,12 @@ RUN apt-get update; \
     {{ host_arch|apt_packages }}; \
   apt-get clean
 
-COPY etc/default/distccd.host-{{ host_arch }}.* /etc/default/
-COPY etc/init.d/distccd.host-{{ host_arch }}.* /etc/init.d/
-COPY etc/logrotate.d/distccd.host-{{ host_arch }}.* /etc/logrotate.d/
-
 RUN mkdir -p /scripts/
 COPY scripts/* /scripts/
 
 RUN \
-  chmod +x /etc/init.d/distccd.* && chmod +x /scripts/* && \
+  chmod +x /scripts/* && \
   /scripts/setup.sh && rm /scripts/setup.sh && \
   /scripts/test-arch.sh {{ host_arch }} && rm /scripts/test-arch.sh
 
-CMD /scripts/run.sh
+CMD /scripts/run-{{ host_arch }}.sh

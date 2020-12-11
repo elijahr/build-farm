@@ -1,0 +1,24 @@
+ARG ARCH={{ host_arch }}
+FROM {{ distro.name }}
+
+# Install deps
+RUN \
+  apk add --no-cache distcc gcc g++ make
+
+{% if host_arch in distro.toolchain_urls_by_host_arch %}
+# Install pre-built musl cross toolchains
+ADD \{% for compiler_arch in host_arch|compiler_archs %}{% if compiler_arch in distro.toolchain_urls_by_host_arch[host_arch] %}
+  {{ distro.toolchain_urls_by_host_arch[host_arch][compiler_arch] }} \{% endif %}{% endfor %}
+  /toolchains/
+{% endif %}
+
+WORKDIR /root
+
+COPY scripts/* /scripts/
+
+RUN \
+  chmod +x /scripts/* && \
+  /scripts/test-arch.sh {{ host_arch }} && rm /scripts/test-arch.sh && \
+  /scripts/setup.sh && rm /scripts/setup.sh
+
+CMD /scripts/run-{{ host_arch }}.sh

@@ -8,14 +8,11 @@ RUN \
 
 # Install pre-built cross-compiler toolchains, as per https://archlinuxarm.org/wiki/Distcc_Cross-Compiling
 COPY toolchains/* /toolchains/
-COPY etc/conf.d/* /etc/conf.d/
-COPY usr/lib/systemd/system/* /usr/lib/systemd/system/
 COPY scripts/* /scripts/
 
 RUN \
   chmod +x /scripts/* && \
-  rm -f /usr/bin/systemctl && ln -s /scripts/systemctl3.py /usr/bin/systemctl && \
   /scripts/test-arch.sh {{ host_arch }} && rm /scripts/test-arch.sh && \
   /scripts/setup.sh && rm /scripts/setup.sh
 
-CMD /scripts/run.sh
+CMD /scripts/run-{{ host_arch }}.sh

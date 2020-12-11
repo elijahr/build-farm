@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-set -uxeo pipefail
+set -uxe
 
 useradd distcc
 
