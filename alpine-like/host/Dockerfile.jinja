@@ -3,7 +3,7 @@ FROM {{ distro.name }}
 
 # Install deps
 RUN \
-  apk add --no-cache distcc ccache gcc g++ make
+  apk add --no-cache distcc gcc g++ make
 
 {% if host_arch in distro.toolchain_urls_by_host_arch %}
 # Install pre-built musl cross toolchains
