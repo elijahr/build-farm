@@ -2,16 +2,23 @@
 
 set -uxe
 
-if [ -d /toolchaiinis ]
+if [ -d /toolchains ]
 then
   cd /toolchains
-  for file in *.tgz;
+  for file in *.tgz
   do
-    if [[ "$file" != "*.tgz" ]];
+    if [ "$file" != "*.tgz" ]
     then
-      tar xzf $file;
-      rm $file;
-    fi;
+      tar xzf $file &
+    fi
+  done
+  wait
+  for file in *.tgz
+  do
+    if [ "$file" != "*.tgz" ]
+    then
+      rm $file
+    fi
   done
   cd -
 fi
