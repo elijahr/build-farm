@@ -42,8 +42,8 @@ class Dumper(yaml.RoundTripDumper):
         return True
 
 
-def slugify(string):
-    return re.sub(r"[^\w]", "-", string).lower()
+def slugify(string, delim="-"):
+    return re.sub(r"[^\w]", delim, string).lower()
 
 
 docker_manifest_args = {
@@ -252,6 +252,10 @@ class Distro(metaclass=abc.ABCMeta):
     @property
     def slug(self):
         return slugify(self.name)
+
+    @property
+    def identifier(self):
+        return slugify(self.name, "_")
 
     def get_template_context(self, **context):
         context.update(
@@ -794,15 +798,15 @@ def render_readme():
     env = Environment(autoescape=False, undefined=StrictUndefined)
     env.filters["slugify"] = slugify
     with PROJECT_DIR:
+        context = dict(
+            project_name="build-farm",
+            repo="elijahr/build-farm",
+            Distro=Distro,
+        )
+        for distro in Distro.registry.values():
+            context[distro.identifier] = distro
         with open("README.md.jinja", "r") as f:
-            rendered = env.from_string(f.read()).render(
-                project_name="build-farm",
-                repo="elijahr/build-farm",
-                debian_buster=debian_buster,
-                debian_buster_slim=debian_buster_slim,
-                archlinux=archlinux,
-                Distro=Distro,
-            )
+            rendered = env.from_string(f.read()).render(**context)
         with open("README.md", "w") as f:
             f.write(rendered)
         print("Rendered README.md.jinja -> README.md")

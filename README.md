@@ -5,6 +5,8 @@
 
 ![archlinux](https://github.com/elijahr/build-farm/workflows/archlinux/badge.svg)
 
+![alpine:3.12](https://github.com/elijahr/build-farm/workflows/alpine%3A3.12/badge.svg)
+
 
 # build-farm
 
@@ -20,17 +22,48 @@ Fast & easy cross-compiling with `docker` and `distcc`.
 
 Each host container runs at least one distccd daemon. Each daemon listens on a different port, targeting a different compiler toolchain.
 
+#### Alpine Linux
+
+The multi-architecture `elijahru/build-farm:alpine_3_12` image expose the following compilers:
+
+| Host arch  | Target arch | Compiler port |
+|------------|-------------|---------------|
+| `amd64`    | `amd64`     | 3804          |
+| `amd64`    | `i386`      | 3803          |
+| `amd64`    | `arm32v6`   | 3806          |
+| `amd64`    | `arm32v7`   | 3807          |
+| `amd64`    | `arm64v8`   | 3808          |
+| `amd64`    | `ppc64le`   | 3810          |
+| `amd64`    | `s390x`     | 3809          |
+| `i386`     | `amd64`     | 3804          |
+| `i386`     | `i386`      | 3803          |
+| `i386`     | `arm32v6`   | 3806          |
+| `i386`     | `arm32v7`   | 3807          |
+| `i386`     | `arm64v8`   | 3808          |
+| `i386`     | `ppc64le`   | 3810          |
+| `i386`     | `s390x`     | 3809          |
+| `arm32v6`  | `arm32v6`   | 3806          |
+| `arm32v7`  | `arm32v7`   | 3807          |
+| `arm64v8`  | `arm64v8`   | 3808          |
+| `ppc64le`  | `ppc64le`   | 3810          |
+| `s390x`    | `s390x`     | 3809          |
+
 #### Arch Linux
 
-The `elijahru/build-farm:archlinux` image exposes the following compilers:
+The multi-architecture `elijahru/build-farm:archlinux` image exposes the following compilers:
 
-| Host arch | Target arch | Compiler port |
-|-----------|-------------|---------------|
-| `amd64`   | `amd64`     | 3704          |
-| `amd64`   | `arm32v5`   | 3705          |
-| `amd64`   | `arm32v6`   | 3706          |
-| `amd64`   | `arm32v7`   | 3707          |
-| `amd64`   | `arm64v8`   | 3708          |
+| Host arch  | Target arch | Compiler port |
+|------------|-------------|---------------|
+| `amd64`    | `amd64`     | 3704          |
+| `amd64`    | `arm32v5`   | 3705          |
+| `amd64`    | `arm32v6`   | 3706          |
+| `amd64`    | `arm32v7`   | 3707          |
+| `amd64`    | `arm64v8`   | 3708          |
+| `arm32v5`  | `arm32v5`   | 3705          |
+| `arm32v6`  | `arm32v6`   | 3706          |
+| `arm32v7`  | `arm32v7`   | 3707          |
+| `arm64v8`  | `arm64v8`   | 3708          |
+
 
 #### Debian Buster
 
@@ -95,15 +128,27 @@ Windows hasn't been tested. You can install QEMU via https://www.qemu.org/downlo
 
 The client containers also use ccache to avoid repeat compilation. ccached object files are volatile unless you mount /root/.ccache as a volume (see examples).
 
+#### Alpine Linux
+
+| Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
+|-----------------------|----------------------------------------------------------------------|-------------------|
+| `amd64`               | `elijahru/build-farm-client:alpine-3-12--amd64`                      | `172.17.0.1:3804` |
+| `i386`                | `elijahru/build-farm-client:alpine-3-12--i386`                       | `172.17.0.1:3803` |
+| `arm32v6`             | `elijahru/build-farm-client:alpine-3-12--arm32v6`                    | `172.17.0.1:3806` |
+| `arm32v7`             | `elijahru/build-farm-client:alpine-3-12--arm32v7`                    | `172.17.0.1:3807` |
+| `arm64v8`             | `elijahru/build-farm-client:alpine-3-12--arm64v8`                    | `172.17.0.1:3808` |
+| `ppc64le`             | `elijahru/build-farm-client:alpine-3-12--ppc64le`                    | `172.17.0.1:3810` |
+| `s390x`               | `elijahru/build-farm-client:alpine-3-12--s390x`                      | `172.17.0.1:3809` |)
+
 #### Arch Linux
 
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
 |-----------------------|----------------------------------------------------------------------|-------------------|
-| `amd64` (`x86_64`)    | `elijahru/build-farm-client:archlinux--amd64`       | `172.17.0.1:3704` |
-| `arm32v5`             | `elijahru/build-farm-client:archlinux--arm32v5`     | `172.17.0.1:3705` |
-| `arm32v6`             | `elijahru/build-farm-client:archlinux--arm32v6`     | `172.17.0.1:3706` |
-| `arm32v7`             | `elijahru/build-farm-client:archlinux--arm32v7`     | `172.17.0.1:3707` |
-| `arm64v8` (`aarch64`) | `elijahru/build-farm-client:archlinux--arm64v8`     | `172.17.0.1:3708` |
+| `amd64`               | `elijahru/build-farm-client:archlinux--amd64`                        | `172.17.0.1:3704` |
+| `arm32v5`             | `elijahru/build-farm-client:archlinux--arm32v5`                      | `172.17.0.1:3705` |
+| `arm32v6`             | `elijahru/build-farm-client:archlinux--arm32v6`                      | `172.17.0.1:3706` |
+| `arm32v7`             | `elijahru/build-farm-client:archlinux--arm32v7`                      | `172.17.0.1:3707` |
+| `arm64v8`             | `elijahru/build-farm-client:archlinux--arm64v8`                      | `172.17.0.1:3708` |)
 
 #### Debian Buster
 
@@ -142,6 +187,136 @@ services:
       # Cache resulting object code between builds
       - ./caches/arm64v8/ccache:/root/.ccache
     command: ./configure && make
+```
+
+### Advanced example: cross-compiler matrix for all available Alpine Linux targets
+
+```yml
+version: '3'
+services:
+  build-host:
+    image: elijahru/build-farm:alpine-3-12--amd64
+    ports:
+      # amd64
+      - 3804:3804
+      # i386
+      - 3803:3803
+      # arm32v6
+      - 3806:3806
+      # arm32v7
+      - 3807:3807
+      # arm64v8
+      - 3808:3808
+      # ppc64le
+      - 3810:3810
+      # s390x
+      - 3809:3809
+  
+  build-client-amd64:
+    image: elijahru/build-farm-client:alpine-3-12--amd64
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-i386:
+    image: elijahru/build-farm-client:alpine-3-12--i386
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-arm32v6:
+    image: elijahru/build-farm-client:alpine-3-12--arm32v6
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-arm32v7:
+    image: elijahru/build-farm-client:alpine-3-12--arm32v7
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-arm64v8:
+    image: elijahru/build-farm-client:alpine-3-12--arm64v8
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-ppc64le:
+    image: elijahru/build-farm-client:alpine-3-12--ppc64le
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-s390x:
+    image: elijahru/build-farm-client:alpine-3-12--s390x
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+```
+
+### Advanced example: cross-compiler matrix for all available Arch Linux targets
+
+```yml
+version: '3'
+services:
+  build-host:
+    image: elijahru/build-farm:archlinux--amd64
+    ports:
+      # amd64
+      - 3704:3704
+      # arm32v5
+      - 3705:3705
+      # arm32v6
+      - 3706:3706
+      # arm32v7
+      - 3707:3707
+      # arm64v8
+      - 3708:3708
+  
+  build-client-amd64:
+    image: elijahru/build-farm-client:archlinux--amd64
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-arm32v5:
+    image: elijahru/build-farm-client:archlinux--arm32v5
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-arm32v6:
+    image: elijahru/build-farm-client:archlinux--arm32v6
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-arm32v7:
+    image: elijahru/build-farm-client:archlinux--arm32v7
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
+  build-client-arm64v8:
+    image: elijahru/build-farm-client:archlinux--arm64v8
+    volumes:
+      - .:/code
+      - ./caches/amd64/ccache:/root/.ccache
+    command: ./configure && make
+  
 ```
 
 ### Advanced example: cross-compiler matrix for all available Debian targets
@@ -214,62 +389,6 @@ services:
   
   build-client-mips64le:
     image: elijahru/build-farm-client:debian-buster--mips64le
-    volumes:
-      - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
-    command: ./configure && make
-  
-```
-
-### Advanced example: cross-compiler matrix for all available Arch Linux targets
-
-```yml
-version: '3'
-services:
-  build-host:
-    image: elijahru/build-farm:archlinux--amd64
-    ports:
-      # amd64
-      - 3704:3704
-      # arm32v5
-      - 3705:3705
-      # arm32v6
-      - 3706:3706
-      # arm32v7
-      - 3707:3707
-      # arm64v8
-      - 3708:3708
-  
-  build-client-amd64:
-    image: elijahru/build-farm-client:archlinux--amd64
-    volumes:
-      - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
-    command: ./configure && make
-  
-  build-client-arm32v5:
-    image: elijahru/build-farm-client:archlinux--arm32v5
-    volumes:
-      - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
-    command: ./configure && make
-  
-  build-client-arm32v6:
-    image: elijahru/build-farm-client:archlinux--arm32v6
-    volumes:
-      - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
-    command: ./configure && make
-  
-  build-client-arm32v7:
-    image: elijahru/build-farm-client:archlinux--arm32v7
-    volumes:
-      - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
-    command: ./configure && make
-  
-  build-client-arm64v8:
-    image: elijahru/build-farm-client:archlinux--arm64v8
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -399,7 +518,7 @@ services:
 
 ### Contributing
 
-Adding new target operating systems should be fairly straightforward by following the existing patterns for Debian and Arch Linux. Please do submit pull requests.
+Adding new target operating systems should be fairly straightforward by following the existing distro patterns. Please do submit pull requests.
 
 Most of the work happens via `builder.py build-host` and `builder.py build-client`. Pass `--help` for usage.
 
@@ -411,12 +530,16 @@ If you are looking for an idea, contributions for the following are especially w
 
 * Make ccache optional in the client containers via an environment variable
 * A GitHub Action for GitHub Marketplace to make using these containers in CI easier
-* Windows arm64v8 toolchain?
+* Windows amd64 and arm64v8 support?
 
 ### Changelog
 
+* 2020-12-11
+  * Added Alpine 3.12 images
+  * Added Arch Linux ARM hosts
+
 * 2020-12-05
-  * Consolidated hosts to new container [`elijahru/build-farm`](https://hub.docker.com/r/elijahru/build-farm).
-  * Consolidated clients to new container [`elijahru/build-farm-client`](https://hub.docker.com/r/elijahru/build-farm-client).
+  * Consolidated hosts to new container [`elijahru/build-farm`](https://hub.docker.com/repository/docker/elijahru/build-farm).
+  * Consolidated clients to new container [`elijahru/build-farm-client`](https://hub.docker.com/repository/docker/elijahru/build-farm-client).
   * Added `debian:buster-slim` based containers.
   * Added `mips64le` and `arm32v5` architectures for `debian`.
