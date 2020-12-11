@@ -4,19 +4,19 @@ set -ue
 
 echo "Checking for .github/workflows/build.yml.jinja changes..."
 
-if [[ "$(git diff-index --cached HEAD --name-only)" != "" ]]
+if [ "$(git diff-index --cached HEAD --name-only)" != "" ]
 then
 
 	files=( $(git diff-index --cached HEAD --name-only) )
 
 	for file in ${files[@]}
 	do
-		if [[ "$file" == ".github/workflows/build.yml.jinja" ]]
+		if [ "$file" == ".github/workflows/build.yml.jinja" ]
 		then
 			echo "Change detected, re-rendering GitHub Actions"
 			pipenv run ./builder.py render-github-actions
 			git add .github/workflows/*.yml || true
-		elif [[ "$file" == "README.md.jinja" ]]
+		elif [ "$file" == "README.md.jinja" ]
 		then
 				echo "Change detected, re-rendering README"
 			pipenv run ./builder.py render-readme
@@ -25,8 +25,11 @@ then
 
 		case $file in
 			*.py)
-				pipenv run black $file
-				git add $file
+				if [ -f "$file" ]
+				then
+					pipenv run black $file
+					git add $file
+				fi
 				;;
 		esac
 	done

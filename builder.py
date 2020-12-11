@@ -265,6 +265,7 @@ class Distro(metaclass=abc.ABCMeta):
         with self.set_context(**context):
             self.render_dockerfile_host()
             self.render_dockerfile_client()
+            self.render_run_sh()
             self.render_docker_compose()
             self.render_github_actions()
 
@@ -354,6 +355,14 @@ class Distro(metaclass=abc.ABCMeta):
             )
             # Replace YAML aliases in rendered jinja output
             self.interpolate_yaml(self.github_actions_yml_path)
+
+    def render_run_sh(self):
+        for host_arch in self.host_archs:
+            with self.set_context(host_arch=host_arch):
+                self.render_template(
+                    self.template_path / "host/build-context/scripts/run.sh.jinja",
+                    self.out_path / f"host/build-context/scripts/run-{host_arch}.sh",
+                )
 
     def build_host(self, host_arch, version, push=False):
         configure_qemu()
@@ -636,37 +645,6 @@ class DebianLike(Distro):
             return ""
         return Path("/usr/local/") / self.toolchains_by_arch[compiler_arch] / "bin:"
 
-    def render(self, **context):
-        with self.set_context(**context):
-            super(DebianLike, self).render(**context)
-            self.render_initd_distccd()
-
-    def render_initd_distccd(self):
-        for host_arch in self.host_archs:
-            for compiler_arch in self.compiler_archs_by_host_arch[host_arch]:
-                with self.set_context(host_arch=host_arch, compiler_arch=compiler_arch):
-                    self.render_template(
-                        self.template_path
-                        / "host/build-context/etc/default/distccd.jinja",
-                        self.out_path
-                        / "host/build-context/etc/default"
-                        / "distccd.host-{host_arch}.compiler-{compiler_arch}",
-                    )
-                    self.render_template(
-                        self.template_path
-                        / "host/build-context/etc/init.d/distccd.jinja",
-                        self.out_path
-                        / "host/build-context/etc/init.d"
-                        / "distccd.host-{host_arch}.compiler-{compiler_arch}",
-                    )
-                    self.render_template(
-                        self.template_path
-                        / "host/build-context/etc/logrotate.d/distccd.jinja",
-                        self.out_path
-                        / "host/build-context/etc/logrotate.d"
-                        / "distccd.host-{host_arch}.compiler-{compiler_arch}",
-                    )
-
 
 class ArchLinuxLike(Distro):
     template_path = Path("archlinux-like")
@@ -706,30 +684,6 @@ class ArchLinuxLike(Distro):
         if self.context["host_arch"] == compiler_arch:
             return ""
         return Path(self.toolchains_by_arch[compiler_arch]) / "bin:"
-
-    def render(self, **context):
-        with self.set_context(**context):
-            super(ArchLinuxLike, self).render(**context)
-            self.render_systemd_distccd()
-
-    def render_systemd_distccd(self):
-        for host_arch in self.host_archs:
-            for compiler_arch in self.compiler_archs_by_host_arch[host_arch]:
-                with self.set_context(host_arch=host_arch, compiler_arch=compiler_arch):
-                    self.render_template(
-                        self.template_path
-                        / "host/build-context/etc/conf.d/distccd.jinja",
-                        self.out_path
-                        / "host/build-context/etc/conf.d"
-                        / "distccd.host-{host_arch}.compiler-{compiler_arch}",
-                    )
-                    self.render_template(
-                        self.template_path
-                        / "host/build-context/usr/lib/systemd/system/distccd.service.jinja",
-                        self.out_path
-                        / "host/build-context/usr/lib/systemd/system"
-                        / "distccd.host-{host_arch}.compiler-{compiler_arch}.service",
-                    )
 
 
 class AlpineLike(Distro):
@@ -789,7 +743,6 @@ class AlpineLike(Distro):
             "ppc64le": "https://more.musl.cc/9/i686-linux-musl/powerpc64le-linux-musl-cross.tgz",
         },
     }
-
     toolchains_by_arch = {
         "i386": "/toolchains/i686-linux-musl-cross",
         "amd64": "/toolchains/x86_64-linux-musl-cross",
@@ -804,19 +757,6 @@ class AlpineLike(Distro):
         if self.context["host_arch"] == compiler_arch:
             return ""
         return Path(self.toolchains_by_arch[compiler_arch]) / "bin:"
-
-    def render(self, **context):
-        with self.set_context(**context):
-            super(AlpineLike, self).render(**context)
-            self.render_run_sh()
-
-    def render_run_sh(self):
-        for host_arch in self.host_archs:
-            with self.set_context(host_arch=host_arch):
-                self.render_template(
-                    self.template_path / "host/build-context/scripts/run.sh.jinja",
-                    self.out_path / f"host/build-context/scripts/run-{host_arch}.sh",
-                )
 
 
 # Register supported distributions

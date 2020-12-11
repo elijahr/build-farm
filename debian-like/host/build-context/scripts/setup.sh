@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Symlink gcc, g++, etc to the cross-compilers.
 # distccd will use these symlinks if /usr/local/${target}/bin is placed
@@ -36,8 +36,6 @@ do
     then
       ln -s /usr/bin/${target}-gcc $link
     fi
-
-    update-rc.d distccd-${target} defaults
   fi
 done
 

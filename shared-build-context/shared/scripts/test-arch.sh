@@ -2,7 +2,6 @@
 
 set -uxe
 
-
 EXPECTED_ARCH=${1:-}
 
 normalize_to_docker_arch () {
@@ -25,7 +24,7 @@ normalize_to_docker_arch () {
     x86_64 | x64)
       # Detect i386 container on amd64 using __amd64 definition
       IS_AMD64=$(gcc -dM -E - < /dev/null | grep "#define __amd64 " | sed 's/#define __amd64 //')
-      if [[ "$IS_AMD64" == "1" ]]
+      if [ "$IS_AMD64" = "1" ]
       then
         echo amd64
       else
@@ -52,4 +51,4 @@ normalize_to_docker_arch () {
   esac
 }
 
-test "$EXPECTED_ARCH" == "$(normalize_to_docker_arch)"
+test "$EXPECTED_ARCH" = "$(normalize_to_docker_arch)"
