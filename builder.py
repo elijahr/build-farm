@@ -290,6 +290,8 @@ class Distro(metaclass=abc.ABCMeta):
                         )
                     )
                     for f in files:
+                        if ".jinja" in f:
+                            continue
                         if not os.path.exists(os.path.dirname(new_root / f)):
                             os.makedirs(os.path.dirname(new_root / f))
                         shutil.copyfile(root / f, new_root / f)
@@ -304,6 +306,8 @@ class Distro(metaclass=abc.ABCMeta):
                         )
                     )
                     for f in files:
+                        if ".jinja" in f:
+                            continue
                         if not os.path.exists(os.path.dirname(new_root / f)):
                             os.makedirs(os.path.dirname(new_root / f))
                         shutil.copyfile(root / f, new_root / f)
@@ -319,6 +323,8 @@ class Distro(metaclass=abc.ABCMeta):
                             )
                         )
                         for f in files:
+                            if ".jinja" in f:
+                                continue
                             if not os.path.exists(os.path.dirname(new_root / f)):
                                 os.makedirs(os.path.dirname(new_root / f))
                             shutil.copyfile(root / f, new_root / f)
@@ -360,7 +366,7 @@ class Distro(metaclass=abc.ABCMeta):
         for host_arch in self.host_archs:
             with self.set_context(host_arch=host_arch):
                 self.render_template(
-                    self.template_path / "host/build-context/scripts/run.sh.jinja",
+                    "shared-build-context/host/scripts/run.sh.jinja",
                     self.out_path / f"host/build-context/scripts/run-{host_arch}.sh",
                 )
 
