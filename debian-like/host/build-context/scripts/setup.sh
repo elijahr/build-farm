@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Symlink gcc, g++, etc to the cross-compilers.
 # distccd will use these symlinks if /usr/local/${target}/bin is placed

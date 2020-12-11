@@ -92,7 +92,13 @@ class Distro(metaclass=abc.ABCMeta):
     toolchains_by_arch = {}
     compiler_archs_by_host_arch = {}
 
-    def __init__(self, name, host_image, client_image):
+    def __init__(
+        self,
+        *,
+        name,
+        host_image="elijahru/build-farm",
+        client_image="elijahru/build-farm-client",
+    ):
         self.name = name
         self.host_image = host_image
         self.client_image = client_image
@@ -145,27 +151,27 @@ class Distro(metaclass=abc.ABCMeta):
 
     def host_manifest_tags(self, version):
         return (
-            f"{self.host_image}:{slugify(self.name)}--{version}",
-            f"{self.host_image}:{slugify(self.name)}",
+            f"{self.host_image}:{self.slug}--{version}",
+            f"{self.host_image}:{self.slug}",
         )
 
     def host_image_tag(self, version, arch):
-        return f"{self.host_image}:{slugify(self.name)}--{arch}--{version}"
+        return f"{self.host_image}:{self.slug}--{arch}--{version}"
 
     def host_image_latest_tag(self, arch):
-        return f"{self.host_image}:{slugify(self.name)}--{arch}"
+        return f"{self.host_image}:{self.slug}--{arch}"
 
     def client_manifest_tags(self, version):
         return (
-            f"{self.client_image}:{slugify(self.name)}--{version}",
-            f"{self.client_image}:{slugify(self.name)}",
+            f"{self.client_image}:{self.slug}--{version}",
+            f"{self.client_image}:{self.slug}",
         )
 
     def client_image_tag(self, version, arch):
-        return f"{self.client_image}:{slugify(self.name)}--{arch}--{version}"
+        return f"{self.client_image}:{self.slug}--{arch}--{version}"
 
     def client_image_latest_tag(self, arch):
-        return f"{self.client_image}:{slugify(self.name)}--{arch}"
+        return f"{self.client_image}:{self.slug}--{arch}"
 
     @contextlib.contextmanager
     def set_context(self, **context):
@@ -187,7 +193,14 @@ class Distro(metaclass=abc.ABCMeta):
             dir_name = os.path.dirname(out_path)
             if not os.path.exists(dir_name):
                 os.makedirs(dir_name)
-            rendered = f"# Rendered from {template_path}\n\n" + rendered
+
+            lines = rendered.split("\n")
+            if lines and lines[0].startswith("#!"):
+                lines.insert(1, f"# Rendered from {template_path}\n")
+            else:
+                lines.insert(0, f"# Rendered from {template_path}\n")
+            rendered = "\n".join(lines)
+
             with open(out_path, "w") as f:
                 f.write(rendered)
             print(f"Rendered {template_path} -> {out_path}")
@@ -218,30 +231,32 @@ class Distro(metaclass=abc.ABCMeta):
 
     @property
     def github_actions_yml_path(self):
-        return Path(f".github/workflows/{slugify(self.name)}.yml")
+        return Path(f".github/workflows/{self.slug}.yml")
 
     def clean(self):
         if os.path.exists(self.out_path):
             shutil.rmtree(self.out_path)
             print(f"Removed {self.out_path}")
+        if os.path.exists(self.github_actions_yml_path):
+            os.unlink(self.github_actions_yml_path)
+            print(f"Removed {self.github_actions_yml_path}")
 
     @property
     def out_path(self):
-        return Path(slugify(self.name))
+        return Path(self.slug)
 
     @abc.abstractmethod
     def get_compiler_path_part(self, compiler_arch):
         ...
 
+    @property
+    def slug(self):
+        return slugify(self.name)
+
     def get_template_context(self, **context):
         context.update(
             dict(
-                distro=self.name,
-                host_image=self.host_image,
-                client_image=self.client_image,
-                distro_slug=slugify(self.name),
-                host_archs=self.host_archs,
-                compiler_archs=self.compiler_archs,
+                distro=self,
             )
         )
         return context
@@ -605,8 +620,8 @@ class DebianLike(Distro):
         "mips64le": "START_DISTCC_MIPS64LE_LINUX_GNU",
     }
 
-    def __init__(self, name, host_image, client_image):
-        super(DebianLike, self).__init__(name, host_image, client_image)
+    def __init__(self, **kwargs):
+        super(DebianLike, self).__init__(**kwargs)
         self.env.filters["flag"] = self.flags_by_arch.get
         self.env.filters["apt_packages"] = self.get_apt_packages
 
@@ -674,11 +689,11 @@ class ArchLinuxLike(Distro):
         ),
     }
     ports_by_arch = {
-        "amd64": 3704,
-        "arm32v5": 3705,
-        "arm32v6": 3706,
-        "arm32v7": 3707,
-        "arm64v8": 3708,
+        "amd64": "3704",
+        "arm32v5": "3705",
+        "arm32v6": "3706",
+        "arm32v7": "3707",
+        "arm64v8": "3708",
     }
     toolchains_by_arch = {
         "arm32v5": "/toolchains/x-tools/arm-unknown-linux-gnueabi",
@@ -717,21 +732,105 @@ class ArchLinuxLike(Distro):
                     )
 
 
+class AlpineLike(Distro):
+    template_path = Path("alpine-like")
+
+    host_archs = (
+        "amd64",
+        "i386",
+        "arm32v6",
+        "arm32v7",
+        "arm64v8",
+        "ppc64le",
+        "s390x",
+    )
+    compiler_archs = (
+        "amd64",
+        "i386",
+        "arm32v6",
+        "arm32v7",
+        "arm64v8",
+        "ppc64le",
+        "s390x",
+    )
+    compiler_archs_by_host_arch = {
+        "amd64": ("amd64", "i386", "arm32v6", "arm32v7", "arm64v8", "ppc64le", "s390x"),
+        "i386": ("amd64", "i386", "arm32v6", "arm32v7", "arm64v8", "ppc64le", "s390x"),
+        "arm32v6": ("arm32v6",),
+        "arm32v7": ("arm32v7",),
+        "arm64v8": ("arm64v8",),
+        "ppc64le": ("ppc64le",),
+        "s390x": ("s390x",),
+    }
+    ports_by_arch = {
+        "i386": "3803",
+        "amd64": "3804",
+        "arm32v6": "3806",
+        "arm32v7": "3807",
+        "arm64v8": "3808",
+        "s390x": "3809",
+        "ppc64le": "3810",
+    }
+    toolchain_urls_by_host_arch = {
+        "amd64": {
+            "i386": "https://more.musl.cc/9/x86_64-linux-musl/i686-linux-musl-cross.tgz",
+            "arm32v6": "https://more.musl.cc/9/x86_64-linux-musl/armel-linux-musleabi-cross.tgz",
+            "arm32v7": "https://more.musl.cc/9/x86_64-linux-musl/armel-linux-musleabihf-cross.tgz",
+            "arm64v8": "https://more.musl.cc/9/x86_64-linux-musl/aarch64-linux-musl-cross.tgz",
+            "s390x": "https://more.musl.cc/9/x86_64-linux-musl/s390x-linux-musl-cross.tgz",
+            "ppc64le": "https://more.musl.cc/9/x86_64-linux-musl/powerpc64le-linux-musl-cross.tgz",
+        },
+        "i386": {
+            "amd64": "https://more.musl.cc/9/i686-linux-musl/x86_64-linux-musl-cross.tgz",
+            "arm32v6": "https://more.musl.cc/9/i686-linux-musl/armel-linux-musleabi-cross.tgz",
+            "arm32v7": "https://more.musl.cc/9/i686-linux-musl/armel-linux-musleabihf-cross.tgz",
+            "arm64v8": "https://more.musl.cc/9/i686-linux-musl/aarch64-linux-musl-cross.tgz",
+            "s390x": "https://more.musl.cc/9/i686-linux-musl/s390x-linux-musl-cross.tgz",
+            "ppc64le": "https://more.musl.cc/9/i686-linux-musl/powerpc64le-linux-musl-cross.tgz",
+        },
+    }
+
+    toolchains_by_arch = {
+        "i386": "/toolchains/i686-linux-musl-cross",
+        "amd64": "/toolchains/x86_64-linux-musl-cross",
+        "arm32v6": "/toolchains/armel-linux-musleabi-cross",
+        "arm32v7": "/toolchains/armel-linux-musleabihf-cross",
+        "arm64v8": "/toolchains/aarch64-linux-musl-cross",
+        "s390x": "/toolchains/s390x-linux-musl-cross",
+        "ppc64le": "/toolchains/powerpc64le-linux-musl-cross",
+    }
+
+    def get_compiler_path_part(self, compiler_arch):
+        if self.context["host_arch"] == compiler_arch:
+            return ""
+        return Path(self.toolchains_by_arch[compiler_arch]) / "bin:"
+
+    def render(self, **context):
+        with self.set_context(**context):
+            super(AlpineLike, self).render(**context)
+            self.render_run_sh()
+
+    def render_run_sh(self):
+        for host_arch in self.host_archs:
+            with self.set_context(host_arch=host_arch):
+                self.render_template(
+                    self.template_path / "host/build-context/scripts/run.sh.jinja",
+                    self.out_path / f"host/build-context/scripts/run-{host_arch}.sh",
+                )
+
+
 # Register supported distributions
 debian_buster = DebianLike(
     name="debian:buster",
-    host_image="elijahru/build-farm",
-    client_image="elijahru/build-farm-client",
 )
 debian_buster_slim = DebianLike(
     name="debian:buster-slim",
-    host_image="elijahru/build-farm",
-    client_image="elijahru/build-farm-client",
 )
 archlinux = ArchLinuxLike(
     name="archlinux",
-    host_image="elijahru/build-farm",
-    client_image="elijahru/build-farm-client",
+)
+alpine_3_12 = AlpineLike(
+    name="alpine:3.12",
 )
 
 

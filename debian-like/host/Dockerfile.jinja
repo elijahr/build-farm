@@ -1,5 +1,5 @@
 ARG ARCH={{ host_arch }}
-FROM {{ distro }}
+FROM {{ distro.name }}
 
 ENV DEBIAN_FRONTEND=noninteractive
 

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+export ORIGINAL_PATH=$PATH
+
+mkdir -p /var/run/distccd
+chown distcc:distcc /var/run/distccd
+
+{% for compiler_arch in host_arch|compiler_archs %}
+export PATH="{{ compiler_arch|compiler_path_part }}${ORIGINAL_PATH}"
+distccd \
+  --daemon \
+  --user distcc \
+  --no-detach \
+  --log-stderr \
+  --log-level info \
+  --allow 0.0.0.0 \
+  --listen 0.0.0.0 \
+  --port {{ compiler_arch|compiler_port }} \
+  --pid-file /var/run/distccd/distccd-{{ compiler_arch }}.pid \
+  &
+{% endfor %}
+
+wait

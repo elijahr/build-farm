@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -uxeo pipefail
 shopt -s nullglob

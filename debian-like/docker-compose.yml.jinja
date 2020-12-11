@@ -1,15 +1,15 @@
 version: '3'
-services:{% for host_arch in host_archs %}
+services:{% for host_arch in distro.host_archs %}
   host-{{ host_arch }}:
-    image: {{ version | host_image_tag(host_arch) }}
+    image: {{ distro.host_image_tag(version, host_arch) }}
     ports:
       {% for compiler_arch in host_arch|compiler_archs %}
       # {{ compiler_arch }}
       - {{ compiler_arch|compiler_port }}:{{ compiler_arch|compiler_port }}{% endfor %}
   {% endfor %}
 
-  {% for compiler_arch in compiler_archs %}
+  {% for compiler_arch in distro.compiler_archs %}
   client-{{ compiler_arch }}:
-    image: {{ version | client_image_tag(compiler_arch) }}
+    image: {{ distro.client_image_tag(version, compiler_arch) }}
     command: /bin/sh
   {% endfor %}

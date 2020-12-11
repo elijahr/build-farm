@@ -1,6 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
 set -uxeo pipefail
+
 
 EXPECTED_ARCH=${1:-}
 
