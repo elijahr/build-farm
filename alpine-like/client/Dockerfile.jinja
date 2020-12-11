@@ -3,7 +3,7 @@ FROM {{ distro.name }}
 
 # Install deps
 RUN \
-  apk add --no-cache distcc ccache
+  apk add --no-cache distcc ccache gcc g++ make
 
 RUN \
   mkdir -p /scripts && \
@@ -13,7 +13,7 @@ COPY scripts/* /scripts/
 COPY root/.ccache/* /root/.ccache/
 
 # Use ccache wrappers first, distcc wrappers second
-ENV PATH=/usr/lib/ccache/bin:/usr/lib/distcc/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
+ENV PATH=/usr/lib/ccache/bin:/usr/lib/distcc/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # If distccd can't be reached, fail
 ENV DISTCC_FALLBACK=0

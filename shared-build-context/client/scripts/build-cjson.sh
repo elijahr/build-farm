@@ -11,7 +11,7 @@ main () {
   test "$(which cc)" == "/usr/lib/ccache/cc" || test "$(which cc)" == "/usr/lib/ccache/bin/cc"
 
   # Assert that ccache wrappers wrap distcc wrappers
-  [[ "$((gcc 2>&1 || true) | tail -n 1)" =~ ^distcc[\[0-9\]+] ]]
+  [[ "$( (gcc 2>&1 || true) | tail -n 1 | grep distcc)" != "" ]]
 
   # Print ccache config
   ccache -p
