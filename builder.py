@@ -154,57 +154,35 @@ class Distro(metaclass=abc.ABCMeta):
             raise RuntimeError("Distro context not entered")
         return self._context
 
-    def host_repo(self, registry):
-        if registry in ("", "docker.io"):
-            return f"{self.docker_io_owner}/{self.host_package}"
-        elif registry == "ghcr.io":
-            return f"{registry}/{self.ghcr_io_owner}/{self.host_package}"
-        else:
-            return self.host_package
+    def host_simple_manifest_tag(self):
+        return f"{self.host_package}:{self.slug}"
 
-    def host_simple_manifest_tag(self, registry=""):
-        return f"{self.host_repo(registry)}:{self.slug}"
+    def host_versioned_manifest_tag(self, version):
+        return f"{self.host_package}:{self.slug}--{version}"
 
-    def host_versioned_manifest_tag(self, version, registry=""):
-        return f"{self.host_repo(registry)}:{self.slug}--{version}"
-
-    def host_manifest_tags(self, version, registry=""):
+    def host_manifest_tags(self, version):
         return (
-            self.host_versioned_manifest_tag(version, registry=registry),
-            self.host_simple_manifest_tag(registry=registry),
+            self.host_versioned_manifest_tag(version),
+            self.host_simple_manifest_tag(),
         )
 
-    def host_image_tag(self, version, arch, registry=""):
-        return f"{self.host_repo(registry)}:{self.slug}--{arch_slug(arch)}--{version}"
+    def host_image_tag(self, version, arch):
+        return f"elijahr/tmp:{slugify(self.host_package)}--{self.slug}--{arch_slug(arch)}--{version}"
 
-    def host_image_latest_tag(self, arch, registry=""):
-        return f"{self.host_repo(registry)}:{self.slug}--{arch_slug(arch)}"
+    def client_simple_manifest_tag(self):
+        return f"{self.client_package}:{self.slug}"
 
-    def client_repo(self, registry):
-        if registry in ("", "docker.io"):
-            return f"{self.docker_io_owner}/{self.client_package}"
-        elif registry == "ghcr.io":
-            return f"{registry}/{self.ghcr_io_owner}/{self.client_package}"
-        else:
-            return self.client_package
+    def client_versioned_manifest_tag(self, version):
+        return f"{self.client_package}:{self.slug}--{version}"
 
-    def client_simple_manifest_tag(self, registry=""):
-        return f"{self.client_repo(registry)}:{self.slug}"
-
-    def client_versioned_manifest_tag(self, version, registry=""):
-        return f"{self.client_repo(registry)}:{self.slug}--{version}"
-
-    def client_manifest_tags(self, version, registry=""):
+    def client_manifest_tags(self, version):
         return (
-            self.client_versioned_manifest_tag(version, registry=registry),
-            self.client_simple_manifest_tag(registry=registry),
+            self.client_versioned_manifest_tag(version),
+            self.client_simple_manifest_tag(),
         )
 
-    def client_image_tag(self, version, arch, registry=""):
-        return f"{self.client_repo(registry)}:{self.slug}--{arch_slug(arch)}--{version}"
-
-    def client_image_latest_tag(self, arch, registry=""):
-        return f"{self.client_repo(registry)}:{self.slug}--{arch_slug(arch)}"
+    def client_image_tag(self, version, arch):
+        return f"elijahr/tmp:{slugify(self.client_package)}--{self.slug}--{arch_slug(arch)}--{version}"
 
     @contextlib.contextmanager
     def set_context(self, **context):
@@ -415,7 +393,7 @@ class Distro(metaclass=abc.ABCMeta):
 
         self.render(version=version)
 
-        image = self.host_image_tag(version, host_arch, registry="ghcr.io")
+        image = self.host_image_tag(version, host_arch)
         dockerfile = self.out_path / f"host/Dockerfile.{arch_slug(host_arch)}"
         try:
             docker("pull", image, "--platform", f"linux/{host_arch}")
@@ -445,7 +423,7 @@ class Distro(metaclass=abc.ABCMeta):
 
         # TODO - determine host_arch
         with self.run_host(host_arch="amd64"):
-            image = self.client_image_tag(version, client_arch, registry="ghcr.io")
+            image = self.client_image_tag(version, client_arch)
             dockerfile = self.out_path / f"client/Dockerfile.{arch_slug(client_arch)}"
             try:
                 docker("pull", image, "--platform", f"linux/{client_arch}")
@@ -472,21 +450,33 @@ class Distro(metaclass=abc.ABCMeta):
     def push_host_manifest(self, version):
         os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
 
-        images = {
-            host_arch: self.host_image_tag(version, host_arch, registry="ghcr.io")
-            for host_arch in self.host_archs
-        }
-
-        for image in images.values():
+        images = {}
+        for host_arch in self.host_archs:
+            new_image = self.host_image_tag(version, host_arch)
+            image = self.host_image_tag(version, host_arch)
+            images[host_arch] = new_image
             docker("pull", image)
+            print(f"docker tag {image} {new_image}")
+            docker("tag", image, new_image)
+            docker("push", new_image)
 
-        for manifest in self.host_manifest_tags(version, registry="docker.io"):
+        for manifest in self.host_manifest_tags(version):
+            print("manifest", "create", "--amend", manifest, *images.values())
             try:
                 docker("manifest", "create", "--amend", manifest, *images.values())
             except ErrorReturnCode_1:
                 docker("manifest", "create", manifest, *images.values())
 
             for host_arch in self.host_archs:
+                print(
+                    "manifest",
+                    "annotate",
+                    manifest,
+                    images[host_arch],
+                    "--os",
+                    "linux",
+                    *docker_manifest_args[host_arch],
+                )
                 docker(
                     "manifest",
                     "annotate",
@@ -503,16 +493,14 @@ class Distro(metaclass=abc.ABCMeta):
         os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
 
         images = {
-            compiler_arch: self.client_image_tag(
-                version, compiler_arch, registry="ghcr.io"
-            )
+            compiler_arch: self.client_image_tag(version, compiler_arch)
             for compiler_arch in self.compiler_archs
         }
 
         for image in images.values():
             docker("pull", image)
 
-        for manifest in self.client_manifest_tags(version, registry="docker.io"):
+        for manifest in self.client_manifest_tags(version):
             try:
                 docker("manifest", "create", "--amend", manifest, *images.values())
             except ErrorReturnCode_1:
@@ -530,38 +518,6 @@ class Distro(metaclass=abc.ABCMeta):
                 )
 
             docker("manifest", "push", manifest)
-
-    def tag_host_latest(self, version):
-        os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
-
-        images = {
-            host_arch: (
-                self.host_image_tag(version, host_arch, registry="ghcr.io"),
-                self.host_image_latest_tag(host_arch, registry="docker.io"),
-            )
-            for host_arch in self.host_archs
-        }
-
-        for image, latest in images.values():
-            docker("pull", image)
-            docker("tag", image, latest)
-            docker("push", latest)
-
-    def tag_client_latest(self, version):
-        os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
-
-        images = {
-            compiler_arch: (
-                self.client_image_tag(version, compiler_arch, registry="ghcr.io"),
-                self.client_image_latest_tag(compiler_arch, registry="docker.io"),
-            )
-            for compiler_arch in self.compiler_archs
-        }
-
-        for image, latest in images.values():
-            docker("pull", image)
-            docker("tag", image, latest)
-            docker("push", latest)
 
     @contextlib.contextmanager
     def run_host(self, host_arch):
@@ -900,16 +856,6 @@ def make_parser():
     parser_push_client_manifest.add_argument("--distro", type=Distro.get, required=True)
     parser_push_client_manifest.add_argument("--version", required=True)
 
-    # tag-host-latest
-    parser_tag_host_latest = subparsers.add_parser("tag-host-latest")
-    parser_tag_host_latest.add_argument("--distro", type=Distro.get, required=True)
-    parser_tag_host_latest.add_argument("--version", required=True)
-
-    # tag-client-latest
-    parser_tag_client_latest = subparsers.add_parser("tag-client-latest")
-    parser_tag_client_latest.add_argument("--distro", type=Distro.get, required=True)
-    parser_tag_client_latest.add_argument("--version", required=True)
-
     # render-readme
     subparsers.add_parser("render-readme")
 
@@ -954,12 +900,6 @@ def main():
 
     elif args.subcommand == "push-client-manifest":
         args.distro.push_client_manifest(version=args.version)
-
-    elif args.subcommand == "tag-host-latest":
-        args.distro.tag_host_latest(version=args.version)
-
-    elif args.subcommand == "tag-client-latest":
-        args.distro.tag_client_latest(version=args.version)
 
     elif args.subcommand == "render-readme":
         render_readme()
