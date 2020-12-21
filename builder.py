@@ -157,10 +157,10 @@ class Distro(metaclass=abc.ABCMeta):
         )
 
     def host_image_tag(self, version, arch):
-        return f"{self.host_image}:{self.slug}--{arch}--{version}"
+        return f"{self.host_image}:{self.slug}--{arch_slug(arch)}--{version}"
 
     def host_image_latest_tag(self, arch):
-        return f"{self.host_image}:{self.slug}--{arch}"
+        return f"{self.host_image}:{self.slug}--{arch_slug(arch)}"
 
     def client_manifest_tags(self, version):
         return (
@@ -169,10 +169,10 @@ class Distro(metaclass=abc.ABCMeta):
         )
 
     def client_image_tag(self, version, arch):
-        return f"{self.client_image}:{self.slug}--{arch}--{version}"
+        return f"{self.client_image}:{self.slug}--{arch_slug(arch)}--{version}"
 
     def client_image_latest_tag(self, arch):
-        return f"{self.client_image}:{self.slug}--{arch}"
+        return f"{self.client_image}:{self.slug}--{arch_slug(arch)}"
 
     @contextlib.contextmanager
     def set_context(self, **context):

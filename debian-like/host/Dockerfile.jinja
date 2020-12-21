@@ -16,4 +16,9 @@ RUN \
   /scripts/setup.sh && rm /scripts/setup.sh && \
   /scripts/test-arch.sh {{ host_arch }} && rm /scripts/test-arch.sh
 
+{% if host_arch == "386" %}
+# Ensure 386 container is correctly detected on x64 docker host
+ENTRYPOINT ["setarch", "i686"]
+{% endif %}
+
 CMD /scripts/run-{{ host_arch }}.sh

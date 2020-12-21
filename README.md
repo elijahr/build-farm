@@ -131,9 +131,9 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 |-----------------------|----------------------------------------------------------------------|-------------------|
 | `amd64`               | `elijahru/build-farm-client:alpine-3-12--amd64`                      | `172.17.0.1:3804` |
 | `386`                 | `elijahru/build-farm-client:alpine-3-12--386`                        | `172.17.0.1:3803` |
-| `arm/v6`              | `elijahru/build-farm-client:alpine-3-12--arm/v6`                     | `172.17.0.1:3806` |
-| `arm/v7`              | `elijahru/build-farm-client:alpine-3-12--arm/v7`                     | `172.17.0.1:3807` |
-| `arm64/v8`            | `elijahru/build-farm-client:alpine-3-12--arm64/v8`                   | `172.17.0.1:3808` |
+| `arm/v6`              | `elijahru/build-farm-client:alpine-3-12--arm32v6`                    | `172.17.0.1:3806` |
+| `arm/v7`              | `elijahru/build-farm-client:alpine-3-12--arm32v7`                    | `172.17.0.1:3807` |
+| `arm64/v8`            | `elijahru/build-farm-client:alpine-3-12--arm64v8`                    | `172.17.0.1:3808` |
 | `ppc64le`             | `elijahru/build-farm-client:alpine-3-12--ppc64le`                    | `172.17.0.1:3810` |)
 
 #### Arch Linux
@@ -141,10 +141,10 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
 |-----------------------|----------------------------------------------------------------------|-------------------|
 | `amd64`               | `elijahru/build-farm-client:archlinux--amd64`                        | `172.17.0.1:3704` |
-| `arm/v5`              | `elijahru/build-farm-client:archlinux--arm/v5`                       | `172.17.0.1:3705` |
-| `arm/v6`              | `elijahru/build-farm-client:archlinux--arm/v6`                       | `172.17.0.1:3706` |
-| `arm/v7`              | `elijahru/build-farm-client:archlinux--arm/v7`                       | `172.17.0.1:3707` |
-| `arm64/v8`            | `elijahru/build-farm-client:archlinux--arm64/v8`                     | `172.17.0.1:3708` |)
+| `arm/v5`              | `elijahru/build-farm-client:archlinux--arm32v5`                      | `172.17.0.1:3705` |
+| `arm/v6`              | `elijahru/build-farm-client:archlinux--arm32v6`                      | `172.17.0.1:3706` |
+| `arm/v7`              | `elijahru/build-farm-client:archlinux--arm32v7`                      | `172.17.0.1:3707` |
+| `arm64/v8`            | `elijahru/build-farm-client:archlinux--arm64v8`                      | `172.17.0.1:3708` |)
 
 #### Debian Buster
 
@@ -152,9 +152,9 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 |-----------------------|----------------------------------------------------------------------|-------------------|
 | `amd64`               | `elijahru/build-farm-client:debian-buster--amd64`                    | `172.17.0.1:3604` |
 | `386`                 | `elijahru/build-farm-client:debian-buster--386`                      | `172.17.0.1:3603` |
-| `arm/v5`              | `elijahru/build-farm-client:debian-buster--arm/v5`                   | `172.17.0.1:3605` |
-| `arm/v7`              | `elijahru/build-farm-client:debian-buster--arm/v7`                   | `172.17.0.1:3607` |
-| `arm64/v8`            | `elijahru/build-farm-client:debian-buster--arm64/v8`                 | `172.17.0.1:3608` |
+| `arm/v5`              | `elijahru/build-farm-client:debian-buster--arm32v5`                  | `172.17.0.1:3605` |
+| `arm/v7`              | `elijahru/build-farm-client:debian-buster--arm32v7`                  | `172.17.0.1:3607` |
+| `arm64/v8`            | `elijahru/build-farm-client:debian-buster--arm64v8`                  | `172.17.0.1:3608` |
 | `ppc64le`             | `elijahru/build-farm-client:debian-buster--ppc64le`                  | `172.17.0.1:3610` |
 | `s390x`               | `elijahru/build-farm-client:debian-buster--s390x`                    | `172.17.0.1:3609` |
 | `mips64le`            | `elijahru/build-farm-client:debian-buster--mips64le`                 | `172.17.0.1:3611` |)
@@ -176,7 +176,7 @@ services:
       - 3608:3608
 
   build-client:
-    image: elijahru/build-farm-client:debian-buster--arm64/v8
+    image: elijahru/build-farm-client:debian-buster--arm64v8
     volumes:
       # Your code
       - .:/code
@@ -221,21 +221,21 @@ services:
     command: ./configure && make
   
   build-client-arm/v6:
-    image: elijahru/build-farm-client:alpine-3-12--arm/v6
+    image: elijahru/build-farm-client:alpine-3-12--arm32v6
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm/v7:
-    image: elijahru/build-farm-client:alpine-3-12--arm/v7
+    image: elijahru/build-farm-client:alpine-3-12--arm32v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm64/v8:
-    image: elijahru/build-farm-client:alpine-3-12--arm64/v8
+    image: elijahru/build-farm-client:alpine-3-12--arm64v8
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -277,28 +277,28 @@ services:
     command: ./configure && make
   
   build-client-arm/v5:
-    image: elijahru/build-farm-client:archlinux--arm/v5
+    image: elijahru/build-farm-client:archlinux--arm32v5
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm/v6:
-    image: elijahru/build-farm-client:archlinux--arm/v6
+    image: elijahru/build-farm-client:archlinux--arm32v6
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm/v7:
-    image: elijahru/build-farm-client:archlinux--arm/v7
+    image: elijahru/build-farm-client:archlinux--arm32v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm64/v8:
-    image: elijahru/build-farm-client:archlinux--arm64/v8
+    image: elijahru/build-farm-client:archlinux--arm64v8
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -340,21 +340,21 @@ services:
     command: ./configure && make
   
   build-client-arm/v5:
-    image: elijahru/build-farm-client:debian-buster--arm/v5
+    image: elijahru/build-farm-client:debian-buster--arm32v5
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm/v7:
-    image: elijahru/build-farm-client:debian-buster--arm/v7
+    image: elijahru/build-farm-client:debian-buster--arm32v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm64/v8:
-    image: elijahru/build-farm-client:debian-buster--arm64/v8
+    image: elijahru/build-farm-client:debian-buster--arm64v8
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -487,7 +487,7 @@ services:
         make test; "
 
   build-arm64/v8:
-    image: elijahru/build-farm-client:archlinux--arm64/v8
+    image: elijahru/build-farm-client:archlinux--arm64v8
     depends_on: [ build-host ]
     volumes:
       # Map GitHub Actions cache to ccache via volume

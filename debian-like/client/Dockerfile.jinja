@@ -24,6 +24,11 @@ ENV DISTCC_FALLBACK=0
 # Connect to distccd on default docker network
 ENV DISTCC_HOSTS=172.17.0.1:{{ compiler_arch|compiler_port }}
 
+{% if compiler_arch == "386" %}
+# Ensure 386 container is correctly detected on x64 docker host
+ENTRYPOINT ["setarch", "i686"]
+{% endif %}
+
 RUN \
   chmod +x /scripts/* && \
   /scripts/setup.sh && \

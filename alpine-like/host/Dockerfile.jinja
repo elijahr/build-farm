@@ -9,7 +9,7 @@ COPY scripts /scripts/
 # Install deps for building
 RUN \
   chmod +x /scripts/* && \
-  apk add --no-cache build-base distcc
+  apk add --no-cache build-base distcc {% if host_arch == "386" %} util-linux {% endif %}
 
 {% for compiler_arch in host_arch|compiler_archs %}
 {% if compiler_arch != host_arch %}
@@ -20,10 +20,9 @@ ADD {{ distro.get_toolchain_url(host_arch, compiler_arch) }} /root/x-tools/
 
 {% if host_arch == "386" %}
 # Ensure 386 container is correctly detected on x64 docker host
-RUN apk add --no-cache util-linux
 ENTRYPOINT ["setarch", "i686"]
 {% endif %}
 
-RUN /scripts/setup.sh
-
-# CMD /scripts/run-{{ host_arch }}.sh
+RUN \
+  /scripts/test-arch.sh {{ host_arch }} && \
+  /scripts/setup.sh
