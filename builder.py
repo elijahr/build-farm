@@ -96,12 +96,16 @@ class Distro(metaclass=abc.ABCMeta):
         self,
         *,
         name,
-        host_image="elijahru/build-farm",
-        client_image="elijahru/build-farm-client",
+        ghcr_io_owner="elijahr",
+        docker_io_owner="elijahru",
+        host_package="build-farm",
+        client_package="build-farm-client",
     ):
         self.name = name
-        self.host_image = host_image
-        self.client_image = client_image
+        self.ghcr_io_owner = ghcr_io_owner
+        self.docker_io_owner = docker_io_owner
+        self.host_package = host_package
+        self.client_package = client_package
         self.registry[name] = self
         self._context = None
         self.env = Environment(autoescape=False, undefined=StrictUndefined)
@@ -150,59 +154,57 @@ class Distro(metaclass=abc.ABCMeta):
             raise RuntimeError("Distro context not entered")
         return self._context
 
+    def host_repo(self, registry):
+        if registry in ("", "docker.io"):
+            return f"{self.docker_io_owner}/{self.host_package}"
+        elif registry == "ghcr.io":
+            return f"{registry}/{self.ghcr_io_owner}/{self.host_package}"
+        else:
+            return self.host_package
+
     def host_simple_manifest_tag(self, registry=""):
-        if registry and not registry.endswith("/"):
-            registry = f"{registry}/"
-        return f"{registry}{self.host_image}:{self.slug}"
+        return f"{self.host_repo(registry)}:{self.slug}"
 
     def host_versioned_manifest_tag(self, version, registry=""):
-        if registry and not registry.endswith("/"):
-            registry = f"{registry}/"
-        return f"{registry}{self.host_image}:{self.slug}--{version}"
+        return f"{self.host_repo(registry)}:{self.slug}--{version}"
 
     def host_manifest_tags(self, version, registry=""):
-        if registry and not registry.endswith("/"):
-            registry = f"{registry}/"
         return (
             self.host_versioned_manifest_tag(version, registry=registry),
             self.host_simple_manifest_tag(registry=registry),
         )
 
     def host_image_tag(self, version, arch, registry=""):
-        if registry and not registry.endswith("/"):
-            registry = f"{registry}/"
-        return f"{registry}{self.host_image}:{self.slug}--{arch_slug(arch)}--{version}"
+        return f"{self.host_repo(registry)}:{self.slug}--{arch_slug(arch)}--{version}"
 
     def host_image_latest_tag(self, arch, registry=""):
-        if registry and not registry.endswith("/"):
-            registry = f"{registry}/"
-        return f"{registry}{self.host_image}:{self.slug}--{arch_slug(arch)}"
+        return f"{self.host_repo(registry)}:{self.slug}--{arch_slug(arch)}"
+
+    def client_repo(self, registry):
+        if registry in ("", "docker.io"):
+            return f"{self.docker_io_owner}/{self.client_package}"
+        elif registry == "ghcr.io":
+            return f"{registry}/{self.ghcr_io_owner}/{self.client_package}"
+        else:
+            return self.client_package
 
     def client_simple_manifest_tag(self, registry=""):
-        if registry and not registry.endswith("/"):
-            registry = f"{registry}/"
-        return f"{registry}{self.client_image}:{self.slug}"
+        return f"{self.client_repo(registry)}:{self.slug}"
 
     def client_versioned_manifest_tag(self, version, registry=""):
-        if registry and not registry.endswith("/"):
-            registry = f"{registry}/"
-        return f"{registry}{self.client_image}:{self.slug}--{version}"
+        return f"{self.client_repo(registry)}:{self.slug}--{version}"
 
     def client_manifest_tags(self, version, registry=""):
-        if registry and not registry.endswith("/"):
-            registry = f"{registry}/"
         return (
             self.client_versioned_manifest_tag(version, registry=registry),
             self.client_simple_manifest_tag(registry=registry),
         )
 
     def client_image_tag(self, version, arch, registry=""):
-        return (
-            f"{registry}{self.client_image}:{self.slug}--{arch_slug(arch)}--{version}"
-        )
+        return f"{self.client_repo(registry)}:{self.slug}--{arch_slug(arch)}--{version}"
 
     def client_image_latest_tag(self, arch, registry=""):
-        return f"{registry}{self.client_image}:{self.slug}--{arch_slug(arch)}"
+        return f"{self.client_repo(registry)}:{self.slug}--{arch_slug(arch)}"
 
     @contextlib.contextmanager
     def set_context(self, **context):
