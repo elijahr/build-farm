@@ -24,79 +24,79 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Alpine Linux
 
-The multi-architecture `elijahru/build-farm-client:alpine-3-12` image expose the following compilers:
+Image: `elijahru/build-farm:alpine-3-12`
 
-| Host arch  | Target arch | Compiler port |
-|------------|-------------|---------------|
-| `amd64`    | `amd64`     | 3804          |
-| `amd64`    | `386`       | 3803          |
-| `amd64`    | `arm/v6`    | 3806          |
-| `amd64`    | `arm/v7`    | 3807          |
-| `amd64`    | `arm64/v8`  | 3808          |
-| `amd64`    | `ppc64le`   | 3810          |
-| `386`      | `amd64`     | 3804          |
-| `386`      | `386`       | 3803          |
-| `386`      | `arm/v6`    | 3806          |
-| `386`      | `arm/v7`    | 3807          |
-| `386`      | `arm64/v8`  | 3808          |
-| `386`      | `ppc64le`   | 3810          |
-| `arm/v6`   | `arm/v6`    | 3806          |
-| `arm/v7`   | `arm/v7`    | 3807          |
-| `arm64/v8` | `arm64/v8`  | 3808          |
-| `ppc64le`  | `ppc64le`   | 3810          |
+| Host platform | Compiler toolchain for platform | Compiler port |
+|---------------|---------------------------------|---------------|
+| `linux/amd64` | `linux/amd64` | 3804 |
+| `linux/amd64` | `linux/386` | 3803 |
+| `linux/amd64` | `linux/arm/v6` | 3806 |
+| `linux/amd64` | `linux/arm/v7` | 3807 |
+| `linux/amd64` | `linux/arm64/v8` | 3808 |
+| `linux/amd64` | `linux/ppc64le` | 3810 |
+| `linux/386` | `linux/amd64` | 3804 |
+| `linux/386` | `linux/386` | 3803 |
+| `linux/386` | `linux/arm/v6` | 3806 |
+| `linux/386` | `linux/arm/v7` | 3807 |
+| `linux/386` | `linux/arm64/v8` | 3808 |
+| `linux/386` | `linux/ppc64le` | 3810 |
+| `linux/arm/v6` | `linux/arm/v6` | 3806 |
+| `linux/arm/v7` | `linux/arm/v7` | 3807 |
+| `linux/arm64/v8` | `linux/arm64/v8` | 3808 |
+| `linux/ppc64le` | `linux/ppc64le` | 3810 |
 
 #### Arch Linux
 
-The multi-architecture `elijahru/build-farm-client:archlinux` image exposes the following compilers:
+Image: `elijahru/build-farm:archlinux`
 
-| Host arch  | Target arch | Compiler port |
-|------------|-------------|---------------|
-| `amd64`    | `amd64`     | 3704          |
-| `amd64`    | `arm/v5`    | 3705          |
-| `amd64`    | `arm/v6`    | 3706          |
-| `amd64`    | `arm/v7`    | 3707          |
-| `amd64`    | `arm64/v8`  | 3708          |
-| `arm/v5`   | `arm/v5`    | 3705          |
-| `arm/v6`   | `arm/v6`    | 3706          |
-| `arm/v7`   | `arm/v7`    | 3707          |
-| `arm64/v8` | `arm64/v8`  | 3708          |
-
+| Host platform | Compiler toolchain for platform | Compiler port |
+|---------------|---------------------------------|---------------|
+| `linux/amd64` | `linux/amd64` | 3704 |
+| `linux/amd64` | `linux/arm/v5` | 3705 |
+| `linux/amd64` | `linux/arm/v6` | 3706 |
+| `linux/amd64` | `linux/arm/v7` | 3707 |
+| `linux/amd64` | `linux/arm64/v8` | 3708 |
+| `linux/arm/v5` | `linux/arm/v5` | 3705 |
+| `linux/arm/v6` | `linux/arm/v6` | 3706 |
+| `linux/arm/v7` | `linux/arm/v7` | 3707 |
+| `linux/arm64/v8` | `linux/arm64/v8` | 3708 |
 
 #### Debian Buster
 
-The multi-architecture `elijahru/build-farm-client:debian-buster` and `elijahru/build-farm-client:debian-buster-slim` images expose the following compilers:
+Image: `elijahru/build-farm:debian-buster`
+Slim image: `elijahru/build-farm:debian-buster-slim`
 
-| Host arch  | Target arch | Compiler port |
-|------------|-------------|---------------|
-| `amd64`    | `amd64`     | 3604          |
-| `amd64`    | `386`       | 3603          |
-| `amd64`    | `arm/v5`    | 3605          |
-| `amd64`    | `arm/v7`    | 3607          |
-| `amd64`    | `arm64/v8`  | 3608          |
-| `amd64`    | `ppc64le`   | 3610          |
-| `amd64`    | `s390x`     | 3609          |
-| `amd64`    | `mips64le`  | 3611          |
-| `386`      | `amd64`     | 3604          |
-| `386`      | `386`       | 3603          |
-| `386`      | `arm/v5`    | 3605          |
-| `386`      | `arm/v7`    | 3607          |
-| `386`      | `arm64/v8`  | 3608          |
-| `386`      | `ppc64le`   | 3610          |
-| `386`      | `s390x`     | 3609          |
-| `386`      | `mips64le`  | 3611          |
-| `arm/v5`   | `arm/v5`    | 3605          |
-| `arm/v7`   | `arm/v7`    | 3607          |
-| `arm64/v8` | `amd64`     | 3604          |
-| `arm64/v8` | `386`       | 3603          |
-| `arm64/v8` | `arm/v5`    | 3605          |
-| `arm64/v8` | `arm/v7`    | 3607          |
-| `arm64/v8` | `arm64/v8`  | 3608          |
-| `ppc64le`  | `amd64`     | 3604          |
-| `ppc64le`  | `386`       | 3603          |
-| `ppc64le`  | `arm64/v8`  | 3608          |
-| `ppc64le`  | `ppc64le`   | 3610          |
-| `s390x`    | `s390x`     | 3609          |
-| `mips64le` | `mips64le`  | 3611          |
+| Host platform | Compiler toolchain for platform | Compiler port |
+|---------------|---------------------------------|---------------|
+| `linux/amd64` | `linux/amd64` | 3604 |
+| `linux/amd64` | `linux/386` | 3603 |
+| `linux/amd64` | `linux/arm/v5` | 3605 |
+| `linux/amd64` | `linux/arm/v7` | 3607 |
+| `linux/amd64` | `linux/arm64/v8` | 3608 |
+| `linux/amd64` | `linux/ppc64le` | 3610 |
+| `linux/amd64` | `linux/s390x` | 3609 |
+| `linux/amd64` | `linux/mips64le` | 3611 |
+| `linux/386` | `linux/amd64` | 3604 |
+| `linux/386` | `linux/386` | 3603 |
+| `linux/386` | `linux/arm/v5` | 3605 |
+| `linux/386` | `linux/arm/v7` | 3607 |
+| `linux/386` | `linux/arm64/v8` | 3608 |
+| `linux/386` | `linux/ppc64le` | 3610 |
+| `linux/386` | `linux/s390x` | 3609 |
+| `linux/386` | `linux/mips64le` | 3611 |
+| `linux/arm/v5` | `linux/arm/v5` | 3605 |
+| `linux/arm/v7` | `linux/arm/v7` | 3607 |
+| `linux/arm64/v8` | `linux/amd64` | 3604 |
+| `linux/arm64/v8` | `linux/386` | 3603 |
+| `linux/arm64/v8` | `linux/arm/v5` | 3605 |
+| `linux/arm64/v8` | `linux/arm/v7` | 3607 |
+| `linux/arm64/v8` | `linux/arm64/v8` | 3608 |
+| `linux/ppc64le` | `linux/amd64` | 3604 |
+| `linux/ppc64le` | `linux/386` | 3603 |
+| `linux/ppc64le` | `linux/arm64/v8` | 3608 |
+| `linux/ppc64le` | `linux/ppc64le` | 3610 |
+| `linux/s390x` | `linux/s390x` | 3609 |
+| `linux/mips64le` | `linux/mips64le` | 3611 |
 
 ### Client containers
 
@@ -130,25 +130,25 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 Image: `elijahru/build-farm-client:alpine-3-12`
 
 | Platform | `DISTCC_HOSTS` |
-|----------|--------------- |
+|----------|----------------|
 | `linux/amd64` | `172.17.0.1:3804` |
 | `linux/386` | `172.17.0.1:3803` |
 | `linux/arm/v6` | `172.17.0.1:3806` |
 | `linux/arm/v7` | `172.17.0.1:3807` |
 | `linux/arm64/v8` | `172.17.0.1:3808` |
-| `linux/ppc64le` | `172.17.0.1:3810` |)
+| `linux/ppc64le` | `172.17.0.1:3810` |
 
 #### Arch Linux
 
 Image: `elijahru/build-farm-client:archlinux`
 
 | Platform | `DISTCC_HOSTS` |
-|----------|--------------- |
+|----------|----------------|
 | `linux/amd64` | `172.17.0.1:3704` |
 | `linux/arm/v5` | `172.17.0.1:3705` |
 | `linux/arm/v6` | `172.17.0.1:3706` |
 | `linux/arm/v7` | `172.17.0.1:3707` |
-| `linux/arm64/v8` | `172.17.0.1:3708` |)
+| `linux/arm64/v8` | `172.17.0.1:3708` |
 
 #### Debian Buster
 
@@ -156,7 +156,7 @@ Image: `elijahru/build-farm-client:debian-buster`
 Slim image: `elijahru/build-farm-client:debian-buster-slim`
 
 | Platform | `DISTCC_HOSTS` |
-|----------|--------------- |
+|----------|----------------|
 | `linux/amd64` | `172.17.0.1:3604` |
 | `linux/386` | `172.17.0.1:3603` |
 | `linux/arm/v5` | `172.17.0.1:3605` |
@@ -164,7 +164,7 @@ Slim image: `elijahru/build-farm-client:debian-buster-slim`
 | `linux/arm64/v8` | `172.17.0.1:3608` |
 | `linux/ppc64le` | `172.17.0.1:3610` |
 | `linux/s390x` | `172.17.0.1:3609` |
-| `linux/mips64le` | `172.17.0.1:3611` |)
+| `linux/mips64le` | `172.17.0.1:3611` |
 
 ### Simple example: cross-compiler
 

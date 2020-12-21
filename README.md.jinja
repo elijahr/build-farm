@@ -18,28 +18,28 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Alpine Linux
 
-The multi-architecture `{{ alpine3_12.client_simple_manifest_tag() }}` image expose the following compilers:
+Image: `{{ alpine_3_12.host_simple_manifest_tag() }}`
 
-| Host arch  | Target arch | Compiler port |
-|------------|-------------|---------------|{% for host_arch in alpine3_12.host_archs %}{% for compiler_arch in alpine3_12.compiler_archs_by_host_arch[host_arch] %}
-| {{ "%-10s" | format('`' + host_arch + '`') }} | {{ "%-11s" | format('`' + compiler_arch + '`') }} | {{ "%-13s" | format(alpine3_12.ports_by_arch[compiler_arch]) }} |{% endfor %}{% endfor %}
+| Host platform | Compiler toolchain for platform | Compiler port |
+|---------------|---------------------------------|---------------|{% for host_arch in alpine3_12.host_archs %}{% for compiler_arch in alpine3_12.compiler_archs_by_host_arch[host_arch] %}
+| `linux/{{ host_arch }}` | `linux/{{ compiler_arch }}` | {{ alpine3_12.ports_by_arch[compiler_arch] }} |{% endfor %}{% endfor %}
 
 #### Arch Linux
 
-The multi-architecture `{{ archlinux.client_simple_manifest_tag() }}` image exposes the following compilers:
+Image: `{{ archlinux.host_simple_manifest_tag() }}`
 
-| Host arch  | Target arch | Compiler port |
-|------------|-------------|---------------|{% for host_arch in archlinux.host_archs %}{% for compiler_arch in archlinux.compiler_archs_by_host_arch[host_arch] %}
-| {{ "%-10s" | format('`' + host_arch + '`') }} | {{ "%-11s" | format('`' + compiler_arch + '`') }} | {{ "%-13s" | format(archlinux.ports_by_arch[compiler_arch]) }} |{% endfor %}{% endfor %}
-
+| Host platform | Compiler toolchain for platform | Compiler port |
+|---------------|---------------------------------|---------------|{% for host_arch in archlinux.host_archs %}{% for compiler_arch in archlinux.compiler_archs_by_host_arch[host_arch] %}
+| `linux/{{ host_arch }}` | `linux/{{ compiler_arch }}` | {{ archlinux.ports_by_arch[compiler_arch] }} |{% endfor %}{% endfor %}
 
 #### Debian Buster
 
-The multi-architecture `{{ debian_buster.client_simple_manifest_tag() }}` and `{{ debian_buster_slim.client_simple_manifest_tag() }}` images expose the following compilers:
+Image: `{{ debian_buster.host_simple_manifest_tag() }}`
+Slim image: `{{ debian_buster_slim.host_simple_manifest_tag() }}`
 
-| Host arch  | Target arch | Compiler port |
-|------------|-------------|---------------|{% for host_arch in debian_buster.host_archs %}{% for compiler_arch in debian_buster.compiler_archs_by_host_arch[host_arch] %}
-| {{ "%-10s" | format('`' + host_arch + '`') }} | {{ "%-11s" | format('`' + compiler_arch + '`') }} | {{ "%-13s" | format(debian_buster.ports_by_arch[compiler_arch]) }} |{% endfor %}{% endfor %}
+| Host platform | Compiler toolchain for platform | Compiler port |
+|---------------|---------------------------------|---------------|{% for host_arch in debian_buster.host_archs %}{% for compiler_arch in debian_buster.compiler_archs_by_host_arch[host_arch] %}
+| `linux/{{ host_arch }}` | `linux/{{ compiler_arch }}` | {{ debian_buster.ports_by_arch[compiler_arch] }} |{% endfor %}{% endfor %}
 
 ### Client containers
 
@@ -73,16 +73,16 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 Image: `{{ alpine_3_12.client_simple_manifest_tag() }}`
 
 | Platform | `DISTCC_HOSTS` |
-|----------|--------------- |{% for compiler_arch in alpine_3_12.compiler_archs %}
-| `linux/{{ compiler_arch }}` | `172.17.0.1:{{ alpine_3_12.ports_by_arch[compiler_arch] }}` |{% endfor %})
+|----------|----------------|{% for compiler_arch in alpine_3_12.compiler_archs %}
+| `linux/{{ compiler_arch }}` | `172.17.0.1:{{ alpine_3_12.ports_by_arch[compiler_arch] }}` |{% endfor %}
 
 #### Arch Linux
 
 Image: `{{ archlinux.client_simple_manifest_tag() }}`
 
 | Platform | `DISTCC_HOSTS` |
-|----------|--------------- |{% for compiler_arch in archlinux.compiler_archs %}
-| `linux/{{ compiler_arch }}` | `172.17.0.1:{{ archlinux.ports_by_arch[compiler_arch] }}` |{% endfor %})
+|----------|----------------|{% for compiler_arch in archlinux.compiler_archs %}
+| `linux/{{ compiler_arch }}` | `172.17.0.1:{{ archlinux.ports_by_arch[compiler_arch] }}` |{% endfor %}
 
 #### Debian Buster
 
@@ -90,8 +90,8 @@ Image: `{{ debian_buster.client_simple_manifest_tag() }}`
 Slim image: `{{ debian_buster_slim.client_simple_manifest_tag() }}`
 
 | Platform | `DISTCC_HOSTS` |
-|----------|--------------- |{% for compiler_arch in debian_buster.compiler_archs %}
-| `linux/{{ compiler_arch }}` | `172.17.0.1:{{ debian_buster.ports_by_arch[compiler_arch] }}` |{% endfor %})
+|----------|----------------|{% for compiler_arch in debian_buster.compiler_archs %}
+| `linux/{{ compiler_arch }}` | `172.17.0.1:{{ debian_buster.ports_by_arch[compiler_arch] }}` |{% endfor %}
 
 ### Simple example: cross-compiler
 
