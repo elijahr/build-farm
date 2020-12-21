@@ -340,7 +340,7 @@ class Distro(metaclass=abc.ABCMeta):
             with self.set_context(host_arch=host_arch):
                 self.render_template(
                     self.template_path / "host/Dockerfile.jinja",
-                    self.out_path / "host" / "Dockerfile.{host_arch}",
+                    self.out_path / "host" / f"Dockerfile.{arch_slug(host_arch)}",
                 )
 
     def render_dockerfile_client(self):
@@ -349,7 +349,9 @@ class Distro(metaclass=abc.ABCMeta):
                 with self.set_context(host_arch=host_arch, compiler_arch=compiler_arch):
                     self.render_template(
                         self.template_path / "client/Dockerfile.jinja",
-                        self.out_path / "client" / "Dockerfile.{compiler_arch}",
+                        self.out_path
+                        / "client"
+                        / f"Dockerfile.{arch_slug(compiler_arch)}",
                     )
 
     def render_docker_compose(self):
