@@ -24,7 +24,7 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Alpine Linux
 
-The multi-architecture `elijahru/build-farm:alpine-3-12` image expose the following compilers:
+The multi-architecture `elijahru/build-farm-client:alpine-3-12` image expose the following compilers:
 
 | Host arch  | Target arch | Compiler port |
 |------------|-------------|---------------|
@@ -47,7 +47,7 @@ The multi-architecture `elijahru/build-farm:alpine-3-12` image expose the follow
 
 #### Arch Linux
 
-The multi-architecture `elijahru/build-farm:archlinux` image exposes the following compilers:
+The multi-architecture `elijahru/build-farm-client:archlinux` image exposes the following compilers:
 
 | Host arch  | Target arch | Compiler port |
 |------------|-------------|---------------|
@@ -64,7 +64,7 @@ The multi-architecture `elijahru/build-farm:archlinux` image exposes the followi
 
 #### Debian Buster
 
-The multi-architecture `elijahru/build-farm:debian-buster` and `elijahru/build-farm:debian-buster-slim` images expose the following compilers:
+The multi-architecture `elijahru/build-farm-client:debian-buster` and `elijahru/build-farm-client:debian-buster-slim` images expose the following compilers:
 
 | Host arch  | Target arch | Compiler port |
 |------------|-------------|---------------|
@@ -127,37 +127,44 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 
 #### Alpine Linux
 
-| Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
-|-----------------------|----------------------------------------------------------------------|-------------------|
-| `amd64`               | `elijahru/build-farm-client:alpine-3-12--amd64`                      | `172.17.0.1:3804` |
-| `386`                 | `elijahru/build-farm-client:alpine-3-12--386`                        | `172.17.0.1:3803` |
-| `arm/v6`              | `elijahru/build-farm-client:alpine-3-12--arm32v6`                    | `172.17.0.1:3806` |
-| `arm/v7`              | `elijahru/build-farm-client:alpine-3-12--arm32v7`                    | `172.17.0.1:3807` |
-| `arm64/v8`            | `elijahru/build-farm-client:alpine-3-12--arm64v8`                    | `172.17.0.1:3808` |
-| `ppc64le`             | `elijahru/build-farm-client:alpine-3-12--ppc64le`                    | `172.17.0.1:3810` |)
+Image: `elijahru/build-farm-client:alpine-3-12`
+
+| Platform | `DISTCC_HOSTS` |
+|----------|--------------- |
+| `linux/amd64` | `172.17.0.1:3804` |
+| `linux/386` | `172.17.0.1:3803` |
+| `linux/arm/v6` | `172.17.0.1:3806` |
+| `linux/arm/v7` | `172.17.0.1:3807` |
+| `linux/arm64/v8` | `172.17.0.1:3808` |
+| `linux/ppc64le` | `172.17.0.1:3810` |)
 
 #### Arch Linux
 
-| Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
-|-----------------------|----------------------------------------------------------------------|-------------------|
-| `amd64`               | `elijahru/build-farm-client:archlinux--amd64`                        | `172.17.0.1:3704` |
-| `arm/v5`              | `elijahru/build-farm-client:archlinux--arm32v5`                      | `172.17.0.1:3705` |
-| `arm/v6`              | `elijahru/build-farm-client:archlinux--arm32v6`                      | `172.17.0.1:3706` |
-| `arm/v7`              | `elijahru/build-farm-client:archlinux--arm32v7`                      | `172.17.0.1:3707` |
-| `arm64/v8`            | `elijahru/build-farm-client:archlinux--arm64v8`                      | `172.17.0.1:3708` |)
+Image: `elijahru/build-farm-client:archlinux`
+
+| Platform | `DISTCC_HOSTS` |
+|----------|--------------- |
+| `linux/amd64` | `172.17.0.1:3704` |
+| `linux/arm/v5` | `172.17.0.1:3705` |
+| `linux/arm/v6` | `172.17.0.1:3706` |
+| `linux/arm/v7` | `172.17.0.1:3707` |
+| `linux/arm64/v8` | `172.17.0.1:3708` |)
 
 #### Debian Buster
 
-| Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
-|-----------------------|----------------------------------------------------------------------|-------------------|
-| `amd64`               | `elijahru/build-farm-client:debian-buster--amd64`                    | `172.17.0.1:3604` |
-| `386`                 | `elijahru/build-farm-client:debian-buster--386`                      | `172.17.0.1:3603` |
-| `arm/v5`              | `elijahru/build-farm-client:debian-buster--arm32v5`                  | `172.17.0.1:3605` |
-| `arm/v7`              | `elijahru/build-farm-client:debian-buster--arm32v7`                  | `172.17.0.1:3607` |
-| `arm64/v8`            | `elijahru/build-farm-client:debian-buster--arm64v8`                  | `172.17.0.1:3608` |
-| `ppc64le`             | `elijahru/build-farm-client:debian-buster--ppc64le`                  | `172.17.0.1:3610` |
-| `s390x`               | `elijahru/build-farm-client:debian-buster--s390x`                    | `172.17.0.1:3609` |
-| `mips64le`            | `elijahru/build-farm-client:debian-buster--mips64le`                 | `172.17.0.1:3611` |)
+Image: `elijahru/build-farm-client:debian-buster`
+Slim image: `elijahru/build-farm-client:debian-buster-slim`
+
+| Platform | `DISTCC_HOSTS` |
+|----------|--------------- |
+| `linux/amd64` | `172.17.0.1:3604` |
+| `linux/386` | `172.17.0.1:3603` |
+| `linux/arm/v5` | `172.17.0.1:3605` |
+| `linux/arm/v7` | `172.17.0.1:3607` |
+| `linux/arm64/v8` | `172.17.0.1:3608` |
+| `linux/ppc64le` | `172.17.0.1:3610` |
+| `linux/s390x` | `172.17.0.1:3609` |
+| `linux/mips64le` | `172.17.0.1:3611` |)
 
 ### Simple example: cross-compiler
 
