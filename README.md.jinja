@@ -18,7 +18,7 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Alpine Linux
 
-The multi-architecture `{{ alpine3_12.host_image }}:alpine3_12` image expose the following compilers:
+The multi-architecture `{{ alpine3_12.host_image }}:alpine-3-12` image expose the following compilers:
 
 | Host arch  | Target arch | Compiler port |
 |------------|-------------|---------------|{% for host_arch in alpine3_12.host_archs %}{% for compiler_arch in alpine3_12.compiler_archs_by_host_arch[host_arch] %}
@@ -108,7 +108,7 @@ services:
       # Your code
       - .:/code
       # Cache resulting object code between builds
-      - ./caches/arm64/v8/ccache:/root/.ccache
+      - ./caches/arm64v8/ccache:/root/.ccache
     command: ./configure && make
 ```
 
@@ -123,7 +123,7 @@ services:
       # {{ compiler_arch }}
       - {{ alpine3_12.ports_by_arch[compiler_arch] }}:{{ alpine3_12.ports_by_arch[compiler_arch] }}{% endfor %}
   {% for compiler_arch in alpine3_12.compiler_archs_by_host_arch['amd64'] %}
-  build-client-{{ compiler_arch }}:
+  build-client-{{ compiler_arch|arch_slug }}:
     image: {{ alpine3_12.client_image_latest_tag(compiler_arch) }}
     volumes:
       - .:/code
@@ -143,7 +143,7 @@ services:
       # {{ compiler_arch }}
       - {{ archlinux.ports_by_arch[compiler_arch] }}:{{ archlinux.ports_by_arch[compiler_arch] }}{% endfor %}
   {% for compiler_arch in archlinux.compiler_archs_by_host_arch['amd64'] %}
-  build-client-{{ compiler_arch }}:
+  build-client-{{ compiler_arch|arch_slug }}:
     image: {{ archlinux.client_image_latest_tag(compiler_arch) }}
     volumes:
       - .:/code
@@ -163,7 +163,7 @@ services:
       # {{ compiler_arch }}
       - {{ archlinux.ports_by_arch[compiler_arch] }}:{{ archlinux.ports_by_arch[compiler_arch] }}{% endfor %}
   {% for compiler_arch in debian_buster.compiler_archs_by_host_arch['amd64'] %}
-  build-client-{{ compiler_arch }}:
+  build-client-{{ compiler_arch|arch_slug }}:
     image: {{ debian_buster.client_image_latest_tag(compiler_arch) }}
     volumes:
       - .:/code
@@ -220,7 +220,7 @@ jobs:
 
     strategy:
       matrix:
-        arch: [ amd64, arm64/v8 ]
+        arch: [ amd64, arm64v8 ]
 
     steps:
       - name: Setup cache
@@ -275,12 +275,12 @@ services:
         make; \
         make test; "
 
-  build-arm64/v8:
+  build-arm64v8:
     image: {{ archlinux.client_image_latest_tag('arm64/v8') }}
     depends_on: [ build-host ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
-      - ./caches/arm64/v8/ccache:/root/.ccache
+      - ./caches/arm64v8/ccache:/root/.ccache
     command: |
       bash -c "\
         curl -LsSf https://github.com/DaveGamble/cJSON/archive/master.tar.gz -o cJSON.tar.gz; \

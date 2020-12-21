@@ -791,6 +791,7 @@ alpine3_12 = AlpineLike(
 def render_readme():
     env = Environment(autoescape=False, undefined=StrictUndefined)
     env.filters["slugify"] = slugify
+    env.filters["arch_slug"] = arch_slug
     with PROJECT_DIR:
         context = dict(
             project_name="build-farm",

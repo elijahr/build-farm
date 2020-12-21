@@ -24,7 +24,7 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Alpine Linux
 
-The multi-architecture `elijahru/build-farm:alpine3_12` image expose the following compilers:
+The multi-architecture `elijahru/build-farm:alpine-3-12` image expose the following compilers:
 
 | Host arch  | Target arch | Compiler port |
 |------------|-------------|---------------|
@@ -181,7 +181,7 @@ services:
       # Your code
       - .:/code
       # Cache resulting object code between builds
-      - ./caches/arm64/v8/ccache:/root/.ccache
+      - ./caches/arm64v8/ccache:/root/.ccache
     command: ./configure && make
 ```
 
@@ -220,21 +220,21 @@ services:
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm/v6:
+  build-client-arm32v6:
     image: elijahru/build-farm-client:alpine-3-12--arm32v6
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm/v7:
+  build-client-arm32v7:
     image: elijahru/build-farm-client:alpine-3-12--arm32v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm64/v8:
+  build-client-arm64v8:
     image: elijahru/build-farm-client:alpine-3-12--arm64v8
     volumes:
       - .:/code
@@ -276,28 +276,28 @@ services:
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm/v5:
+  build-client-arm32v5:
     image: elijahru/build-farm-client:archlinux--arm32v5
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm/v6:
+  build-client-arm32v6:
     image: elijahru/build-farm-client:archlinux--arm32v6
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm/v7:
+  build-client-arm32v7:
     image: elijahru/build-farm-client:archlinux--arm32v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm64/v8:
+  build-client-arm64v8:
     image: elijahru/build-farm-client:archlinux--arm64v8
     volumes:
       - .:/code
@@ -339,21 +339,21 @@ services:
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm/v5:
+  build-client-arm32v5:
     image: elijahru/build-farm-client:debian-buster--arm32v5
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm/v7:
+  build-client-arm32v7:
     image: elijahru/build-farm-client:debian-buster--arm32v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm64/v8:
+  build-client-arm64v8:
     image: elijahru/build-farm-client:debian-buster--arm64v8
     volumes:
       - .:/code
@@ -431,7 +431,7 @@ jobs:
 
     strategy:
       matrix:
-        arch: [ amd64, arm64/v8 ]
+        arch: [ amd64, arm64v8 ]
 
     steps:
       - name: Setup cache
@@ -486,12 +486,12 @@ services:
         make; \
         make test; "
 
-  build-arm64/v8:
+  build-arm64v8:
     image: elijahru/build-farm-client:archlinux--arm64v8
     depends_on: [ build-host ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
-      - ./caches/arm64/v8/ccache:/root/.ccache
+      - ./caches/arm64v8/ccache:/root/.ccache
     command: |
       bash -c "\
         curl -LsSf https://github.com/DaveGamble/cJSON/archive/master.tar.gz -o cJSON.tar.gz; \
