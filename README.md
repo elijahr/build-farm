@@ -171,12 +171,14 @@ The compiled object code is cached via `ccache` in a persistent volume, so that 
 version: '3'
 services:
   build-host:
-    image: elijahru/build-farm:debian-buster--amd64
+    image: elijahru/build-farm:debian-buster
+    platform: linux/amd64
     ports:
       - 3608:3608
 
   build-client:
-    image: elijahru/build-farm-client:debian-buster--arm64v8
+    image: elijahru/build-farm-client:debian-buster
+    platform: linux/arm64/v8
     volumes:
       # Your code
       - .:/code
@@ -191,7 +193,8 @@ services:
 version: '3'
 services:
   build-host:
-    image: elijahru/build-farm:alpine-3-12--amd64
+    image: elijahru/build-farm:alpine-3-12
+    platform: linux/amd64
     ports:
       # amd64
       - 3804:3804
@@ -207,42 +210,48 @@ services:
       - 3810:3810
   
   build-client-amd64:
-    image: elijahru/build-farm-client:alpine-3-12--amd64
+    image: elijahru/build-farm-client:alpine-3-12
+    platform: linux/amd64
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-386:
-    image: elijahru/build-farm-client:alpine-3-12--386
+    image: elijahru/build-farm-client:alpine-3-12
+    platform: linux/386
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v6:
-    image: elijahru/build-farm-client:alpine-3-12--arm32v6
+    image: elijahru/build-farm-client:alpine-3-12
+    platform: linux/arm/v6
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v7:
-    image: elijahru/build-farm-client:alpine-3-12--arm32v7
+    image: elijahru/build-farm-client:alpine-3-12
+    platform: linux/arm/v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm64v8:
-    image: elijahru/build-farm-client:alpine-3-12--arm64v8
+    image: elijahru/build-farm-client:alpine-3-12
+    platform: linux/arm64/v8
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-ppc64le:
-    image: elijahru/build-farm-client:alpine-3-12--ppc64le
+    image: elijahru/build-farm-client:alpine-3-12
+    platform: linux/ppc64le
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -256,7 +265,8 @@ services:
 version: '3'
 services:
   build-host:
-    image: elijahru/build-farm:archlinux--amd64
+    image: elijahru/build-farm:archlinux
+    platform: linux/amd64
     ports:
       # amd64
       - 3704:3704
@@ -270,35 +280,40 @@ services:
       - 3708:3708
   
   build-client-amd64:
-    image: elijahru/build-farm-client:archlinux--amd64
+    image: elijahru/build-farm-client:archlinux
+    platform: linux/amd64
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v5:
-    image: elijahru/build-farm-client:archlinux--arm32v5
+    image: elijahru/build-farm-client:archlinux
+    platform: linux/arm/v5
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v6:
-    image: elijahru/build-farm-client:archlinux--arm32v6
+    image: elijahru/build-farm-client:archlinux
+    platform: linux/arm/v6
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v7:
-    image: elijahru/build-farm-client:archlinux--arm32v7
+    image: elijahru/build-farm-client:archlinux
+    platform: linux/arm/v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm64v8:
-    image: elijahru/build-farm-client:archlinux--arm64v8
+    image: elijahru/build-farm-client:archlinux
+    platform: linux/arm64/v8
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -312,70 +327,85 @@ services:
 version: '3'
 services:
   build-host:
-    image: elijahru/build-farm:debian-buster--amd64
+    image: elijahru/build-farm:debian-buster
+    platform: linux/amd64
     ports:
       # amd64
-      - 3704:3704
+      - 3604:3604
+      # 386
+      - 3603:3603
       # arm/v5
-      - 3705:3705
-      # arm/v6
-      - 3706:3706
+      - 3605:3605
       # arm/v7
-      - 3707:3707
+      - 3607:3607
       # arm64/v8
-      - 3708:3708
+      - 3608:3608
+      # ppc64le
+      - 3610:3610
+      # s390x
+      - 3609:3609
+      # mips64le
+      - 3611:3611
   
   build-client-amd64:
-    image: elijahru/build-farm-client:debian-buster--amd64
+    image: elijahru/build-farm-client:debian-buster
+    platform: linux/amd64
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-386:
-    image: elijahru/build-farm-client:debian-buster--386
+    image: elijahru/build-farm-client:debian-buster
+    platform: linux/386
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v5:
-    image: elijahru/build-farm-client:debian-buster--arm32v5
+    image: elijahru/build-farm-client:debian-buster
+    platform: linux/arm/v5
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v7:
-    image: elijahru/build-farm-client:debian-buster--arm32v7
+    image: elijahru/build-farm-client:debian-buster
+    platform: linux/arm/v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm64v8:
-    image: elijahru/build-farm-client:debian-buster--arm64v8
+    image: elijahru/build-farm-client:debian-buster
+    platform: linux/arm64/v8
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-ppc64le:
-    image: elijahru/build-farm-client:debian-buster--ppc64le
+    image: elijahru/build-farm-client:debian-buster
+    platform: linux/ppc64le
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-s390x:
-    image: elijahru/build-farm-client:debian-buster--s390x
+    image: elijahru/build-farm-client:debian-buster
+    platform: linux/s390x
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-mips64le:
-    image: elijahru/build-farm-client:debian-buster--mips64le
+    image: elijahru/build-farm-client:debian-buster
+    platform: linux/mips64le
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -391,7 +421,7 @@ Assuming several nodes, configured as follows:
 version: '3'
 services:
   build-host:
-    image: elijahru/build-farm:archlinux--amd64
+    image: elijahru/build-farm:archlinux
     ports:
       - 3704:3704
 ```
@@ -404,7 +434,7 @@ services:
   client:
     environment:
       - DISTCC_HOSTS="build-host1:3704 build-host2:3704 build-host3:3704"
-    image: elijahru/build-farm-client:archlinux--amd64
+    image: elijahru/build-farm-client:archlinux
     volumes:
       - .:/code
     command: ./configure && make
@@ -463,7 +493,8 @@ The above workflow config assumes the repository contains a `docker-compose.yml`
 version: '3'
 services:
   build-host:
-    image: elijahru/build-farm:archlinux--amd64
+    image: elijahru/build-farm:archlinux
+    platform: linux/amd64
     ports:
       # amd64
       - 3704:3704
@@ -471,7 +502,8 @@ services:
       - 3708:3708
 
   build-amd64:
-    image: elijahru/build-farm-client:archlinux--amd64
+    image: elijahru/build-farm-client:archlinux
+    platform: linux/amd64
     depends_on: [ build-host ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
@@ -487,7 +519,8 @@ services:
         make test; "
 
   build-arm64v8:
-    image: elijahru/build-farm-client:archlinux--arm64v8
+    image: elijahru/build-farm-client:archlinux
+    platform: linux/arm64/v8
     depends_on: [ build-host ]
     volumes:
       # Map GitHub Actions cache to ccache via volume

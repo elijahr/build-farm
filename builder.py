@@ -150,29 +150,59 @@ class Distro(metaclass=abc.ABCMeta):
             raise RuntimeError("Distro context not entered")
         return self._context
 
-    def host_manifest_tags(self, version):
+    def host_simple_manifest_tag(self, registry=""):
+        if registry and not registry.endswith("/"):
+            registry = f"{registry}/"
+        return f"{registry}{self.host_image}:{self.slug}"
+
+    def host_versioned_manifest_tag(self, version, registry=""):
+        if registry and not registry.endswith("/"):
+            registry = f"{registry}/"
+        return f"{registry}{self.host_image}:{self.slug}--{version}"
+
+    def host_manifest_tags(self, version, registry=""):
+        if registry and not registry.endswith("/"):
+            registry = f"{registry}/"
         return (
-            f"{self.host_image}:{self.slug}--{version}",
-            f"{self.host_image}:{self.slug}",
+            self.host_versioned_manifest_tag(version, registry=registry),
+            self.host_simple_manifest_tag(registry=registry),
         )
 
-    def host_image_tag(self, version, arch):
-        return f"{self.host_image}:{self.slug}--{arch_slug(arch)}--{version}"
+    def host_image_tag(self, version, arch, registry=""):
+        if registry and not registry.endswith("/"):
+            registry = f"{registry}/"
+        return f"{registry}{self.host_image}:{self.slug}--{arch_slug(arch)}--{version}"
 
-    def host_image_latest_tag(self, arch):
-        return f"{self.host_image}:{self.slug}--{arch_slug(arch)}"
+    def host_image_latest_tag(self, arch, registry=""):
+        if registry and not registry.endswith("/"):
+            registry = f"{registry}/"
+        return f"{registry}{self.host_image}:{self.slug}--{arch_slug(arch)}"
 
-    def client_manifest_tags(self, version):
+    def client_simple_manifest_tag(self, registry=""):
+        if registry and not registry.endswith("/"):
+            registry = f"{registry}/"
+        return f"{registry}{self.client_image}:{self.slug}"
+
+    def client_versioned_manifest_tag(self, version, registry=""):
+        if registry and not registry.endswith("/"):
+            registry = f"{registry}/"
+        return f"{registry}{self.client_image}:{self.slug}--{version}"
+
+    def client_manifest_tags(self, version, registry=""):
+        if registry and not registry.endswith("/"):
+            registry = f"{registry}/"
         return (
-            f"{self.client_image}:{self.slug}--{version}",
-            f"{self.client_image}:{self.slug}",
+            self.client_versioned_manifest_tag(version, registry=registry),
+            self.client_simple_manifest_tag(registry=registry),
         )
 
-    def client_image_tag(self, version, arch):
-        return f"{self.client_image}:{self.slug}--{arch_slug(arch)}--{version}"
+    def client_image_tag(self, version, arch, registry=""):
+        return (
+            f"{registry}{self.client_image}:{self.slug}--{arch_slug(arch)}--{version}"
+        )
 
-    def client_image_latest_tag(self, arch):
-        return f"{self.client_image}:{self.slug}--{arch_slug(arch)}"
+    def client_image_latest_tag(self, arch, registry=""):
+        return f"{registry}{self.client_image}:{self.slug}--{arch_slug(arch)}"
 
     @contextlib.contextmanager
     def set_context(self, **context):
@@ -383,7 +413,7 @@ class Distro(metaclass=abc.ABCMeta):
 
         self.render(version=version)
 
-        image = self.host_image_tag(version, host_arch)
+        image = self.host_image_tag(version, host_arch, registry="ghcr.io")
         dockerfile = self.out_path / f"host/Dockerfile.{arch_slug(host_arch)}"
         try:
             docker("pull", image, "--platform", f"linux/{host_arch}")
@@ -413,7 +443,7 @@ class Distro(metaclass=abc.ABCMeta):
 
         # TODO - determine host_arch
         with self.run_host(host_arch="amd64"):
-            image = self.client_image_tag(version, client_arch)
+            image = self.client_image_tag(version, client_arch, registry="ghcr.io")
             dockerfile = self.out_path / f"client/Dockerfile.{arch_slug(client_arch)}"
             try:
                 docker("pull", image, "--platform", f"linux/{client_arch}")
@@ -441,14 +471,14 @@ class Distro(metaclass=abc.ABCMeta):
         os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
 
         images = {
-            host_arch: self.host_image_tag(version, host_arch)
+            host_arch: self.host_image_tag(version, host_arch, registry="ghcr.io")
             for host_arch in self.host_archs
         }
 
         for image in images.values():
             docker("pull", image)
 
-        for manifest in self.host_manifest_tags(version):
+        for manifest in self.host_manifest_tags(version, registry="docker.io"):
             try:
                 docker("manifest", "create", "--amend", manifest, *images.values())
             except ErrorReturnCode_1:
@@ -471,14 +501,16 @@ class Distro(metaclass=abc.ABCMeta):
         os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
 
         images = {
-            compiler_arch: self.client_image_tag(version, compiler_arch)
+            compiler_arch: self.client_image_tag(
+                version, compiler_arch, registry="ghcr.io"
+            )
             for compiler_arch in self.compiler_archs
         }
 
         for image in images.values():
             docker("pull", image)
 
-        for manifest in self.client_manifest_tags(version):
+        for manifest in self.client_manifest_tags(version, registry="docker.io"):
             try:
                 docker("manifest", "create", "--amend", manifest, *images.values())
             except ErrorReturnCode_1:
@@ -502,8 +534,8 @@ class Distro(metaclass=abc.ABCMeta):
 
         images = {
             host_arch: (
-                self.host_image_tag(version, host_arch),
-                self.host_image_latest_tag(host_arch),
+                self.host_image_tag(version, host_arch, registry="ghcr.io"),
+                self.host_image_latest_tag(host_arch, registry="docker.io"),
             )
             for host_arch in self.host_archs
         }
@@ -518,8 +550,8 @@ class Distro(metaclass=abc.ABCMeta):
 
         images = {
             compiler_arch: (
-                self.client_image_tag(version, compiler_arch),
-                self.client_image_latest_tag(compiler_arch),
+                self.client_image_tag(version, compiler_arch, registry="ghcr.io"),
+                self.client_image_latest_tag(compiler_arch, registry="docker.io"),
             )
             for compiler_arch in self.compiler_archs
         }

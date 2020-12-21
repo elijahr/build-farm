@@ -26,9 +26,19 @@ _anchors:
 
   dockerhub_login: &dockerhub_login
     name: Login to Docker Hub
-    run: |
-      echo {% raw %}${{ secrets.DOCKERHUB_TOKEN }}{% endraw %} | docker login \
-        -u elijahru --password-stdin
+    uses: docker/login-action@v1
+    with:
+      registry: docker.io
+      username: elijahru
+      password: {% raw %}${{ secrets.DOCKERHUB_TOKEN }}{% endraw %}
+
+  ghcr_login: &ghcr_login
+    name: Login to GitHub Container Registry
+    uses: docker/login-action@v1
+    with:
+      registry: ghcr.io
+      username: {% raw %}${{ github.repository_owner }}{% endraw %}
+      password: {% raw %}${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}{% endraw %}
 
   enable_docker_experimental_features: &enable_docker_experimental_features
     name: Enable Docker experimental features
@@ -58,6 +68,7 @@ jobs:
       - *install_pip_requirements
       - *enable_docker_experimental_features
       - *dockerhub_login
+      - *ghcr_login
       - name: Build host image
         run: |
           ./builder.py build-host \
@@ -83,6 +94,7 @@ jobs:
       - *install_pip_requirements
       - *enable_docker_experimental_features
       - *dockerhub_login
+      - *ghcr_login
       - name: Build client image
         run: |
           ./builder.py build-client \
@@ -111,6 +123,7 @@ jobs:
       - *install_pip_requirements
       - *enable_docker_experimental_features
       - *dockerhub_login
+      - *ghcr_login
       - name: Push host manifest
         run: |
           ./builder.py push-host-manifest \
@@ -137,6 +150,7 @@ jobs:
       - *install_pip_requirements
       - *enable_docker_experimental_features
       - *dockerhub_login
+      - *ghcr_login
       - name: Tag host latest
         run: |
           ./builder.py tag-host-latest \
