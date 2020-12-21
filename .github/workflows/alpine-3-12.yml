@@ -100,7 +100,7 @@ jobs:
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-host-arm/v6:
+  build-host-arm32v6:
     name: |
       host: arm/v6
     runs-on: ubuntu-latest
@@ -146,7 +146,7 @@ jobs:
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-host-arm/v7:
+  build-host-arm32v7:
     name: |
       host: arm/v7
     runs-on: ubuntu-latest
@@ -192,7 +192,7 @@ jobs:
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-host-arm64/v8:
+  build-host-arm64v8:
     name: |
       host: arm64/v8
     runs-on: ubuntu-latest
@@ -384,7 +384,7 @@ jobs:
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-client-arm/v6:
+  build-client-arm32v6:
     name: |
       client: arm/v6
 
@@ -433,7 +433,7 @@ jobs:
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-client-arm/v7:
+  build-client-arm32v7:
     name: |
       client: arm/v7
 
@@ -482,7 +482,7 @@ jobs:
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-client-arm64/v8:
+  build-client-arm64v8:
     name: |
       client: arm64/v8
 
@@ -592,11 +592,11 @@ jobs:
 
     - build-host-386
 
-    - build-host-arm/v6
+    - build-host-arm32v6
 
-    - build-host-arm/v7
+    - build-host-arm32v7
 
-    - build-host-arm64/v8
+    - build-host-arm64v8
 
     - build-host-ppc64le
 
@@ -605,11 +605,11 @@ jobs:
 
     - build-client-386
 
-    - build-client-arm/v6
+    - build-client-arm32v6
 
-    - build-client-arm/v7
+    - build-client-arm32v7
 
-    - build-client-arm64/v8
+    - build-client-arm64v8
 
     - build-client-ppc64le
 

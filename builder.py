@@ -79,8 +79,8 @@ def configure_qemu():
         )
 
 
-def get_platform(arch):
-    return f"linux/{arch.replace('arm32', 'arm/').replace('arm64', 'arm64/')}"
+def arch_slug(arch):
+    return arch.replace("arm/", "arm32").replace("arm64/", "arm64")
 
 
 class Distro(metaclass=abc.ABCMeta):
@@ -111,6 +111,7 @@ class Distro(metaclass=abc.ABCMeta):
         self.env.filters["compiler_path_part"] = self.get_compiler_path_part
         self.env.filters["host_image_tag"] = self.host_image_tag
         self.env.filters["client_image_tag"] = self.client_image_tag
+        self.env.filters["arch_slug"] = arch_slug
 
     def __repr__(self):
         return f"{self.__class__.__name__}({repr(self.name)})"
@@ -372,7 +373,7 @@ class Distro(metaclass=abc.ABCMeta):
                 self.render_template(
                     "shared-build-context/host/scripts/run.sh.jinja",
                     self.out_path
-                    / f"host/build-context/scripts/run-{host_arch.replace('arm/', 'arm32').replace('arm64/', 'arm64')}.sh",
+                    / f"host/build-context/scripts/run-{arch_slug(host_arch)}.sh",
                 )
 
     def build_host(self, host_arch, version, push=False):
@@ -381,9 +382,9 @@ class Distro(metaclass=abc.ABCMeta):
         self.render(version=version)
 
         image = self.host_image_tag(version, host_arch)
-        dockerfile = self.out_path / f"host/Dockerfile.{host_arch}"
+        dockerfile = self.out_path / f"host/Dockerfile.{arch_slug(host_arch)}"
         try:
-            docker("pull", image, "--platform", get_platform(host_arch))
+            docker("pull", image, "--platform", f"linux/{host_arch}")
         except ErrorReturnCode_1:
             pass
         docker(
@@ -396,7 +397,7 @@ class Distro(metaclass=abc.ABCMeta):
             "--cache-from",
             image,
             "--platform",
-            get_platform(host_arch),
+            f"linux/{host_arch}",
             "--progress",
             "plain",
         )
@@ -411,9 +412,9 @@ class Distro(metaclass=abc.ABCMeta):
         # TODO - determine host_arch
         with self.run_host(host_arch="amd64"):
             image = self.client_image_tag(version, client_arch)
-            dockerfile = self.out_path / f"client/Dockerfile.{client_arch}"
+            dockerfile = self.out_path / f"client/Dockerfile.{arch_slug(client_arch)}"
             try:
-                docker("pull", image, "--platform", get_platform(client_arch))
+                docker("pull", image, "--platform", f"linux/{client_arch}")
             except ErrorReturnCode_1:
                 pass
 
@@ -427,7 +428,7 @@ class Distro(metaclass=abc.ABCMeta):
                 "--cache-from",
                 image,
                 "--platform",
-                get_platform(client_arch),
+                f"linux/{client_arch}",
                 "--progress",
                 "plain",
             )
