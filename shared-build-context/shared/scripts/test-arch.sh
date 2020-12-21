@@ -38,7 +38,7 @@ normalize_to_docker_arch () {
     arm*)
       # Detect arm32 version using __ARM_ARCH definition
       ARM_ARCH=$(gcc -dM -E - < /dev/null | grep "#define __ARM_ARCH " | sed 's/#define __ARM_ARCH //')
-      echo "arm32v$ARM_ARCH"
+      echo "arm/v$ARM_ARCH"
       ;;
     mips64)
       echo mips64le ;;
