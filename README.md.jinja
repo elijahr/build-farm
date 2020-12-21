@@ -18,11 +18,11 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Alpine Linux
 
-The multi-architecture `{{ alpine_3_12.host_image }}:alpine_3_12` image expose the following compilers:
+The multi-architecture `{{ alpine3_12.host_image }}:alpine3_12` image expose the following compilers:
 
 | Host arch  | Target arch | Compiler port |
-|------------|-------------|---------------|{% for host_arch in alpine_3_12.host_archs %}{% for compiler_arch in alpine_3_12.compiler_archs_by_host_arch[host_arch] %}
-| {{ "%-10s" | format('`' + host_arch + '`') }} | {{ "%-11s" | format('`' + compiler_arch + '`') }} | {{ "%-13s" | format(alpine_3_12.ports_by_arch[compiler_arch]) }} |{% endfor %}{% endfor %}
+|------------|-------------|---------------|{% for host_arch in alpine3_12.host_archs %}{% for compiler_arch in alpine3_12.compiler_archs_by_host_arch[host_arch] %}
+| {{ "%-10s" | format('`' + host_arch + '`') }} | {{ "%-11s" | format('`' + compiler_arch + '`') }} | {{ "%-13s" | format(alpine3_12.ports_by_arch[compiler_arch]) }} |{% endfor %}{% endfor %}
 
 #### Arch Linux
 
@@ -71,8 +71,8 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 #### Alpine Linux
 
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
-|-----------------------|----------------------------------------------------------------------|-------------------|{% for compiler_arch in alpine_3_12.compiler_archs %}
-| {{ "%-21s" | format('`' + compiler_arch + '`') }} | {{ "%-68s" | format('`' + alpine_3_12.client_image_latest_tag(compiler_arch) + '`') }} | {{ "%-17s" | format('`172.17.0.1:' + alpine_3_12.ports_by_arch[compiler_arch] + '`') }} |{% endfor %})
+|-----------------------|----------------------------------------------------------------------|-------------------|{% for compiler_arch in alpine3_12.compiler_archs %}
+| {{ "%-21s" | format('`' + compiler_arch + '`') }} | {{ "%-68s" | format('`' + alpine3_12.client_image_latest_tag(compiler_arch) + '`') }} | {{ "%-17s" | format('`172.17.0.1:' + alpine3_12.ports_by_arch[compiler_arch] + '`') }} |{% endfor %})
 
 #### Arch Linux
 
@@ -88,9 +88,9 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 
 ### Simple example: cross-compiler
 
-In this example, `host` is a native Debian `amd64` container which exposes an `arm64v8` cross-compiler on port `3608`.
+In this example, `host` is a native Debian `amd64` container which exposes an `arm64/v8` cross-compiler on port `3608`.
 
-`client` is an emulated `arm64v8` container that offloads all `gcc/g++/cc/etc` work to the cross-compiler exposed on `host:3608`.
+`client` is an emulated `arm64/v8` container that offloads all `gcc/g++/cc/etc` work to the cross-compiler exposed on `host:3608`.
 
 The compiled object code is cached via `ccache` in a persistent volume, so that subsequent builds do not re-compile unchanged code.
 
@@ -103,12 +103,12 @@ services:
       - 3608:3608
 
   build-client:
-    image: {{ debian_buster.client_image_latest_tag('arm64v8') }}
+    image: {{ debian_buster.client_image_latest_tag('arm64/v8') }}
     volumes:
       # Your code
       - .:/code
       # Cache resulting object code between builds
-      - ./caches/arm64v8/ccache:/root/.ccache
+      - ./caches/arm64/v8/ccache:/root/.ccache
     command: ./configure && make
 ```
 
@@ -118,13 +118,13 @@ services:
 version: '3'
 services:
   build-host:
-    image: {{ alpine_3_12.host_image_latest_tag('amd64') }}
-    ports:{% for compiler_arch in alpine_3_12.compiler_archs_by_host_arch['amd64'] %}
+    image: {{ alpine3_12.host_image_latest_tag('amd64') }}
+    ports:{% for compiler_arch in alpine3_12.compiler_archs_by_host_arch['amd64'] %}
       # {{ compiler_arch }}
-      - {{ alpine_3_12.ports_by_arch[compiler_arch] }}:{{ alpine_3_12.ports_by_arch[compiler_arch] }}{% endfor %}
-  {% for compiler_arch in alpine_3_12.compiler_archs_by_host_arch['amd64'] %}
+      - {{ alpine3_12.ports_by_arch[compiler_arch] }}:{{ alpine3_12.ports_by_arch[compiler_arch] }}{% endfor %}
+  {% for compiler_arch in alpine3_12.compiler_archs_by_host_arch['amd64'] %}
   build-client-{{ compiler_arch }}:
-    image: {{ alpine_3_12.client_image_latest_tag(compiler_arch) }}
+    image: {{ alpine3_12.client_image_latest_tag(compiler_arch) }}
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -220,7 +220,7 @@ jobs:
 
     strategy:
       matrix:
-        arch: [ amd64, arm64v8 ]
+        arch: [ amd64, arm64/v8 ]
 
     steps:
       - name: Setup cache
@@ -256,7 +256,7 @@ services:
     ports:
       # amd64
       - 3704:3704
-      # arm64v8
+      # arm64/v8
       - 3708:3708
 
   build-amd64:
@@ -275,12 +275,12 @@ services:
         make; \
         make test; "
 
-  build-arm64v8:
-    image: {{ archlinux.client_image_latest_tag('arm64v8') }}
+  build-arm64/v8:
+    image: {{ archlinux.client_image_latest_tag('arm64/v8') }}
     depends_on: [ build-host ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
-      - ./caches/arm64v8/ccache:/root/.ccache
+      - ./caches/arm64/v8/ccache:/root/.ccache
     command: |
       bash -c "\
         curl -LsSf https://github.com/DaveGamble/cJSON/archive/master.tar.gz -o cJSON.tar.gz; \
@@ -306,7 +306,7 @@ If you are looking for an idea, contributions for the following are especially w
 
 * Make ccache optional in the client containers via an environment variable
 * A GitHub Action for GitHub Marketplace to make using these containers in CI easier
-* Windows amd64 and arm64v8 support?
+* Windows amd64 and arm64/v8 support?
 
 ### Changelog
 
@@ -318,4 +318,4 @@ If you are looking for an idea, contributions for the following are especially w
   * Consolidated hosts to new container [`elijahru/build-farm`](https://hub.docker.com/repository/docker/elijahru/build-farm).
   * Consolidated clients to new container [`elijahru/build-farm-client`](https://hub.docker.com/repository/docker/elijahru/build-farm-client).
   * Added `debian:buster-slim` based containers.
-  * Added `mips64le` and `arm32v5` architectures for `debian`.
+  * Added `mips64le` and `arm/v5` architectures for `debian`.

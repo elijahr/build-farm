@@ -48,11 +48,11 @@ def slugify(string, delim="-"):
 
 docker_manifest_args = {
     "amd64": ["--arch", "amd64"],
-    "i386": ["--arch", "386"],
-    "arm32v5": ["--arch", "arm", "--variant", "v5"],
-    "arm32v6": ["--arch", "arm", "--variant", "v6"],
-    "arm32v7": ["--arch", "arm", "--variant", "v7"],
-    "arm64v8": ["--arch", "arm64", "--variant", "v8"],
+    "386": ["--arch", "386"],
+    "arm/v5": ["--arch", "arm", "--variant", "v5"],
+    "arm/v6": ["--arch", "arm", "--variant", "v6"],
+    "arm/v7": ["--arch", "arm", "--variant", "v7"],
+    "arm64/v8": ["--arch", "arm64", "--variant", "v8"],
     "ppc": ["--arch", "ppc"],
     "ppc64le": ["--arch", "ppc64le"],
     "s390x": ["--arch", "s390x"],
@@ -371,7 +371,8 @@ class Distro(metaclass=abc.ABCMeta):
             with self.set_context(host_arch=host_arch):
                 self.render_template(
                     "shared-build-context/host/scripts/run.sh.jinja",
-                    self.out_path / f"host/build-context/scripts/run-{host_arch}.sh",
+                    self.out_path
+                    / f"host/build-context/scripts/run-{host_arch.replace('arm/', 'arm32').replace('arm64/', 'arm64')}.sh",
                 )
 
     def build_host(self, host_arch, version, push=False):
@@ -396,6 +397,8 @@ class Distro(metaclass=abc.ABCMeta):
             image,
             "--platform",
             get_platform(host_arch),
+            "--progress",
+            "plain",
         )
         if push:
             docker("push", image)
@@ -425,6 +428,8 @@ class Distro(metaclass=abc.ABCMeta):
                 image,
                 "--platform",
                 get_platform(client_arch),
+                "--progress",
+                "plain",
             )
             if push:
                 docker("push", image)
@@ -552,20 +557,20 @@ class DebianLike(Distro):
 
     host_archs = (
         "amd64",
-        "i386",
-        "arm32v5",
-        "arm32v7",
-        "arm64v8",
+        "386",
+        "arm/v5",
+        "arm/v7",
+        "arm64/v8",
         "ppc64le",
         "s390x",
         "mips64le",
     )
     compiler_archs = (
         "amd64",
-        "i386",
-        "arm32v5",
-        "arm32v7",
-        "arm64v8",
+        "386",
+        "arm/v5",
+        "arm/v7",
+        "arm64/v8",
         "ppc64le",
         "s390x",
         "mips64le",
@@ -573,67 +578,67 @@ class DebianLike(Distro):
     compiler_archs_by_host_arch = {
         "amd64": (
             "amd64",
-            "i386",
-            "arm32v5",
-            "arm32v7",
-            "arm64v8",
+            "386",
+            "arm/v5",
+            "arm/v7",
+            "arm64/v8",
             "ppc64le",
             "s390x",
             "mips64le",
         ),
-        "i386": (
+        "386": (
             "amd64",
-            "i386",
-            "arm32v5",
-            "arm32v7",
-            "arm64v8",
+            "386",
+            "arm/v5",
+            "arm/v7",
+            "arm64/v8",
             "ppc64le",
             "s390x",
             "mips64le",
         ),
-        "arm32v5": ("arm32v5",),
-        "arm32v7": ("arm32v7",),
-        "arm64v8": ("amd64", "i386", "arm32v5", "arm32v7", "arm64v8"),
-        "ppc64le": ("amd64", "i386", "arm64v8", "ppc64le"),
+        "arm/v5": ("arm/v5",),
+        "arm/v7": ("arm/v7",),
+        "arm64/v8": ("amd64", "386", "arm/v5", "arm/v7", "arm64/v8"),
+        "ppc64le": ("amd64", "386", "arm64/v8", "ppc64le"),
         "s390x": ("s390x",),
         "mips64le": ("mips64le",),
     }
     packages_by_arch = {
         "amd64": "gcc-x86-64-linux-gnu g++-x86-64-linux-gnu binutils-x86-64-linux-gnu",
-        "i386": "gcc-i686-linux-gnu g++-i686-linux-gnu binutils-i686-linux-gnu",
-        "arm32v5": "gcc-arm-linux-gnueabi g++-arm-linux-gnueabi binutils-arm-linux-gnueabi",
-        "arm32v7": "gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf binutils-arm-linux-gnueabihf",
-        "arm64v8": "gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu",
+        "386": "gcc-i686-linux-gnu g++-i686-linux-gnu binutils-i686-linux-gnu",
+        "arm/v5": "gcc-arm-linux-gnueabi g++-arm-linux-gnueabi binutils-arm-linux-gnueabi",
+        "arm/v7": "gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf binutils-arm-linux-gnueabihf",
+        "arm64/v8": "gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu",
         "ppc64le": "gcc-powerpc64le-linux-gnu g++-powerpc64le-linux-gnu binutils-powerpc64le-linux-gnu",
         "s390x": "gcc-s390x-linux-gnu g++-s390x-linux-gnu binutils-s390x-linux-gnu",
         "mips64le": "gcc-mipsel-linux-gnu g++-mipsel-linux-gnu binutils-mipsel-linux-gnu",
     }
     ports_by_arch = {
-        "i386": "3603",
+        "386": "3603",
         "amd64": "3604",
-        "arm32v5": "3605",
-        "arm32v7": "3607",
-        "arm64v8": "3608",
+        "arm/v5": "3605",
+        "arm/v7": "3607",
+        "arm64/v8": "3608",
         "s390x": "3609",
         "ppc64le": "3610",
         "mips64le": "3611",
     }
     toolchains_by_arch = {
         "amd64": "x86_64-linux-gnu",
-        "i386": "i686-linux-gnu",
-        "arm32v5": "arm-linux-gnueabi",
-        "arm32v7": "arm-linux-gnueabihf",
-        "arm64v8": "aarch64-linux-gnu",
+        "386": "i686-linux-gnu",
+        "arm/v5": "arm-linux-gnueabi",
+        "arm/v7": "arm-linux-gnueabihf",
+        "arm64/v8": "aarch64-linux-gnu",
         "ppc64le": "powerpc64le-linux-gnu",
         "s390x": "s390x-linux-gnu",
         "mips64le": "mipsel-linux-gnu",
     }
     flags_by_arch = {
         "amd64": "START_DISTCC_X86_64_LINUX_GNU",
-        "i386": "START_DISTCC_I686_LINUX_GNU",
-        "arm32v5": "START_DISTCC_ARM_LINUX_GNUEABI",
-        "arm32v7": "START_DISTCC_ARM_LINUX_GNUEABIHF",
-        "arm64v8": "START_DISTCC_AARCH64_LINUX_GNU",
+        "386": "START_DISTCC_I686_LINUX_GNU",
+        "arm/v5": "START_DISTCC_ARM_LINUX_GNUEABI",
+        "arm/v7": "START_DISTCC_ARM_LINUX_GNUEABIHF",
+        "arm64/v8": "START_DISTCC_AARCH64_LINUX_GNU",
         "ppc64le": "START_DISTCC_PPC64LE_LINUX_GNU",
         "s390x": "START_DISTCC_S390X_LINUX_GNU",
         "mips64le": "START_DISTCC_MIPS64LE_LINUX_GNU",
@@ -661,43 +666,43 @@ class ArchLinuxLike(Distro):
 
     host_archs = (
         "amd64",
-        "arm32v5",
-        "arm32v6",
-        "arm32v7",
-        "arm64v8",
+        "arm/v5",
+        "arm/v6",
+        "arm/v7",
+        "arm64/v8",
     )
     compiler_archs = (
         "amd64",
-        "arm32v5",
-        "arm32v6",
-        "arm32v7",
-        "arm64v8",
+        "arm/v5",
+        "arm/v6",
+        "arm/v7",
+        "arm64/v8",
     )
     compiler_archs_by_host_arch = {
         "amd64": (
             "amd64",
-            "arm32v5",
-            "arm32v6",
-            "arm32v7",
-            "arm64v8",
+            "arm/v5",
+            "arm/v6",
+            "arm/v7",
+            "arm64/v8",
         ),
-        "arm32v5": ("arm32v5",),
-        "arm32v6": ("arm32v6",),
-        "arm32v7": ("arm32v7",),
-        "arm64v8": ("arm64v8",),
+        "arm/v5": ("arm/v5",),
+        "arm/v6": ("arm/v6",),
+        "arm/v7": ("arm/v7",),
+        "arm64/v8": ("arm64/v8",),
     }
     ports_by_arch = {
         "amd64": "3704",
-        "arm32v5": "3705",
-        "arm32v6": "3706",
-        "arm32v7": "3707",
-        "arm64v8": "3708",
+        "arm/v5": "3705",
+        "arm/v6": "3706",
+        "arm/v7": "3707",
+        "arm64/v8": "3708",
     }
     toolchains_by_arch = {
-        "arm32v5": "/toolchains/x-tools/arm-unknown-linux-gnueabi",
-        "arm32v6": "/toolchains/x-tools6h/arm-unknown-linux-gnueabihf",
-        "arm32v7": "/toolchains/x-tools7h/arm-unknown-linux-gnueabihf",
-        "arm64v8": "/toolchains/x-tools8/aarch64-unknown-linux-gnu",
+        "arm/v5": "/root/x-tools/x-tools/arm-unknown-linux-gnueabi",
+        "arm/v6": "/root/x-tools/x-tools6h/arm-unknown-linux-gnueabihf",
+        "arm/v7": "/root/x-tools/x-tools7h/arm-unknown-linux-gnueabihf",
+        "arm64/v8": "/root/x-tools/x-tools8/aarch64-unknown-linux-gnu",
     }
 
     def get_compiler_path_part(self, compiler_arch):
@@ -709,74 +714,60 @@ class ArchLinuxLike(Distro):
 class AlpineLike(Distro):
     template_path = Path("alpine-like")
 
+    xtools_release = "devel-65a3dd2"
+
     host_archs = (
         "amd64",
-        "i386",
-        "arm32v6",
-        "arm32v7",
-        "arm64v8",
+        "386",
+        "arm/v6",
+        "arm/v7",
+        "arm64/v8",
         "ppc64le",
-        "s390x",
     )
     compiler_archs = (
         "amd64",
-        "i386",
-        "arm32v6",
-        "arm32v7",
-        "arm64v8",
+        "386",
+        "arm/v6",
+        "arm/v7",
+        "arm64/v8",
         "ppc64le",
-        "s390x",
     )
     compiler_archs_by_host_arch = {
-        "amd64": ("amd64", "i386", "arm32v6", "arm32v7", "arm64v8", "ppc64le", "s390x"),
-        "i386": ("amd64", "i386", "arm32v6", "arm32v7", "arm64v8", "ppc64le", "s390x"),
-        "arm32v6": ("arm32v6",),
-        "arm32v7": ("arm32v7",),
-        "arm64v8": ("arm64v8",),
+        "amd64": ("amd64", "386", "arm/v6", "arm/v7", "arm64/v8", "ppc64le"),
+        "386": ("amd64", "386", "arm/v6", "arm/v7", "arm64/v8", "ppc64le"),
+        "arm/v6": ("arm/v6",),
+        "arm/v7": ("arm/v7",),
+        "arm64/v8": ("arm64/v8",),
         "ppc64le": ("ppc64le",),
-        "s390x": ("s390x",),
     }
     ports_by_arch = {
-        "i386": "3803",
+        "386": "3803",
         "amd64": "3804",
-        "arm32v6": "3806",
-        "arm32v7": "3807",
-        "arm64v8": "3808",
-        "s390x": "3809",
+        "arm/v6": "3806",
+        "arm/v7": "3807",
+        "arm64/v8": "3808",
         "ppc64le": "3810",
     }
-    toolchain_urls_by_host_arch = {
-        "amd64": {
-            "i386": "https://more.musl.cc/9/x86_64-linux-musl/i686-linux-musl-cross.tgz",
-            "arm32v6": "https://more.musl.cc/9/x86_64-linux-musl/armel-linux-musleabi-cross.tgz",
-            "arm32v7": "https://more.musl.cc/9/x86_64-linux-musl/armel-linux-musleabihf-cross.tgz",
-            "arm64v8": "https://more.musl.cc/9/x86_64-linux-musl/aarch64-linux-musl-cross.tgz",
-            "s390x": "https://more.musl.cc/9/x86_64-linux-musl/s390x-linux-musl-cross.tgz",
-            "ppc64le": "https://more.musl.cc/9/x86_64-linux-musl/powerpc64le-linux-musl-cross.tgz",
-        },
-        "i386": {
-            "amd64": "https://more.musl.cc/9/i686-linux-musl/x86_64-linux-musl-cross.tgz",
-            "arm32v6": "https://more.musl.cc/9/i686-linux-musl/armel-linux-musleabi-cross.tgz",
-            "arm32v7": "https://more.musl.cc/9/i686-linux-musl/armel-linux-musleabihf-cross.tgz",
-            "arm64v8": "https://more.musl.cc/9/i686-linux-musl/aarch64-linux-musl-cross.tgz",
-            "s390x": "https://more.musl.cc/9/i686-linux-musl/s390x-linux-musl-cross.tgz",
-            "ppc64le": "https://more.musl.cc/9/i686-linux-musl/powerpc64le-linux-musl-cross.tgz",
-        },
-    }
-    toolchains_by_arch = {
-        "i386": "/toolchains/i686-linux-musl-cross",
-        "amd64": "/toolchains/x86_64-linux-musl-cross",
-        "arm32v6": "/toolchains/armel-linux-musleabi-cross",
-        "arm32v7": "/toolchains/armel-linux-musleabihf-cross",
-        "arm64v8": "/toolchains/aarch64-linux-musl-cross",
-        "s390x": "/toolchains/s390x-linux-musl-cross",
-        "ppc64le": "/toolchains/powerpc64le-linux-musl-cross",
-    }
+
+    @property
+    def toolchains_by_arch(self):
+        name = self.name.replace(":", "")
+        return {
+            "386": f"i686-{name}-linux-musl",
+            "amd64": f"x86_64-{name}-linux-musl",
+            "arm/v6": f"armv6-{name}-linux-musleabihf",
+            "arm/v7": f"armv7-{name}-linux-musleabihf",
+            "arm64/v8": f"aarch64-{name}-linux-musl",
+            "ppc64le": f"powerpc64le-{name}-linux-musl",
+        }
 
     def get_compiler_path_part(self, compiler_arch):
         if self.context["host_arch"] == compiler_arch:
             return ""
-        return Path(self.toolchains_by_arch[compiler_arch]) / "bin:"
+        return Path("/toolchains") / self.toolchains_by_arch[compiler_arch] / "bin:"
+
+    def get_toolchain_url(self, host_arch, compiler_arch):
+        return f"https://github.com/elijahr/x-tools/releases/download/{self.xtools_release}/x-tools-{self.xtools_release}--{self.name.replace(':', '')}-{host_arch}--{self.toolchains_by_arch[compiler_arch]}.tar.xz"
 
 
 # Register supported distributions
@@ -789,7 +780,7 @@ debian_buster_slim = DebianLike(
 archlinux = ArchLinuxLike(
     name="archlinux",
 )
-alpine_3_12 = AlpineLike(
+alpine3_12 = AlpineLike(
     name="alpine:3.12",
 )
 
@@ -802,6 +793,10 @@ def render_readme():
             project_name="build-farm",
             repo="elijahr/build-farm",
             Distro=Distro,
+            debian_buster=debian_buster,
+            debian_buster_slim=debian_buster_slim,
+            archlinux=archlinux,
+            alpine3_12=alpine3_12,
         )
         for distro in Distro.registry.values():
             context[distro.identifier] = distro

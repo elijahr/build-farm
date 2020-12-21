@@ -26,7 +26,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -54,9 +54,9 @@ jobs:
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-host-i386:
+  build-host-386:
     name: |
-      host: i386
+      host: 386
     runs-on: ubuntu-latest
 
     steps:
@@ -72,7 +72,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -96,13 +96,13 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro debian:buster \
-          --host-arch i386 \
+          --host-arch 386 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-host-arm32v5:
+  build-host-arm/v5:
     name: |
-      host: arm32v5
+      host: arm/v5
     runs-on: ubuntu-latest
 
     steps:
@@ -118,7 +118,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -142,13 +142,13 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro debian:buster \
-          --host-arch arm32v5 \
+          --host-arch arm/v5 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-host-arm32v7:
+  build-host-arm/v7:
     name: |
-      host: arm32v7
+      host: arm/v7
     runs-on: ubuntu-latest
 
     steps:
@@ -164,7 +164,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -188,13 +188,13 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro debian:buster \
-          --host-arch arm32v7 \
+          --host-arch arm/v7 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-host-arm64v8:
+  build-host-arm64/v8:
     name: |
-      host: arm64v8
+      host: arm64/v8
     runs-on: ubuntu-latest
 
     steps:
@@ -210,7 +210,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -234,7 +234,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro debian:buster \
-          --host-arch arm64v8 \
+          --host-arch arm64/v8 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -256,7 +256,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -302,7 +302,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -348,7 +348,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -399,7 +399,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -427,9 +427,9 @@ jobs:
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-client-i386:
+  build-client-386:
     name: |
-      client: i386
+      client: 386
 
     runs-on: ubuntu-latest
     needs:
@@ -448,7 +448,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -472,13 +472,13 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro debian:buster \
-          --client-arch i386 \
+          --client-arch 386 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-client-arm32v5:
+  build-client-arm/v5:
     name: |
-      client: arm32v5
+      client: arm/v5
 
     runs-on: ubuntu-latest
     needs:
@@ -497,7 +497,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -521,13 +521,13 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro debian:buster \
-          --client-arch arm32v5 \
+          --client-arch arm/v5 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-client-arm32v7:
+  build-client-arm/v7:
     name: |
-      client: arm32v7
+      client: arm/v7
 
     runs-on: ubuntu-latest
     needs:
@@ -546,7 +546,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -570,13 +570,13 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro debian:buster \
-          --client-arch arm32v7 \
+          --client-arch arm/v7 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
-  build-client-arm64v8:
+  build-client-arm64/v8:
     name: |
-      client: arm64v8
+      client: arm64/v8
 
     runs-on: ubuntu-latest
     needs:
@@ -595,7 +595,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -619,7 +619,7 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro debian:buster \
-          --client-arch arm64v8 \
+          --client-arch arm64/v8 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -644,7 +644,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -693,7 +693,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -742,7 +742,7 @@ jobs:
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -780,13 +780,13 @@ jobs:
     needs:
     - build-host-amd64
 
-    - build-host-i386
+    - build-host-386
 
-    - build-host-arm32v5
+    - build-host-arm/v5
 
-    - build-host-arm32v7
+    - build-host-arm/v7
 
-    - build-host-arm64v8
+    - build-host-arm64/v8
 
     - build-host-ppc64le
 
@@ -797,13 +797,13 @@ jobs:
 
     - build-client-amd64
 
-    - build-client-i386
+    - build-client-386
 
-    - build-client-arm32v5
+    - build-client-arm/v5
 
-    - build-client-arm32v7
+    - build-client-arm/v7
 
-    - build-client-arm64v8
+    - build-client-arm64/v8
 
     - build-client-ppc64le
 
@@ -819,7 +819,7 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
@@ -867,7 +867,7 @@ jobs:
         fetch-depth: 1
         submodules: recursive
 
-    - name: Install emulation dependencies
+    - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools

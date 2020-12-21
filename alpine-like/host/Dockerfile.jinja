@@ -1,24 +1,29 @@
 ARG ARCH={{ host_arch }}
 FROM {{ distro.name }}
 
-# Install deps
-RUN \
-  apk add --no-cache distcc gcc g++ make
-
-{% if host_arch in distro.toolchain_urls_by_host_arch %}
-# Install pre-built musl cross toolchains
-ADD \{% for compiler_arch in host_arch|compiler_archs %}{% if compiler_arch in distro.toolchain_urls_by_host_arch[host_arch] %}
-  {{ distro.toolchain_urls_by_host_arch[host_arch][compiler_arch] }} \{% endif %}{% endfor %}
-  /toolchains/
-{% endif %}
-
 WORKDIR /root
 
-COPY scripts/* /scripts/
+# Copy test, setup, and run scripts
+COPY scripts /scripts/
 
+# Install deps for building
 RUN \
   chmod +x /scripts/* && \
-  /scripts/test-arch.sh {{ host_arch }} && rm /scripts/test-arch.sh && \
-  /scripts/setup.sh && rm /scripts/setup.sh
+  apk add --no-cache build-base distcc
 
-CMD /scripts/run-{{ host_arch }}.sh
+{% for compiler_arch in host_arch|compiler_archs %}
+{% if compiler_arch != host_arch %}
+# Download {{ compiler_arch|toolchain }} toolchain binaries for {{ host_arch }}
+ADD {{ distro.get_toolchain_url(host_arch, compiler_arch) }} /root/x-tools/
+{% endif %}
+{% endfor %}
+
+{% if host_arch == "386" %}
+# Ensure 386 container is correctly detected on x64 docker host
+RUN apk add --no-cache util-linux
+ENTRYPOINT ["setarch", "i686"]
+{% endif %}
+
+RUN /scripts/setup.sh
+
+# CMD /scripts/run-{{ host_arch }}.sh

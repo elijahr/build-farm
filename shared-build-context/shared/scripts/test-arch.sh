@@ -8,11 +8,11 @@ normalize_to_docker_arch () {
   # Function to detect the current running container's architecture and
   # normalize it to one of the following:
   # - amd64
-  # - i386
-  # - arm32v5
-  # - arm32v6
-  # - arm32v7
-  # - arm64v8
+  # - 386
+  # - arm/v5
+  # - arm/v6
+  # - arm/v7
+  # - arm64/v8
   # - ppc
   # - ppc64le
   # - s390x
@@ -22,19 +22,19 @@ normalize_to_docker_arch () {
 
   case $ACTUAL_ARCH in
     x86_64 | x64)
-      # Detect i386 container on amd64 using __amd64 definition
+      # Detect 386 container on amd64 using __amd64 definition
       IS_AMD64=$(gcc -dM -E - < /dev/null | grep "#define __amd64 " | sed 's/#define __amd64 //')
       if [ "$IS_AMD64" = "1" ]
       then
         echo amd64
       else
-        echo i386
+        echo 386
       fi
       ;;
-    i386 | i686 | x86)
-      echo i386 ;;
+    386 | i686 | x86)
+      echo 386 ;;
     aarch64 | arm64 | armv8b | armv8l)
-      echo arm64v8 ;;
+      echo arm64/v8 ;;
     arm*)
       # Detect arm32 version using __ARM_ARCH definition
       ARM_ARCH=$(gcc -dM -E - < /dev/null | grep "#define __ARM_ARCH " | sed 's/#define __ARM_ARCH //')

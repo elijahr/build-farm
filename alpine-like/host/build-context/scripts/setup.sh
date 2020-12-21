@@ -2,24 +2,17 @@
 
 set -uxe
 
-if [ -d /toolchains ]
+if [ -d /root/x-tools ]
 then
-  cd /toolchains
-  for file in *.tgz
+  cd /root/x-tools
+  for tarball in *.tar.xz
   do
-    if [ "$file" != "*.tgz" ]
+    if [ "$tarball" != "*.tar.xz" ]
     then
-      tar xzf $file &
+      tar xJf "$tarball" && rm "$tarball" &
     fi
   done
   wait
-  for file in *.tgz
-  do
-    if [ "$file" != "*.tgz" ]
-    then
-      rm $file
-    fi
-  done
   for dir in *
   do
     if [ "$dir" != "*" ]
@@ -29,18 +22,17 @@ then
       do
         if [ "$file" != "*" ]
         then
-          # symlink toolchain binaries for whitelisting
           if [ ! -f "/usr/lib/distcc/${file}" ]
           then
-            ln -s "$(readlink -f $file)" "/usr/lib/distcc/${file}"
-            # alias <arch>-linux-musl-<cmd> as <arch>-alpine-linux-musl-<cmd>
-            ln -s "$(readlink -f $file)" "$(dirname $(readlink -f $file))/$(echo $file | sed 's/linux/alpine-linux/')"
+            # alias /root/x-tools/<toolchain>/bin/<arch>-alpine*-linux-musl*-<cmd>
+            # as /usr/lib/distcc/<arch>-alpine-linux-musl*-<cmd>
+            # this whitelists the binary for use with distcc and matches alpine's toolchain naming pattern
+            ln -s "$(readlink -f $file)" "/usr/lib/distcc/$(echo $file | sed 's/alpine.*-linux/alpine-linux/')"
           fi
-          if [ ! -f "/usr/lib/distcc/$(echo $file | sed 's/linux-musl/alpine-linux-musl/')" ]
-          then
-            # alias <arch>-linux-musl-<cmd> as <arch>-alpine-linux-musl-<cmd>
-            ln -s "$(readlink -f $file)" "/usr/lib/distcc/$(echo $file | sed 's/linux/alpine-linux/')"
-          fi
+          # alias /root/x-tools/<toolchain>/bin/<arch>-alpine*-linux-musl*-<cmd>
+          # as /root/x-tools/<toolchain>/bin/<cmd>
+          # this allows us to set PATH and have a distccd instance default to gcc/strip/ld etc from the toolchain
+          ln -s "$file" "$(echo "$file" | sed 's/.*musl[a-z]*-\(.*\)$/\1\2/')"
         fi
       done
       cd -

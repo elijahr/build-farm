@@ -7,7 +7,7 @@ _anchors:
       submodules: recursive
 
   install_apt_requirements: &install_apt_requirements
-    name: Install emulation dependencies
+    name: Install apt requirements
     run: |
       sudo apt-get update -q -y
       sudo apt-get -qq install -y python3-setuptools

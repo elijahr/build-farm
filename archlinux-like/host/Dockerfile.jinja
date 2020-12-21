@@ -8,7 +8,7 @@ RUN \
 
 {% if host_arch != "amd64" %}
 # Install pre-built cross-compiler toolchains, as per https://archlinuxarm.org/wiki/Distcc_Cross-Compiling
-COPY toolchains/* /toolchains/
+COPY toolchains/* /root/x-tools/
 {% endif %}
 COPY scripts/* /scripts/
 

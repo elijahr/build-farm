@@ -24,29 +24,26 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Alpine Linux
 
-The multi-architecture `elijahru/build-farm:alpine_3_12` image expose the following compilers:
+The multi-architecture `elijahru/build-farm:alpine3_12` image expose the following compilers:
 
 | Host arch  | Target arch | Compiler port |
 |------------|-------------|---------------|
 | `amd64`    | `amd64`     | 3804          |
-| `amd64`    | `i386`      | 3803          |
-| `amd64`    | `arm32v6`   | 3806          |
-| `amd64`    | `arm32v7`   | 3807          |
-| `amd64`    | `arm64v8`   | 3808          |
+| `amd64`    | `386`       | 3803          |
+| `amd64`    | `arm/v6`    | 3806          |
+| `amd64`    | `arm/v7`    | 3807          |
+| `amd64`    | `arm64/v8`  | 3808          |
 | `amd64`    | `ppc64le`   | 3810          |
-| `amd64`    | `s390x`     | 3809          |
-| `i386`     | `amd64`     | 3804          |
-| `i386`     | `i386`      | 3803          |
-| `i386`     | `arm32v6`   | 3806          |
-| `i386`     | `arm32v7`   | 3807          |
-| `i386`     | `arm64v8`   | 3808          |
-| `i386`     | `ppc64le`   | 3810          |
-| `i386`     | `s390x`     | 3809          |
-| `arm32v6`  | `arm32v6`   | 3806          |
-| `arm32v7`  | `arm32v7`   | 3807          |
-| `arm64v8`  | `arm64v8`   | 3808          |
+| `386`      | `amd64`     | 3804          |
+| `386`      | `386`       | 3803          |
+| `386`      | `arm/v6`    | 3806          |
+| `386`      | `arm/v7`    | 3807          |
+| `386`      | `arm64/v8`  | 3808          |
+| `386`      | `ppc64le`   | 3810          |
+| `arm/v6`   | `arm/v6`    | 3806          |
+| `arm/v7`   | `arm/v7`    | 3807          |
+| `arm64/v8` | `arm64/v8`  | 3808          |
 | `ppc64le`  | `ppc64le`   | 3810          |
-| `s390x`    | `s390x`     | 3809          |
 
 #### Arch Linux
 
@@ -55,14 +52,14 @@ The multi-architecture `elijahru/build-farm:archlinux` image exposes the followi
 | Host arch  | Target arch | Compiler port |
 |------------|-------------|---------------|
 | `amd64`    | `amd64`     | 3704          |
-| `amd64`    | `arm32v5`   | 3705          |
-| `amd64`    | `arm32v6`   | 3706          |
-| `amd64`    | `arm32v7`   | 3707          |
-| `amd64`    | `arm64v8`   | 3708          |
-| `arm32v5`  | `arm32v5`   | 3705          |
-| `arm32v6`  | `arm32v6`   | 3706          |
-| `arm32v7`  | `arm32v7`   | 3707          |
-| `arm64v8`  | `arm64v8`   | 3708          |
+| `amd64`    | `arm/v5`    | 3705          |
+| `amd64`    | `arm/v6`    | 3706          |
+| `amd64`    | `arm/v7`    | 3707          |
+| `amd64`    | `arm64/v8`  | 3708          |
+| `arm/v5`   | `arm/v5`    | 3705          |
+| `arm/v6`   | `arm/v6`    | 3706          |
+| `arm/v7`   | `arm/v7`    | 3707          |
+| `arm64/v8` | `arm64/v8`  | 3708          |
 
 
 #### Debian Buster
@@ -72,31 +69,31 @@ The multi-architecture `elijahru/build-farm:debian-buster` and `elijahru/build-f
 | Host arch  | Target arch | Compiler port |
 |------------|-------------|---------------|
 | `amd64`    | `amd64`     | 3604          |
-| `amd64`    | `i386`      | 3603          |
-| `amd64`    | `arm32v5`   | 3605          |
-| `amd64`    | `arm32v7`   | 3607          |
-| `amd64`    | `arm64v8`   | 3608          |
+| `amd64`    | `386`       | 3603          |
+| `amd64`    | `arm/v5`    | 3605          |
+| `amd64`    | `arm/v7`    | 3607          |
+| `amd64`    | `arm64/v8`  | 3608          |
 | `amd64`    | `ppc64le`   | 3610          |
 | `amd64`    | `s390x`     | 3609          |
 | `amd64`    | `mips64le`  | 3611          |
-| `i386`     | `amd64`     | 3604          |
-| `i386`     | `i386`      | 3603          |
-| `i386`     | `arm32v5`   | 3605          |
-| `i386`     | `arm32v7`   | 3607          |
-| `i386`     | `arm64v8`   | 3608          |
-| `i386`     | `ppc64le`   | 3610          |
-| `i386`     | `s390x`     | 3609          |
-| `i386`     | `mips64le`  | 3611          |
-| `arm32v5`  | `arm32v5`   | 3605          |
-| `arm32v7`  | `arm32v7`   | 3607          |
-| `arm64v8`  | `amd64`     | 3604          |
-| `arm64v8`  | `i386`      | 3603          |
-| `arm64v8`  | `arm32v5`   | 3605          |
-| `arm64v8`  | `arm32v7`   | 3607          |
-| `arm64v8`  | `arm64v8`   | 3608          |
+| `386`      | `amd64`     | 3604          |
+| `386`      | `386`       | 3603          |
+| `386`      | `arm/v5`    | 3605          |
+| `386`      | `arm/v7`    | 3607          |
+| `386`      | `arm64/v8`  | 3608          |
+| `386`      | `ppc64le`   | 3610          |
+| `386`      | `s390x`     | 3609          |
+| `386`      | `mips64le`  | 3611          |
+| `arm/v5`   | `arm/v5`    | 3605          |
+| `arm/v7`   | `arm/v7`    | 3607          |
+| `arm64/v8` | `amd64`     | 3604          |
+| `arm64/v8` | `386`       | 3603          |
+| `arm64/v8` | `arm/v5`    | 3605          |
+| `arm64/v8` | `arm/v7`    | 3607          |
+| `arm64/v8` | `arm64/v8`  | 3608          |
 | `ppc64le`  | `amd64`     | 3604          |
-| `ppc64le`  | `i386`      | 3603          |
-| `ppc64le`  | `arm64v8`   | 3608          |
+| `ppc64le`  | `386`       | 3603          |
+| `ppc64le`  | `arm64/v8`  | 3608          |
 | `ppc64le`  | `ppc64le`   | 3610          |
 | `s390x`    | `s390x`     | 3609          |
 | `mips64le` | `mips64le`  | 3611          |
@@ -133,41 +130,40 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
 |-----------------------|----------------------------------------------------------------------|-------------------|
 | `amd64`               | `elijahru/build-farm-client:alpine-3-12--amd64`                      | `172.17.0.1:3804` |
-| `i386`                | `elijahru/build-farm-client:alpine-3-12--i386`                       | `172.17.0.1:3803` |
-| `arm32v6`             | `elijahru/build-farm-client:alpine-3-12--arm32v6`                    | `172.17.0.1:3806` |
-| `arm32v7`             | `elijahru/build-farm-client:alpine-3-12--arm32v7`                    | `172.17.0.1:3807` |
-| `arm64v8`             | `elijahru/build-farm-client:alpine-3-12--arm64v8`                    | `172.17.0.1:3808` |
-| `ppc64le`             | `elijahru/build-farm-client:alpine-3-12--ppc64le`                    | `172.17.0.1:3810` |
-| `s390x`               | `elijahru/build-farm-client:alpine-3-12--s390x`                      | `172.17.0.1:3809` |)
+| `386`                 | `elijahru/build-farm-client:alpine-3-12--386`                        | `172.17.0.1:3803` |
+| `arm/v6`              | `elijahru/build-farm-client:alpine-3-12--arm/v6`                     | `172.17.0.1:3806` |
+| `arm/v7`              | `elijahru/build-farm-client:alpine-3-12--arm/v7`                     | `172.17.0.1:3807` |
+| `arm64/v8`            | `elijahru/build-farm-client:alpine-3-12--arm64/v8`                   | `172.17.0.1:3808` |
+| `ppc64le`             | `elijahru/build-farm-client:alpine-3-12--ppc64le`                    | `172.17.0.1:3810` |)
 
 #### Arch Linux
 
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
 |-----------------------|----------------------------------------------------------------------|-------------------|
 | `amd64`               | `elijahru/build-farm-client:archlinux--amd64`                        | `172.17.0.1:3704` |
-| `arm32v5`             | `elijahru/build-farm-client:archlinux--arm32v5`                      | `172.17.0.1:3705` |
-| `arm32v6`             | `elijahru/build-farm-client:archlinux--arm32v6`                      | `172.17.0.1:3706` |
-| `arm32v7`             | `elijahru/build-farm-client:archlinux--arm32v7`                      | `172.17.0.1:3707` |
-| `arm64v8`             | `elijahru/build-farm-client:archlinux--arm64v8`                      | `172.17.0.1:3708` |)
+| `arm/v5`              | `elijahru/build-farm-client:archlinux--arm/v5`                       | `172.17.0.1:3705` |
+| `arm/v6`              | `elijahru/build-farm-client:archlinux--arm/v6`                       | `172.17.0.1:3706` |
+| `arm/v7`              | `elijahru/build-farm-client:archlinux--arm/v7`                       | `172.17.0.1:3707` |
+| `arm64/v8`            | `elijahru/build-farm-client:archlinux--arm64/v8`                     | `172.17.0.1:3708` |)
 
 #### Debian Buster
 
 | Emulated architecture | Client image on Docker Hub                                           | `DISTCC_HOSTS`    |
 |-----------------------|----------------------------------------------------------------------|-------------------|
 | `amd64`               | `elijahru/build-farm-client:debian-buster--amd64`                    | `172.17.0.1:3604` |
-| `i386`                | `elijahru/build-farm-client:debian-buster--i386`                     | `172.17.0.1:3603` |
-| `arm32v5`             | `elijahru/build-farm-client:debian-buster--arm32v5`                  | `172.17.0.1:3605` |
-| `arm32v7`             | `elijahru/build-farm-client:debian-buster--arm32v7`                  | `172.17.0.1:3607` |
-| `arm64v8`             | `elijahru/build-farm-client:debian-buster--arm64v8`                  | `172.17.0.1:3608` |
+| `386`                 | `elijahru/build-farm-client:debian-buster--386`                      | `172.17.0.1:3603` |
+| `arm/v5`              | `elijahru/build-farm-client:debian-buster--arm/v5`                   | `172.17.0.1:3605` |
+| `arm/v7`              | `elijahru/build-farm-client:debian-buster--arm/v7`                   | `172.17.0.1:3607` |
+| `arm64/v8`            | `elijahru/build-farm-client:debian-buster--arm64/v8`                 | `172.17.0.1:3608` |
 | `ppc64le`             | `elijahru/build-farm-client:debian-buster--ppc64le`                  | `172.17.0.1:3610` |
 | `s390x`               | `elijahru/build-farm-client:debian-buster--s390x`                    | `172.17.0.1:3609` |
 | `mips64le`            | `elijahru/build-farm-client:debian-buster--mips64le`                 | `172.17.0.1:3611` |)
 
 ### Simple example: cross-compiler
 
-In this example, `host` is a native Debian `amd64` container which exposes an `arm64v8` cross-compiler on port `3608`.
+In this example, `host` is a native Debian `amd64` container which exposes an `arm64/v8` cross-compiler on port `3608`.
 
-`client` is an emulated `arm64v8` container that offloads all `gcc/g++/cc/etc` work to the cross-compiler exposed on `host:3608`.
+`client` is an emulated `arm64/v8` container that offloads all `gcc/g++/cc/etc` work to the cross-compiler exposed on `host:3608`.
 
 The compiled object code is cached via `ccache` in a persistent volume, so that subsequent builds do not re-compile unchanged code.
 
@@ -180,12 +176,12 @@ services:
       - 3608:3608
 
   build-client:
-    image: elijahru/build-farm-client:debian-buster--arm64v8
+    image: elijahru/build-farm-client:debian-buster--arm64/v8
     volumes:
       # Your code
       - .:/code
       # Cache resulting object code between builds
-      - ./caches/arm64v8/ccache:/root/.ccache
+      - ./caches/arm64/v8/ccache:/root/.ccache
     command: ./configure && make
 ```
 
@@ -199,18 +195,16 @@ services:
     ports:
       # amd64
       - 3804:3804
-      # i386
+      # 386
       - 3803:3803
-      # arm32v6
+      # arm/v6
       - 3806:3806
-      # arm32v7
+      # arm/v7
       - 3807:3807
-      # arm64v8
+      # arm64/v8
       - 3808:3808
       # ppc64le
       - 3810:3810
-      # s390x
-      - 3809:3809
   
   build-client-amd64:
     image: elijahru/build-farm-client:alpine-3-12--amd64
@@ -219,29 +213,29 @@ services:
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-i386:
-    image: elijahru/build-farm-client:alpine-3-12--i386
+  build-client-386:
+    image: elijahru/build-farm-client:alpine-3-12--386
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm32v6:
-    image: elijahru/build-farm-client:alpine-3-12--arm32v6
+  build-client-arm/v6:
+    image: elijahru/build-farm-client:alpine-3-12--arm/v6
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm32v7:
-    image: elijahru/build-farm-client:alpine-3-12--arm32v7
+  build-client-arm/v7:
+    image: elijahru/build-farm-client:alpine-3-12--arm/v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm64v8:
-    image: elijahru/build-farm-client:alpine-3-12--arm64v8
+  build-client-arm64/v8:
+    image: elijahru/build-farm-client:alpine-3-12--arm64/v8
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -249,13 +243,6 @@ services:
   
   build-client-ppc64le:
     image: elijahru/build-farm-client:alpine-3-12--ppc64le
-    volumes:
-      - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
-    command: ./configure && make
-  
-  build-client-s390x:
-    image: elijahru/build-farm-client:alpine-3-12--s390x
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -273,13 +260,13 @@ services:
     ports:
       # amd64
       - 3704:3704
-      # arm32v5
+      # arm/v5
       - 3705:3705
-      # arm32v6
+      # arm/v6
       - 3706:3706
-      # arm32v7
+      # arm/v7
       - 3707:3707
-      # arm64v8
+      # arm64/v8
       - 3708:3708
   
   build-client-amd64:
@@ -289,29 +276,29 @@ services:
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm32v5:
-    image: elijahru/build-farm-client:archlinux--arm32v5
+  build-client-arm/v5:
+    image: elijahru/build-farm-client:archlinux--arm/v5
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm32v6:
-    image: elijahru/build-farm-client:archlinux--arm32v6
+  build-client-arm/v6:
+    image: elijahru/build-farm-client:archlinux--arm/v6
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm32v7:
-    image: elijahru/build-farm-client:archlinux--arm32v7
+  build-client-arm/v7:
+    image: elijahru/build-farm-client:archlinux--arm/v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm64v8:
-    image: elijahru/build-farm-client:archlinux--arm64v8
+  build-client-arm64/v8:
+    image: elijahru/build-farm-client:archlinux--arm64/v8
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -329,13 +316,13 @@ services:
     ports:
       # amd64
       - 3704:3704
-      # arm32v5
+      # arm/v5
       - 3705:3705
-      # arm32v6
+      # arm/v6
       - 3706:3706
-      # arm32v7
+      # arm/v7
       - 3707:3707
-      # arm64v8
+      # arm64/v8
       - 3708:3708
   
   build-client-amd64:
@@ -345,29 +332,29 @@ services:
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-i386:
-    image: elijahru/build-farm-client:debian-buster--i386
+  build-client-386:
+    image: elijahru/build-farm-client:debian-buster--386
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm32v5:
-    image: elijahru/build-farm-client:debian-buster--arm32v5
+  build-client-arm/v5:
+    image: elijahru/build-farm-client:debian-buster--arm/v5
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm32v7:
-    image: elijahru/build-farm-client:debian-buster--arm32v7
+  build-client-arm/v7:
+    image: elijahru/build-farm-client:debian-buster--arm/v7
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
-  build-client-arm64v8:
-    image: elijahru/build-farm-client:debian-buster--arm64v8
+  build-client-arm64/v8:
+    image: elijahru/build-farm-client:debian-buster--arm64/v8
     volumes:
       - .:/code
       - ./caches/amd64/ccache:/root/.ccache
@@ -444,7 +431,7 @@ jobs:
 
     strategy:
       matrix:
-        arch: [ amd64, arm64v8 ]
+        arch: [ amd64, arm64/v8 ]
 
     steps:
       - name: Setup cache
@@ -480,7 +467,7 @@ services:
     ports:
       # amd64
       - 3704:3704
-      # arm64v8
+      # arm64/v8
       - 3708:3708
 
   build-amd64:
@@ -499,12 +486,12 @@ services:
         make; \
         make test; "
 
-  build-arm64v8:
-    image: elijahru/build-farm-client:archlinux--arm64v8
+  build-arm64/v8:
+    image: elijahru/build-farm-client:archlinux--arm64/v8
     depends_on: [ build-host ]
     volumes:
       # Map GitHub Actions cache to ccache via volume
-      - ./caches/arm64v8/ccache:/root/.ccache
+      - ./caches/arm64/v8/ccache:/root/.ccache
     command: |
       bash -c "\
         curl -LsSf https://github.com/DaveGamble/cJSON/archive/master.tar.gz -o cJSON.tar.gz; \
@@ -530,7 +517,7 @@ If you are looking for an idea, contributions for the following are especially w
 
 * Make ccache optional in the client containers via an environment variable
 * A GitHub Action for GitHub Marketplace to make using these containers in CI easier
-* Windows amd64 and arm64v8 support?
+* Windows amd64 and arm64/v8 support?
 
 ### Changelog
 
@@ -542,4 +529,4 @@ If you are looking for an idea, contributions for the following are especially w
   * Consolidated hosts to new container [`elijahru/build-farm`](https://hub.docker.com/repository/docker/elijahru/build-farm).
   * Consolidated clients to new container [`elijahru/build-farm-client`](https://hub.docker.com/repository/docker/elijahru/build-farm-client).
   * Added `debian:buster-slim` based containers.
-  * Added `mips64le` and `arm32v5` architectures for `debian`.
+  * Added `mips64le` and `arm/v5` architectures for `debian`.

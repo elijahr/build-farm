@@ -4,10 +4,10 @@ set -uxe
 
 useradd distcc
 
-if [ -d /toolchains ]
+if [ -d /root/x-tools ]
 then
   # Extract cross-compiler toolchains
-  cd /toolchains
+  cd /root/x-tools
   for file in x-tools*.tar.xz
   do
     tar xf $file &
