@@ -165,7 +165,7 @@ class Distro(metaclass=abc.ABCMeta):
         )
 
     def host_image_tag(self, version, arch):
-        return f"{self.tmp_pkg}:{slugify(self.host_pkg)}--{self.slug}--{arch_slug(arch)}--{version}"
+        return f"{self.tmp_pkg}:{slugify(self.host_pkg.split('/')[1])}--{self.slug}--{arch_slug(arch)}--{version}"
 
     def client_simple_manifest_tag(self):
         return f"{self.client_pkg}:{self.slug}"
@@ -180,7 +180,7 @@ class Distro(metaclass=abc.ABCMeta):
         )
 
     def client_image_tag(self, version, arch):
-        return f"{self.tmp_pkg}:{slugify(self.client_pkg)}--{self.slug}--{arch_slug(arch)}--{version}"
+        return f"{self.tmp_pkg}:{slugify(self.client_pkg.split('/')[1])}--{self.slug}--{arch_slug(arch)}--{version}"
 
     @contextlib.contextmanager
     def set_context(self, **context):
@@ -455,22 +455,12 @@ class Distro(metaclass=abc.ABCMeta):
             docker("pull", image)
 
         for manifest in self.host_manifest_tags(version):
-            print("manifest", "create", "--amend", manifest, *images.values())
             try:
                 docker("manifest", "create", "--amend", manifest, *images.values())
             except ErrorReturnCode_1:
                 docker("manifest", "create", manifest, *images.values())
 
             for host_arch in self.host_archs:
-                print(
-                    "manifest",
-                    "annotate",
-                    manifest,
-                    images[host_arch],
-                    "--os",
-                    "linux",
-                    *docker_manifest_args[host_arch],
-                )
                 docker(
                     "manifest",
                     "annotate",
