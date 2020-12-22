@@ -452,13 +452,9 @@ class Distro(metaclass=abc.ABCMeta):
 
         images = {}
         for host_arch in self.host_archs:
-            new_image = self.host_image_tag(version, host_arch)
             image = self.host_image_tag(version, host_arch)
-            images[host_arch] = new_image
+            images[host_arch] = image
             docker("pull", image)
-            print(f"docker tag {image} {new_image}")
-            docker("tag", image, new_image)
-            docker("push", new_image)
 
         for manifest in self.host_manifest_tags(version):
             print("manifest", "create", "--amend", manifest, *images.values())
