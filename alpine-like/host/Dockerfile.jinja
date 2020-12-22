@@ -3,9 +3,6 @@ FROM {{ distro.name }}
 
 WORKDIR /root
 
-# Copy test, setup, and run scripts
-COPY scripts /scripts/
-
 # Install deps for building
 RUN \
   chmod +x /scripts/* && \
@@ -13,16 +10,22 @@ RUN \
 
 {% for compiler_arch in host_arch|compiler_archs %}
 {% if compiler_arch != host_arch %}
-# Download {{ compiler_arch|toolchain }} toolchain binaries for {{ host_arch }}
+# Download pre-built {{ compiler_arch|toolchain }} toolchain binaries for {{ host_arch }}
 ADD {{ distro.get_toolchain_url(host_arch, compiler_arch) }} /root/x-tools/
 {% endif %}
 {% endfor %}
+
+COPY scripts/setup.sh scripts/test-arch.sh /scripts/
+COPY scripts/run-{{ host_arch }}.sh /scripts/run.sh
+
+RUN \
+  chmod +x /scripts/* && \
+  /scripts/setup.sh && rm /scripts/setup.sh && \
+  /scripts/test-arch.sh {{ host_arch }} && rm /scripts/test-arch.sh
 
 {% if host_arch == "386" %}
 # Ensure 386 container is correctly detected on x64 docker host
 ENTRYPOINT ["setarch", "i686"]
 {% endif %}
 
-RUN \
-  /scripts/test-arch.sh {{ host_arch }} && \
-  /scripts/setup.sh
+CMD /scripts/run.sh

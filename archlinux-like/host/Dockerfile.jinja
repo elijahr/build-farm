@@ -10,7 +10,8 @@ RUN \
 # Install pre-built cross-compiler toolchains, as per https://archlinuxarm.org/wiki/Distcc_Cross-Compiling
 COPY toolchains/* /root/x-tools/
 {% endif %}
-COPY scripts/* /scripts/
+COPY scripts/setup.sh scripts/test-arch.sh /scripts/
+COPY scripts/run-{{ host_arch }}.sh /scripts/run.sh
 
 RUN \
   chmod +x /scripts/* && \
@@ -22,4 +23,4 @@ RUN \
 ENTRYPOINT ["setarch", "i686"]
 {% endif %}
 
-CMD /scripts/run-{{ host_arch }}.sh
+CMD /scripts/run.sh
