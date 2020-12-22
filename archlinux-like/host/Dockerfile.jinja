@@ -11,7 +11,7 @@ RUN \
 COPY toolchains/* /root/x-tools/
 {% endif %}
 COPY scripts/setup.sh scripts/test-arch.sh /scripts/
-COPY scripts/run-{{ host_arch }}.sh /scripts/run.sh
+COPY scripts/run-{{ host_arch|arch_slug }}.sh /scripts/run.sh
 
 RUN \
   chmod +x /scripts/* && \

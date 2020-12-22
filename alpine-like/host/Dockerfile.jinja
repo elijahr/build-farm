@@ -15,7 +15,7 @@ ADD {{ distro.get_toolchain_url(host_arch, compiler_arch) }} /root/x-tools/
 {% endfor %}
 
 COPY scripts/setup.sh scripts/test-arch.sh /scripts/
-COPY scripts/run-{{ host_arch }}.sh /scripts/run.sh
+COPY scripts/run-{{ host_arch|arch_slug }}.sh /scripts/run.sh
 
 RUN \
   chmod +x /scripts/* && \
