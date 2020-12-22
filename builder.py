@@ -167,7 +167,7 @@ class Distro(metaclass=abc.ABCMeta):
         )
 
     def host_image_tag(self, version, arch):
-        return f"elijahr/tmp:{slugify(self.host_package)}--{self.slug}--{arch_slug(arch)}--{version}"
+        return f"elijahru/tmp:{slugify(self.host_package)}--{self.slug}--{arch_slug(arch)}--{version}"
 
     def client_simple_manifest_tag(self):
         return f"{self.client_package}:{self.slug}"
@@ -182,7 +182,7 @@ class Distro(metaclass=abc.ABCMeta):
         )
 
     def client_image_tag(self, version, arch):
-        return f"elijahr/tmp:{slugify(self.client_package)}--{self.slug}--{arch_slug(arch)}--{version}"
+        return f"elijahru/tmp:{slugify(self.client_package)}--{self.slug}--{arch_slug(arch)}--{version}"
 
     @contextlib.contextmanager
     def set_context(self, **context):

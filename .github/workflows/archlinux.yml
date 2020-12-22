@@ -48,13 +48,6 @@ jobs:
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
@@ -102,13 +95,6 @@ jobs:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}
 
     - name: Build host image
       run: |
@@ -158,13 +144,6 @@ jobs:
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
@@ -213,13 +192,6 @@ jobs:
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
@@ -267,13 +239,6 @@ jobs:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}
 
     - name: Build host image
       run: |
@@ -328,13 +293,6 @@ jobs:
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
@@ -385,13 +343,6 @@ jobs:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}
 
     - name: Build client image
       run: |
@@ -444,13 +395,6 @@ jobs:
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
@@ -502,13 +446,6 @@ jobs:
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
@@ -559,13 +496,6 @@ jobs:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}
 
     - name: Build client image
       run: |
@@ -634,13 +564,6 @@ jobs:
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}
-
     - name: Push host manifest
       run: |
         ./builder.py push-host-manifest \
@@ -690,13 +613,6 @@ jobs:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v1
-      with:
-        registry: ghcr.io
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GHCR_PERSONAL_ACCESS_TOKEN }}
 
     - name: Tag host latest
       run: |
