@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update; \
   apt-get install -y \
-    {{ host_arch|apt_packages }}; \
+    {{ host_arch|apt_pkgs }}; \
   apt-get clean
 
 RUN mkdir -p /scripts/

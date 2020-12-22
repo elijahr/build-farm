@@ -42,8 +42,8 @@ class Dumper(yaml.RoundTripDumper):
         return True
 
 
-def slugify(string, delim="-"):
-    return re.sub(r"[^\w]", delim, string).lower()
+def slugify(string, delim="-", allowed_chars=""):
+    return re.sub(r"[^\w%s]" % re.escape(allowed_chars), delim, string).lower()
 
 
 docker_manifest_args = {
@@ -63,7 +63,7 @@ docker_manifest_args = {
 def configure_qemu():
     if not which("qemu-aarch64") and not which("qemu-system-aarch64"):
         raise RuntimeError(
-            "QEMU not installed, install missing package (apt: qemu,qemu-user-static | pacman: qemu-headless,qemu-headless-arch-extra | brew: qemu)."
+            "QEMU not installed, install missing pkg (apt: qemu,qemu-user-static | pacman: qemu-headless,qemu-headless-arch-extra | brew: qemu)."
         )
 
     images = docker("images", "--format", "{{ .Repository }}", _out=None, _err=None)
@@ -96,16 +96,14 @@ class Distro(metaclass=abc.ABCMeta):
         self,
         *,
         name,
-        ghcr_io_owner="elijahr",
-        docker_io_owner="elijahru",
-        host_package="build-farm",
-        client_package="build-farm-client",
+        host_pkg="elijahru/build-farm",
+        client_pkg="elijahru/build-farm-client",
+        tmp_pkg="elijahru/tmp",
     ):
         self.name = name
-        self.ghcr_io_owner = ghcr_io_owner
-        self.docker_io_owner = docker_io_owner
-        self.host_package = host_package
-        self.client_package = client_package
+        self.tmp_pkg = tmp_pkg
+        self.host_pkg = host_pkg
+        self.client_pkg = client_pkg
         self.registry[name] = self
         self._context = None
         self.env = Environment(autoescape=False, undefined=StrictUndefined)
@@ -155,10 +153,10 @@ class Distro(metaclass=abc.ABCMeta):
         return self._context
 
     def host_simple_manifest_tag(self):
-        return f"{self.host_package}:{self.slug}"
+        return f"{self.host_pkg}:{self.slug}"
 
     def host_versioned_manifest_tag(self, version):
-        return f"{self.host_package}:{self.slug}--{version}"
+        return f"{self.host_pkg}:{self.slug}--{version}"
 
     def host_manifest_tags(self, version):
         return (
@@ -167,13 +165,13 @@ class Distro(metaclass=abc.ABCMeta):
         )
 
     def host_image_tag(self, version, arch):
-        return f"elijahru/tmp:{slugify(self.host_package)}--{self.slug}--{arch_slug(arch)}--{version}"
+        return f"{self.tmp_pkg}:{slugify(self.host_pkg)}--{self.slug}--{arch_slug(arch)}--{version}"
 
     def client_simple_manifest_tag(self):
-        return f"{self.client_package}:{self.slug}"
+        return f"{self.client_pkg}:{self.slug}"
 
     def client_versioned_manifest_tag(self, version):
-        return f"{self.client_package}:{self.slug}--{version}"
+        return f"{self.client_pkg}:{self.slug}--{version}"
 
     def client_manifest_tags(self, version):
         return (
@@ -182,7 +180,7 @@ class Distro(metaclass=abc.ABCMeta):
         )
 
     def client_image_tag(self, version, arch):
-        return f"elijahru/tmp:{slugify(self.client_package)}--{self.slug}--{arch_slug(arch)}--{version}"
+        return f"{self.tmp_pkg}:{slugify(self.client_pkg)}--{self.slug}--{arch_slug(arch)}--{version}"
 
     @contextlib.contextmanager
     def set_context(self, **context):
@@ -262,7 +260,7 @@ class Distro(metaclass=abc.ABCMeta):
 
     @property
     def slug(self):
-        return slugify(self.name)
+        return slugify(self.name, allowed_chars=".")
 
     @property
     def identifier(self):
@@ -592,7 +590,7 @@ class DebianLike(Distro):
         "s390x": ("s390x",),
         "mips64le": ("mips64le",),
     }
-    packages_by_arch = {
+    pkgs_by_arch = {
         "amd64": "gcc-x86-64-linux-gnu g++-x86-64-linux-gnu binutils-x86-64-linux-gnu",
         "386": "gcc-i686-linux-gnu g++-i686-linux-gnu binutils-i686-linux-gnu",
         "arm/v5": "gcc-arm-linux-gnueabi g++-arm-linux-gnueabi binutils-arm-linux-gnueabi",
@@ -636,13 +634,13 @@ class DebianLike(Distro):
     def __init__(self, **kwargs):
         super(DebianLike, self).__init__(**kwargs)
         self.env.filters["flag"] = self.flags_by_arch.get
-        self.env.filters["apt_packages"] = self.get_apt_packages
+        self.env.filters["apt_pkgs"] = self.get_apt_pkgs
 
-    def get_apt_packages(self, host_arch):
-        packages = "build-essential g++ distcc lsb-base"
+    def get_apt_pkgs(self, host_arch):
+        pkgs = "build-essential g++ distcc lsb-base"
         for compiler_arch in self.compiler_archs_by_host_arch[host_arch]:
-            packages += f" {self.packages_by_arch[compiler_arch]}"
-        return packages
+            pkgs += f" {self.pkgs_by_arch[compiler_arch]}"
+        return pkgs
 
     def get_compiler_path_part(self, compiler_arch):
         if self.context["host_arch"] == compiler_arch:

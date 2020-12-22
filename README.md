@@ -24,7 +24,7 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Alpine Linux
 
-Image: `elijahru/build-farm:alpine-3-12`
+Image: `elijahru/build-farm:alpine-3.12`
 
 | Host platform | Compiler toolchain for platform | Compiler port |
 |---------------|---------------------------------|---------------|
@@ -127,7 +127,7 @@ The client containers also use ccache to avoid repeat compilation. ccached objec
 
 #### Alpine Linux
 
-Image: `elijahru/build-farm-client:alpine-3-12`
+Image: `elijahru/build-farm-client:alpine-3.12`
 
 | Platform | `DISTCC_HOSTS` |
 |----------|----------------|
@@ -200,7 +200,7 @@ services:
 version: '3'
 services:
   build-host:
-    image: elijahru/build-farm:alpine-3-12
+    image: elijahru/build-farm:alpine-3.12
     platform: linux/amd64
     ports:
       # amd64
@@ -217,7 +217,7 @@ services:
       - 3810:3810
   
   build-client-amd64:
-    image: elijahru/build-farm-client:alpine-3-12
+    image: elijahru/build-farm-client:alpine-3.12
     platform: linux/amd64
     volumes:
       - .:/code
@@ -225,7 +225,7 @@ services:
     command: ./configure && make
   
   build-client-386:
-    image: elijahru/build-farm-client:alpine-3-12
+    image: elijahru/build-farm-client:alpine-3.12
     platform: linux/386
     volumes:
       - .:/code
@@ -233,7 +233,7 @@ services:
     command: ./configure && make
   
   build-client-arm32v6:
-    image: elijahru/build-farm-client:alpine-3-12
+    image: elijahru/build-farm-client:alpine-3.12
     platform: linux/arm/v6
     volumes:
       - .:/code
@@ -241,7 +241,7 @@ services:
     command: ./configure && make
   
   build-client-arm32v7:
-    image: elijahru/build-farm-client:alpine-3-12
+    image: elijahru/build-farm-client:alpine-3.12
     platform: linux/arm/v7
     volumes:
       - .:/code
@@ -249,7 +249,7 @@ services:
     command: ./configure && make
   
   build-client-arm64v8:
-    image: elijahru/build-farm-client:alpine-3-12
+    image: elijahru/build-farm-client:alpine-3.12
     platform: linux/arm64/v8
     volumes:
       - .:/code
@@ -257,7 +257,7 @@ services:
     command: ./configure && make
   
   build-client-ppc64le:
-    image: elijahru/build-farm-client:alpine-3-12
+    image: elijahru/build-farm-client:alpine-3.12
     platform: linux/ppc64le
     volumes:
       - .:/code
