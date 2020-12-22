@@ -5,16 +5,10 @@ set -uxe
 main () {
   cd $(dirname $0)
 
-  # gcc/etc should use ccache first
-  test "$(which gcc)" = "/usr/lib/ccache/gcc" || test "$(which gcc)" = "/usr/lib/ccache/bin/gcc"
-  test "$(which g++)" = "/usr/lib/ccache/g++" || test "$(which g++)" = "/usr/lib/ccache/bin/g++"
-  test "$(which cc)" = "/usr/lib/ccache/cc" || test "$(which cc)" = "/usr/lib/ccache/bin/cc"
-
-  # Assert that ccache wrappers wrap distcc wrappers
+  # Assert that distcc wrappers are used
   test "$( (gcc 2>&1 || true) | tail -n 1 | grep distcc)" != ""
-
-  # Print ccache config
-  ccache -p
+  test "$( (g++ 2>&1 || true) | tail -n 1 | grep distcc)" != ""
+  test "$( (cc 2>&1 || true) | tail -n 1 | grep distcc)" != ""
 
   rm -Rf /tmp/cJSON
   mkdir /tmp/cJSON

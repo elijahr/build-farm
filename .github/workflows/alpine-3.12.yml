@@ -3,9 +3,12 @@
 name: alpine:3.12
 
 on:
+  pull_request:
+    paths-ignore: ['**.md']
   push:
     branches: ['*']
     tags: ['*']
+    paths-ignore: ['**.md']
 
 jobs:
   build-host-amd64:

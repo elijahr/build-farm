@@ -123,8 +123,6 @@ docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
 Windows hasn't been tested. You can install QEMU via https://www.qemu.org/download/#windows. If additional steps are required please submit a PR with instructions added to this README.
 
-The client containers also use ccache to avoid repeat compilation. ccached object files are volatile unless you mount /root/.ccache as a volume (see examples).
-
 #### Alpine Linux
 
 Image: `elijahru/build-farm-client:alpine-3.12`
@@ -172,8 +170,6 @@ In this example, `host` is a native Debian `amd64` container which exposes an `a
 
 `client` is an emulated `arm64/v8` container that offloads all `gcc/g++/cc/etc` work to the cross-compiler exposed on `host:3608`.
 
-The compiled object code is cached via `ccache` in a persistent volume, so that subsequent builds do not re-compile unchanged code.
-
 ```yml
 version: '3'
 services:
@@ -189,8 +185,6 @@ services:
     volumes:
       # Your code
       - .:/code
-      # Cache resulting object code between builds
-      - ./caches/arm64v8/ccache:/root/.ccache
     command: ./configure && make
 ```
 
@@ -221,7 +215,6 @@ services:
     platform: linux/amd64
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-386:
@@ -229,7 +222,6 @@ services:
     platform: linux/386
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v6:
@@ -237,7 +229,6 @@ services:
     platform: linux/arm/v6
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v7:
@@ -245,7 +236,6 @@ services:
     platform: linux/arm/v7
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm64v8:
@@ -253,7 +243,6 @@ services:
     platform: linux/arm64/v8
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-ppc64le:
@@ -261,7 +250,6 @@ services:
     platform: linux/ppc64le
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
 ```
@@ -291,7 +279,6 @@ services:
     platform: linux/amd64
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v5:
@@ -299,7 +286,6 @@ services:
     platform: linux/arm/v5
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v6:
@@ -307,7 +293,6 @@ services:
     platform: linux/arm/v6
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v7:
@@ -315,7 +300,6 @@ services:
     platform: linux/arm/v7
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm64v8:
@@ -323,7 +307,6 @@ services:
     platform: linux/arm64/v8
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
 ```
@@ -359,7 +342,6 @@ services:
     platform: linux/amd64
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-386:
@@ -367,7 +349,6 @@ services:
     platform: linux/386
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v5:
@@ -375,7 +356,6 @@ services:
     platform: linux/arm/v5
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm32v7:
@@ -383,7 +363,6 @@ services:
     platform: linux/arm/v7
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-arm64v8:
@@ -391,7 +370,6 @@ services:
     platform: linux/arm64/v8
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-ppc64le:
@@ -399,7 +377,6 @@ services:
     platform: linux/ppc64le
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-s390x:
@@ -407,7 +384,6 @@ services:
     platform: linux/s390x
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
   build-client-mips64le:
@@ -415,7 +391,6 @@ services:
     platform: linux/mips64le
     volumes:
       - .:/code
-      - ./caches/amd64/ccache:/root/.ccache
     command: ./configure && make
   
 ```
@@ -471,13 +446,6 @@ jobs:
         arch: [ amd64, arm64v8 ]
 
     steps:
-      - name: Setup cache
-        uses: actions/cache@v2
-        with:
-          # Used by ccache
-          path: caches
-          key: ${{ matrix.arch }}
-
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
@@ -512,9 +480,6 @@ services:
     image: elijahru/build-farm-client:archlinux
     platform: linux/amd64
     depends_on: [ build-host ]
-    volumes:
-      # Map GitHub Actions cache to ccache via volume
-      - ./caches/amd64/ccache:/root/.ccache
     command: |
       bash -c "\
         curl -LsSf https://github.com/DaveGamble/cJSON/archive/master.tar.gz -o cJSON.tar.gz; \
@@ -529,9 +494,6 @@ services:
     image: elijahru/build-farm-client:archlinux
     platform: linux/arm64/v8
     depends_on: [ build-host ]
-    volumes:
-      # Map GitHub Actions cache to ccache via volume
-      - ./caches/arm64v8/ccache:/root/.ccache
     command: |
       bash -c "\
         curl -LsSf https://github.com/DaveGamble/cJSON/archive/master.tar.gz -o cJSON.tar.gz; \
@@ -555,7 +517,6 @@ There are some useful git hooks that can be enabled by running `git config --loc
 
 If you are looking for an idea, contributions for the following are especially welcome:
 
-* Make ccache optional in the client containers via an environment variable
 * A GitHub Action for GitHub Marketplace to make using these containers in CI easier
 * Windows amd64 and arm64/v8 support?
 

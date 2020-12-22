@@ -3,18 +3,11 @@ FROM lopsided/archlinux:devel
 
 # Install deps and clear pacman cache
 RUN \
-  pacman -Syu --noconfirm distcc ccache; \
+  pacman -Syu --noconfirm distcc; \
   pacman -Sc --noconfirm || true;
 
-RUN \
-  mkdir -p /scripts && \
-  mkdir -p /root/.ccache
-
-COPY scripts/* /scripts/
-COPY root/.ccache/* /root/.ccache/
-
-# Use ccache wrappers first, distcc wrappers second
-ENV PATH=/usr/lib/ccache/bin:/usr/lib/distcc/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
+# Use distcc wrappers firstx
+ENV PATH=/usr/lib/distcc/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
 
 # If distccd can't be reached, fail
 ENV DISTCC_FALLBACK=0
@@ -26,6 +19,8 @@ ENV DISTCC_HOSTS=172.17.0.1:{{ compiler_arch|compiler_port }}
 # Ensure 386 container is correctly detected on x64 docker host
 ENTRYPOINT ["setarch", "i686"]
 {% endif %}
+
+COPY scripts/* /scripts/
 
 RUN \
   chmod +x /scripts/* && \

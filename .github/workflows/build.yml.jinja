@@ -42,9 +42,12 @@ _anchors:
 name: {{ distro.name }}
 
 on:
+  pull_request:
+    paths-ignore: [ '**.md' ]
   push:
     branches: [ '*' ]
     tags: [ '*' ]
+    paths-ignore: [ '**.md' ]
 
 jobs:
   {% for host_arch in distro.host_archs %}

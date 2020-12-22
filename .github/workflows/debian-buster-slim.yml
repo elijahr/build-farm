@@ -3,9 +3,12 @@
 name: debian:buster-slim
 
 on:
+  pull_request:
+    paths-ignore: ['**.md']
   push:
     branches: ['*']
     tags: ['*']
+    paths-ignore: ['**.md']
 
 jobs:
   build-host-amd64:

@@ -5,7 +5,6 @@ WORKDIR /root
 
 # Install deps for building
 RUN \
-  chmod +x /scripts/* && \
   apk add --no-cache build-base distcc {% if host_arch == "386" %} util-linux {% endif %}
 
 {% for compiler_arch in host_arch|compiler_archs %}
