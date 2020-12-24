@@ -2,6 +2,7 @@
 
 set -uxe
 
+mkdir -p /usr/lib/gcc-cross
 cd /usr/lib/gcc-cross
 for tarball in *.tar.xz
 do
