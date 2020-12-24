@@ -6,10 +6,12 @@ RUN \
   pacman -Syu --noconfirm distcc which; \
   pacman -Sc --noconfirm || true;
 
-{% if host_arch != "amd64" %}
-# Install pre-built cross-compiler toolchains, as per https://archlinuxarm.org/wiki/Distcc_Cross-Compiling
-COPY toolchains/* /root/x-tools/
+{% for compiler_arch in host_arch|compiler_archs %}
+{% if compiler_arch != host_arch %}
+# Download pre-built {{ compiler_arch|toolchain }} toolchain binaries for {{ host_arch }}
+ADD {{ distro.get_toolchain_url(host_arch, compiler_arch) }} /usr/lib/gcc-cross/
 {% endif %}
+{% endfor %}
 COPY scripts/setup.sh scripts/test-arch.sh /scripts/
 COPY scripts/run-{{ host_arch|arch_slug }}.sh /scripts/run.sh
 

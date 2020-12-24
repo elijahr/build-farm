@@ -10,7 +10,7 @@ RUN \
 {% for compiler_arch in host_arch|compiler_archs %}
 {% if compiler_arch != host_arch %}
 # Download pre-built {{ compiler_arch|toolchain }} toolchain binaries for {{ host_arch }}
-ADD {{ distro.get_toolchain_url(host_arch, compiler_arch) }} /root/x-tools/
+ADD {{ distro.get_toolchain_url(host_arch, compiler_arch) }} /usr/lib/gcc-cross/
 {% endif %}
 {% endfor %}
 

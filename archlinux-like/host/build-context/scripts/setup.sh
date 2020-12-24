@@ -4,23 +4,33 @@ set -uxe
 
 useradd distcc
 
-if [ -d /root/x-tools ]
-then
-  # Extract cross-compiler toolchains
-  cd /root/x-tools
-  for file in x-tools*.tar.xz
-  do
-    tar xf $file &
-  done
-  wait
-  rm -r x-tools*.tar.xz
-  cd -
-  # Whitelist binaries for specific toolchains
-  toolchains=( "armv5tel-unknown-linux-gnueabi" "armv6l-unknown-linux-gnueabihf" \
-              "armv7l-unknown-linux-gnueabihf" "aarch64-unknown-linux-gnu")
-  for toolchain in ${toolchains[@]}
-  do
-    ln -s /usr/bin/distcc /usr/lib/distcc/${toolchain}-gcc
-    ln -s /usr/bin/distcc /usr/lib/distcc/${toolchain}-g++
-  done
-fi
+cd /usr/lib/gcc-cross
+for tarball in *.tar.xz
+do
+  if [ "$tarball" != "*.tar.xz" ]
+  then
+    tar xJf "$tarball" && rm "$tarball" &
+  fi
+done
+wait
+
+for toolchain in *
+do
+  if [ "$toolchain" != "*" ]
+  then
+    cd "${toolchain}/bin"
+    for exe in ${toolchain}-*
+    do
+      if [ "$exe" != "${toolchain}-*" ]
+      then
+        # symlink toolchain to /usr/bin
+        ln -s "$(readlink -f "$exe")" "/usr/bin/" || true
+      fi
+    done
+    cd -
+  fi
+done
+cd -
+
+# Whitelist all compilers for use by distccd
+update-distcc-symlinks

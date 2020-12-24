@@ -531,7 +531,6 @@ class Distro(metaclass=abc.ABCMeta):
 
 class DebianLike(Distro):
     template_path = Path("debian-like")
-
     host_archs = (
         "amd64",
         "386",
@@ -638,9 +637,35 @@ class DebianLike(Distro):
         return Path("/usr/local/") / self.toolchains_by_arch[compiler_arch] / "bin:"
 
 
-class ArchLinuxLike(Distro):
-    template_path = Path("archlinux-like")
+class XtoolsDistro(Distro):
+    @property
+    @abc.abstractmethod
+    def xtools_release(self):
+        ...
 
+    @property
+    @abc.abstractmethod
+    def toolchains_by_arch(self):
+        ...
+
+    def get_compiler_path_part(self, compiler_arch):
+        if self.context["host_arch"] == compiler_arch:
+            return ""
+        return (
+            Path("/usr/lib/gcc-cross") / self.toolchains_by_arch[compiler_arch] / "bin:"
+        )
+
+    def get_toolchain_url(self, host_arch, compiler_arch):
+        os = self.name.replace(":", "")
+        host_arch = arch_slug(host_arch)
+        toolchain = self.toolchains_by_arch[compiler_arch]
+        tarball = f"x-tools--host.{os}-{host_arch}--target.{toolchain}--{self.xtools_release}.tar.xz"
+        return f"https://github.com/elijahr/x-tools/releases/download/{self.xtools_release}/{tarball}"
+
+
+class ArchLinuxLike(XtoolsDistro):
+    template_path = Path("archlinux-like")
+    xtools_release = "devel-20201224"
     host_archs = (
         "amd64",
         "arm/v5",
@@ -676,42 +701,36 @@ class ArchLinuxLike(Distro):
         "arm64/v8": "3708",
     }
     toolchains_by_arch = {
-        "arm/v5": "/root/x-tools/x-tools/arm-unknown-linux-gnueabi",
-        "arm/v6": "/root/x-tools/x-tools6h/arm-unknown-linux-gnueabihf",
-        "arm/v7": "/root/x-tools/x-tools7h/arm-unknown-linux-gnueabihf",
-        "arm64/v8": "/root/x-tools/x-tools8/aarch64-unknown-linux-gnu",
+        "amd64": "x86_64-build_pc-linux-gnu",
+        "arm/v5": "armv5tel-unknown-linux-gnueabi",
+        "arm/v6": "armv6l-unknown-linux-gnueabihf",
+        "arm/v7": "armv7l-unknown-linux-gnueabihf",
+        "arm64/v8": "aarch64-unknown-linux-gnu",
     }
 
-    def get_compiler_path_part(self, compiler_arch):
-        if self.context["host_arch"] == compiler_arch:
-            return ""
-        return Path(self.toolchains_by_arch[compiler_arch]) / "bin:"
 
-
-class AlpineLike(Distro):
+class AlpineLike(XtoolsDistro):
     template_path = Path("alpine-like")
-
-    xtools_release = "devel-65a3dd2"
-
+    xtools_release = "devel-20201224"
     host_archs = (
-        "amd64",
         "386",
+        "amd64",
         "arm/v6",
         "arm/v7",
         "arm64/v8",
         "ppc64le",
     )
     compiler_archs = (
-        "amd64",
         "386",
+        "amd64",
         "arm/v6",
         "arm/v7",
         "arm64/v8",
         "ppc64le",
     )
     compiler_archs_by_host_arch = {
-        "amd64": ("amd64", "386", "arm/v6", "arm/v7", "arm64/v8", "ppc64le"),
-        "386": ("amd64", "386", "arm/v6", "arm/v7", "arm64/v8", "ppc64le"),
+        "386": ("386",),
+        "amd64": ("amd64", "386", "arm/v6", "arm64/v8", "ppc64le"),
         "arm/v6": ("arm/v6",),
         "arm/v7": ("arm/v7",),
         "arm64/v8": ("arm64/v8",),
@@ -725,26 +744,14 @@ class AlpineLike(Distro):
         "arm64/v8": "3808",
         "ppc64le": "3810",
     }
-
-    @property
-    def toolchains_by_arch(self):
-        name = self.name.replace(":", "")
-        return {
-            "386": f"i686-{name}-linux-musl",
-            "amd64": f"x86_64-{name}-linux-musl",
-            "arm/v6": f"armv6-{name}-linux-musleabihf",
-            "arm/v7": f"armv7-{name}-linux-musleabihf",
-            "arm64/v8": f"aarch64-{name}-linux-musl",
-            "ppc64le": f"powerpc64le-{name}-linux-musl",
-        }
-
-    def get_compiler_path_part(self, compiler_arch):
-        if self.context["host_arch"] == compiler_arch:
-            return ""
-        return Path("/toolchains") / self.toolchains_by_arch[compiler_arch] / "bin:"
-
-    def get_toolchain_url(self, host_arch, compiler_arch):
-        return f"https://github.com/elijahr/x-tools/releases/download/{self.xtools_release}/x-tools-{self.xtools_release}--{self.name.replace(':', '')}-{host_arch}--{self.toolchains_by_arch[compiler_arch]}.tar.xz"
+    toolchains_by_arch = {
+        "386": "i686-alpine-linux-musl",
+        "amd64": "x86_64-alpine-linux-musl",
+        "arm/v6": "armv6-alpine-linux-musleabihf",
+        "arm/v7": "armv7-alpine-linux-musleabihf",
+        "arm64/v8": "aarch64-alpine-linux-musl",
+        "ppc64le": "powerpc64le-alpine-linux-musl",
+    }
 
 
 # Register supported distributions

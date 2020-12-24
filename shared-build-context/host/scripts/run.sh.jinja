@@ -17,7 +17,7 @@ distccd \
   --allow 0.0.0.0/0 \
   --listen 0.0.0.0 \
   --port {{ compiler_arch|compiler_port }} \
-  --pid-file /var/run/distccd/distccd-{{ compiler_arch.replace('arm/', 'arm32').replace('arm64/', 'arm64') }}.pid \
+  --pid-file /var/run/distccd/distccd-{{ compiler_arch|arch_slug }}.pid \
   &
 {% endfor %}
 
