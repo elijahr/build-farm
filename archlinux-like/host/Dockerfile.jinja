@@ -12,7 +12,7 @@ RUN \
 ADD {{ distro.get_toolchain_url(host_arch, compiler_arch) }} /usr/lib/gcc-cross/
 {% endif %}
 {% endfor %}
-COPY scripts/setup.sh scripts/test-arch.sh /scripts/
+COPY scripts/setup.sh scripts/test-arch.sh scripts/functions.sh /scripts/
 COPY scripts/run-{{ host_arch|arch_slug }}.sh /scripts/run.sh
 
 RUN \

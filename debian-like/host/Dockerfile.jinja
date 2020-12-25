@@ -8,7 +8,7 @@ RUN apt-get update; \
     {{ host_arch|apt_pkgs }}; \
   apt-get clean
 
-COPY scripts/setup.sh scripts/test-arch.sh /scripts/
+COPY scripts/setup.sh scripts/test-arch.sh scripts/functions.sh /scripts/
 COPY scripts/run-{{ host_arch|arch_slug }}.sh /scripts/run.sh
 
 RUN \
