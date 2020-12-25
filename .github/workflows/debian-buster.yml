@@ -55,7 +55,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro debian:buster \
-          --host-arch amd64 \
+          --arch amd64 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -103,7 +103,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro debian:buster \
-          --host-arch 386 \
+          --arch 386 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -151,7 +151,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro debian:buster \
-          --host-arch arm/v5 \
+          --arch arm/v5 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -199,7 +199,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro debian:buster \
-          --host-arch arm/v7 \
+          --arch arm/v7 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -247,7 +247,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro debian:buster \
-          --host-arch arm64/v8 \
+          --arch arm64/v8 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -295,7 +295,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro debian:buster \
-          --host-arch ppc64le \
+          --arch ppc64le \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -343,7 +343,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro debian:buster \
-          --host-arch s390x \
+          --arch s390x \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -391,7 +391,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro debian:buster \
-          --host-arch mips64le \
+          --arch mips64le \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -444,9 +444,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro debian:buster \
-          --client-arch amd64 \
+          --arch amd64 \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro debian:buster \
+          --client-arch amd64 \
+          --version $(basename ${{ github.event.ref }})
 
   build-client-386:
     name: |
@@ -495,9 +501,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro debian:buster \
-          --client-arch 386 \
+          --arch 386 \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro debian:buster \
+          --client-arch 386 \
+          --version $(basename ${{ github.event.ref }})
 
   build-client-arm32v5:
     name: |
@@ -546,9 +558,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro debian:buster \
-          --client-arch arm/v5 \
+          --arch arm/v5 \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro debian:buster \
+          --client-arch arm/v5 \
+          --version $(basename ${{ github.event.ref }})
 
   build-client-arm32v7:
     name: |
@@ -597,9 +615,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro debian:buster \
-          --client-arch arm/v7 \
+          --arch arm/v7 \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro debian:buster \
+          --client-arch arm/v7 \
+          --version $(basename ${{ github.event.ref }})
 
   build-client-arm64v8:
     name: |
@@ -648,9 +672,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro debian:buster \
-          --client-arch arm64/v8 \
+          --arch arm64/v8 \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro debian:buster \
+          --client-arch arm64/v8 \
+          --version $(basename ${{ github.event.ref }})
 
   build-client-ppc64le:
     name: |
@@ -699,9 +729,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro debian:buster \
-          --client-arch ppc64le \
+          --arch ppc64le \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro debian:buster \
+          --client-arch ppc64le \
+          --version $(basename ${{ github.event.ref }})
 
   build-client-s390x:
     name: |
@@ -750,9 +786,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro debian:buster \
-          --client-arch s390x \
+          --arch s390x \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro debian:buster \
+          --client-arch s390x \
+          --version $(basename ${{ github.event.ref }})
 
   build-client-mips64le:
     name: |
@@ -801,9 +843,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro debian:buster \
-          --client-arch mips64le \
+          --arch mips64le \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro debian:buster \
+          --client-arch mips64le \
+          --version $(basename ${{ github.event.ref }})
 
 
   push_manifests:

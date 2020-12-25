@@ -55,7 +55,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro archlinux \
-          --host-arch amd64 \
+          --arch amd64 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -103,7 +103,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro archlinux \
-          --host-arch arm/v5 \
+          --arch arm/v5 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -151,7 +151,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro archlinux \
-          --host-arch arm/v6 \
+          --arch arm/v6 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -199,7 +199,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro archlinux \
-          --host-arch arm/v7 \
+          --arch arm/v7 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -247,7 +247,7 @@ jobs:
       run: |
         ./builder.py build-host \
           --distro archlinux \
-          --host-arch arm64/v8 \
+          --arch arm64/v8 \
           --version $(basename ${{ github.event.ref }}) \
           --push
 
@@ -300,9 +300,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro archlinux \
-          --client-arch amd64 \
+          --arch amd64 \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro archlinux \
+          --client-arch amd64 \
+          --version $(basename ${{ github.event.ref }})
 
   build-client-arm32v5:
     name: |
@@ -351,9 +357,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro archlinux \
-          --client-arch arm/v5 \
+          --arch arm/v5 \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro archlinux \
+          --client-arch arm/v5 \
+          --version $(basename ${{ github.event.ref }})
 
   build-client-arm32v6:
     name: |
@@ -402,9 +414,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro archlinux \
-          --client-arch arm/v6 \
+          --arch arm/v6 \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro archlinux \
+          --client-arch arm/v6 \
+          --version $(basename ${{ github.event.ref }})
 
   build-client-arm32v7:
     name: |
@@ -453,9 +471,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro archlinux \
-          --client-arch arm/v7 \
+          --arch arm/v7 \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro archlinux \
+          --client-arch arm/v7 \
+          --version $(basename ${{ github.event.ref }})
 
   build-client-arm64v8:
     name: |
@@ -504,9 +528,15 @@ jobs:
       run: |
         ./builder.py build-client \
           --distro archlinux \
-          --client-arch arm64/v8 \
+          --arch arm64/v8 \
           --version $(basename ${{ github.event.ref }}) \
           --push
+    - name: Test host and client image
+      run: |
+        ./builder.py test \
+          --distro archlinux \
+          --client-arch arm64/v8 \
+          --version $(basename ${{ github.event.ref }})
 
 
   push_manifests:

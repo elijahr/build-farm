@@ -24,7 +24,5 @@ COPY scripts/* /scripts/
 
 RUN \
   chmod +x /scripts/* && \
-  /scripts/setup.sh && \
-  /scripts/test-arch.sh {{ compiler_arch }} && \
-  /scripts/build-cjson.sh && \
-  rm -Rf /scripts/*
+  /scripts/setup.sh && rm /scripts/setup.sh && \
+  /scripts/test-arch.sh {{ compiler_arch }} && rm /scripts/test-arch.sh

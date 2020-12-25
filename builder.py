@@ -27,6 +27,7 @@ from ruamel import yaml
 from sh import docker as _docker  # pylint: disable=no-name-in-module
 from sh import docker_compose as _docker_compose  # pylint: disable=no-name-in-module
 from sh import ErrorReturnCode_1  # pylint: disable=no-name-in-module
+from sh import sh  # pylint: disable=no-name-in-module
 from sh import which  # pylint: disable=no-name-in-module
 
 
@@ -44,6 +45,13 @@ class Dumper(yaml.RoundTripDumper):
 
 def slugify(string, delim="-", allowed_chars=""):
     return re.sub(r"[^\w%s]" % re.escape(allowed_chars), delim, string).lower()
+
+
+def get_current_arch():
+    return sh(
+        "-c",
+        f". {PROJECT_DIR / 'shared-build-context/shared/scripts/functions.sh; normalize_to_docker_arch'}",
+    ).strip()
 
 
 docker_manifest_args = {
@@ -414,36 +422,52 @@ class Distro(metaclass=abc.ABCMeta):
         if push:
             docker("push", image)
 
-    def build_client(self, client_arch, version, push=False):
+    def build_client(self, client_arch, version, host_arch=None, push=False):
         configure_qemu()
+
+        if host_arch is None:
+            host_arch = get_current_arch()
 
         self.render(version=version)
 
-        # TODO - determine host_arch
-        with self.run_host(host_arch="amd64"):
-            image = self.client_image_tag(version, client_arch)
-            dockerfile = self.out_path / f"client/Dockerfile.{arch_slug(client_arch)}"
-            try:
-                docker("pull", image, "--platform", f"linux/{client_arch}")
-            except ErrorReturnCode_1:
-                pass
+        image = self.client_image_tag(version, client_arch)
+        dockerfile = self.out_path / f"client/Dockerfile.{arch_slug(client_arch)}"
+        try:
+            docker("pull", image, "--platform", f"linux/{client_arch}")
+        except ErrorReturnCode_1:
+            pass
 
+        docker(
+            "build",
+            self.out_path / "client/build-context",
+            "--file",
+            dockerfile,
+            "--tag",
+            image,
+            "--cache-from",
+            image,
+            "--platform",
+            f"linux/{client_arch}",
+            "--progress",
+            "plain",
+        )
+        if push:
+            docker("push", image)
+
+    def test(self, client_arch, version, host_arch=None):
+        configure_qemu()
+
+        with self.run_host(host_arch=host_arch):
+            image = self.client_image_tag(version, client_arch)
             docker(
-                "build",
-                self.out_path / "client/build-context",
-                "--file",
-                dockerfile,
-                "--tag",
-                image,
-                "--cache-from",
-                image,
+                "run",
+                "-t",
                 "--platform",
                 f"linux/{client_arch}",
-                "--progress",
-                "plain",
+                image,
+                "sh",
+                "/scripts/build-cjson.sh",
             )
-            if push:
-                docker("push", image)
 
     def push_host_manifest(self, version):
         os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
@@ -504,7 +528,10 @@ class Distro(metaclass=abc.ABCMeta):
             docker("manifest", "push", manifest)
 
     @contextlib.contextmanager
-    def run_host(self, host_arch):
+    def run_host(self, host_arch=None):
+        if host_arch is None:
+            host_arch = get_current_arch()
+
         image_id = lambda: docker(
             "ps",
             "--filter",
@@ -818,14 +845,14 @@ def make_parser():
     # build-host
     parser_build_host = subparsers.add_parser("build-host")
     parser_build_host.add_argument("--distro", type=Distro.get, required=True)
-    parser_build_host.add_argument("--host-arch", required=True)
+    parser_build_host.add_argument("--arch", required=True)
     parser_build_host.add_argument("--version", required=True)
     parser_build_host.add_argument("--push", action="store_true")
 
     # build-client
     parser_build_client = subparsers.add_parser("build-client")
     parser_build_client.add_argument("--distro", type=Distro.get, required=True)
-    parser_build_client.add_argument("--client-arch", required=True)
+    parser_build_client.add_argument("--arch", required=True)
     parser_build_client.add_argument("--version", required=True)
     parser_build_client.add_argument("--push", action="store_true")
 
@@ -836,6 +863,13 @@ def make_parser():
 
     # clean
     subparsers.add_parser("clean")
+
+    # test
+    parser_test = subparsers.add_parser("test")
+    parser_test.add_argument("--distro", type=Distro.get, required=True)
+    parser_test.add_argument("--host-arch")
+    parser_test.add_argument("--client-arch", required=True)
+    parser_test.add_argument("--version", required=True)
 
     # push-host-manifest
     parser_push_host_manifest = subparsers.add_parser("push-host-manifest")
@@ -872,10 +906,10 @@ def main():
             distro.render_github_actions()
 
     elif args.subcommand == "build-host":
-        args.distro.build_host(args.host_arch, version=args.version, push=args.push)
+        args.distro.build_host(args.arch, version=args.version, push=args.push)
 
     elif args.subcommand == "build-client":
-        args.distro.build_client(args.client_arch, version=args.version, push=args.push)
+        args.distro.build_client(args.arch, version=args.version, push=args.push)
 
     elif args.subcommand == "build-all":
         Distro.build_all(version=args.version, push=args.push)
@@ -884,7 +918,9 @@ def main():
         Distro.clean_all()
 
     elif args.subcommand == "test":
-        args.distro.test(args.host_arch, args.client_arch, version=args.version)
+        args.distro.test(
+            host_arch=args.host_arch, client_arch=args.client_arch, version=args.version
+        )
 
     elif args.subcommand == "push-host-manifest":
         args.distro.push_host_manifest(version=args.version)

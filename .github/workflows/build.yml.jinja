@@ -67,7 +67,7 @@ jobs:
         run: |
           ./builder.py build-host \
             --distro {{ distro.name }} \
-            --host-arch {{ host_arch }} \
+            --arch {{ host_arch }} \
             --version $(basename {% raw %}${{ github.event.ref }}{% endraw %}) \
             --push
   {% endfor %}
@@ -92,9 +92,15 @@ jobs:
         run: |
           ./builder.py build-client \
             --distro {{ distro.name }} \
-            --client-arch {{ compiler_arch }} \
+            --arch {{ compiler_arch }} \
             --version $(basename {% raw %}${{ github.event.ref }}{% endraw %}) \
             --push
+      - name: Test host and client image
+        run: |
+          ./builder.py test \
+            --distro {{ distro.name }} \
+            --client-arch {{ compiler_arch }} \
+            --version $(basename {% raw %}${{ github.event.ref }}{% endraw %})
   {% endfor %}
 
   push_manifests:
