@@ -1,5 +1,5 @@
 ARG ARCH={{ compiler_arch }}
-FROM {{ distro.name }}
+FROM {{ distro.from_image(compiler_arch) }}
 
 ENV DEBIAN_FRONTEND=noninteractive
 

@@ -1,9 +1,9 @@
 ARG ARCH={{ host_arch }}
-FROM lopsided/archlinux:devel
+FROM {{ distro.from_image(host_arch )}}
 
 # Install deps and clear pacman cache
 RUN \
-  pacman -Syu --noconfirm distcc which; \
+  pacman -Syu --noconfirm distcc which python grep; \
   pacman -Sc --noconfirm || true;
 
 {% for compiler_arch in host_arch|compiler_archs %}

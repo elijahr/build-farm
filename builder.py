@@ -262,6 +262,9 @@ class Distro(metaclass=abc.ABCMeta):
     def out_path(self):
         return Path(self.slug)
 
+    def from_image(self, arch):
+        return self.name
+
     @abc.abstractmethod
     def get_compiler_path_part(self, compiler_arch):
         ...
@@ -532,10 +535,12 @@ class Distro(metaclass=abc.ABCMeta):
         if host_arch is None:
             host_arch = get_current_arch()
 
+        service_name = f"host-{arch_slug(host_arch)}"
+
         image_id = lambda: docker(
             "ps",
             "--filter",
-            f"name=host-{host_arch}",
+            f"name={service_name}",
             "--format",
             "{{.ID}}",
             _out=None,
@@ -544,9 +549,7 @@ class Distro(metaclass=abc.ABCMeta):
         id = image_id()
         if id:
             docker("kill", id, _out=None, _err=None)
-        docker_compose(
-            "-f", self.docker_compose_yml_path, "up", "-d", f"host-{host_arch}"
-        )
+        docker_compose("-f", self.docker_compose_yml_path, "up", "-d", service_name)
         time.sleep(5)
         try:
             yield
@@ -735,6 +738,11 @@ class ArchLinuxLike(XtoolsDistro):
         "arm64/v8": "aarch64-unknown-linux-gnu",
     }
 
+    def from_image(self, arch):
+        if arch == "amd64":
+            return "archlinux:base-devel"
+        return "lopsided/archlinux"
+
 
 class AlpineLike(XtoolsDistro):
     template_path = Path("alpine-like")
@@ -805,10 +813,10 @@ def render_readme():
             project_name="build-farm",
             repo="elijahr/build-farm",
             Distro=Distro,
-            debian_buster=debian_buster,
-            debian_buster_slim=debian_buster_slim,
-            archlinux=archlinux,
-            alpine3_12=alpine3_12,
+            # debian_buster=debian_buster,
+            # debian_buster_slim=debian_buster_slim,
+            # archlinux=archlinux,
+            # alpine3_12=alpine3_12,
         )
         for distro in Distro.registry.values():
             context[distro.identifier] = distro
