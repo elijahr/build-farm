@@ -404,6 +404,10 @@ class Distro(metaclass=abc.ABCMeta):
 
         image = self.host_image_tag(version, host_arch)
         dockerfile = self.out_path / f"host/Dockerfile.{arch_slug(host_arch)}"
+        try:
+            docker("pull", image, "--platform", f"linux/{host_arch}")
+        except ErrorReturnCode_1:
+            pass
         docker(
             "build",
             self.out_path / "host/build-context",
@@ -431,6 +435,11 @@ class Distro(metaclass=abc.ABCMeta):
 
         image = self.client_image_tag(version, client_arch)
         dockerfile = self.out_path / f"client/Dockerfile.{arch_slug(client_arch)}"
+        try:
+            docker("pull", image, "--platform", f"linux/{client_arch}")
+        except ErrorReturnCode_1:
+            pass
+
         docker(
             "build",
             self.out_path / "client/build-context",
