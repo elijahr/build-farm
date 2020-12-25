@@ -528,7 +528,7 @@ If you are looking for an idea, contributions for the following are especially w
 
 ### Changelog
 
-* 2020-12-24
+* 2020-12-25
   * Alpine and Arch Linux now use toolchains from [x-tools](https://github.com/elijahr/x-tools).
 
 * 2020-12-20

@@ -799,7 +799,7 @@ debian_buster_slim = DebianLike(
 archlinux = ArchLinuxLike(
     name="archlinux",
 )
-alpine3_12 = AlpineLike(
+alpine_3_12 = AlpineLike(
     name="alpine:3.12",
 )
 
@@ -813,10 +813,6 @@ def render_readme():
             project_name="build-farm",
             repo="elijahr/build-farm",
             Distro=Distro,
-            # debian_buster=debian_buster,
-            # debian_buster_slim=debian_buster_slim,
-            # archlinux=archlinux,
-            # alpine3_12=alpine3_12,
         )
         for distro in Distro.registry.values():
             context[distro.identifier] = distro

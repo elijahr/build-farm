@@ -21,8 +21,8 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 Image: `{{ alpine_3_12.host_simple_manifest_tag() }}`
 
 | Host platform | Compiler toolchain for platform | Compiler port |
-|---------------|---------------------------------|---------------|{% for host_arch in alpine3_12.host_archs %}{% for compiler_arch in alpine3_12.compiler_archs_by_host_arch[host_arch] %}
-| `linux/{{ host_arch }}` | `linux/{{ compiler_arch }}` | {{ alpine3_12.ports_by_arch[compiler_arch] }} |{% endfor %}{% endfor %}
+|---------------|---------------------------------|---------------|{% for host_arch in alpine_3_12.host_archs %}{% for compiler_arch in alpine_3_12.compiler_archs_by_host_arch[host_arch] %}
+| `linux/{{ host_arch }}` | `linux/{{ compiler_arch }}` | {{ alpine_3_12.ports_by_arch[compiler_arch] }} |{% endfor %}{% endfor %}
 
 #### Arch Linux
 
@@ -122,14 +122,14 @@ services:
 version: '3'
 services:
   build-host:
-    image: {{ alpine3_12.host_simple_manifest_tag() }}
+    image: {{ alpine_3_12.host_simple_manifest_tag() }}
     platform: linux/amd64
-    ports:{% for compiler_arch in alpine3_12.compiler_archs_by_host_arch['amd64'] %}
+    ports:{% for compiler_arch in alpine_3_12.compiler_archs_by_host_arch['amd64'] %}
       # {{ compiler_arch }}
-      - {{ alpine3_12.ports_by_arch[compiler_arch] }}:{{ alpine3_12.ports_by_arch[compiler_arch] }}{% endfor %}
-  {% for compiler_arch in alpine3_12.compiler_archs_by_host_arch['amd64'] %}
+      - {{ alpine_3_12.ports_by_arch[compiler_arch] }}:{{ alpine_3_12.ports_by_arch[compiler_arch] }}{% endfor %}
+  {% for compiler_arch in alpine_3_12.compiler_archs_by_host_arch['amd64'] %}
   build-client-{{ compiler_arch|arch_slug }}:
-    image: {{ alpine3_12.client_simple_manifest_tag() }}
+    image: {{ alpine_3_12.client_simple_manifest_tag() }}
     platform: linux/{{ compiler_arch }}
     depends_on: [ build-host ]
     volumes:
@@ -311,7 +311,7 @@ If you are looking for an idea, contributions for the following are especially w
 
 ### Changelog
 
-* 2020-12-24
+* 2020-12-25
   * Alpine and Arch Linux now use toolchains from [x-tools](https://github.com/elijahr/x-tools).
 
 * 2020-12-20
