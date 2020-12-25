@@ -732,7 +732,7 @@ class ArchLinuxLike(XtoolsDistro):
     def from_image(self, arch):
         if arch == "amd64":
             return "archlinux:base-devel"
-        return "lopsided/archlinux"
+        return "lopsided/archlinux:devel"
 
 
 class AlpineLike(XtoolsDistro):
