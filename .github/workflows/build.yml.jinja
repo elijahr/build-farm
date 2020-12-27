@@ -58,7 +58,9 @@ jobs:
 
     steps:
       - *checkout_repo
+      {% if host_arch != "386" and host_arch != "amd64" %}
       - *configure_qemu
+      {% endif %}
       - *install_apt_requirements
       - *install_pip_requirements
       - *enable_docker_experimental_features
@@ -83,7 +85,9 @@ jobs:
 
     steps:
       - *checkout_repo
+      {% if compiler_arch != "386" and compiler_arch != "amd64" %}
       - *configure_qemu
+      {% endif %}
       - *install_apt_requirements
       - *install_pip_requirements
       - *enable_docker_experimental_features
