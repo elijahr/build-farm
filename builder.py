@@ -69,22 +69,23 @@ docker_manifest_args = {
 
 
 def configure_qemu():
-    if not which("qemu-aarch64") and not which("qemu-system-aarch64"):
-        raise RuntimeError(
-            "QEMU not installed, install missing pkg (apt: qemu,qemu-user-static | pacman: qemu-headless,qemu-headless-arch-extra | brew: qemu)."
-        )
+    pass
+    # if not which("qemu-aarch64") and not which("qemu-system-aarch64"):
+    #     raise RuntimeError(
+    #         "QEMU not installed, install missing pkg (apt: qemu,qemu-user-static | pacman: qemu-headless,qemu-headless-arch-extra | brew: qemu)."
+    #     )
 
-    images = docker("images", "--format", "{{ .Repository }}", _out=None, _err=None)
-    if "multiarch/qemu-user-static" not in images:
-        docker(
-            "run",
-            "--rm",
-            "--privileged",
-            "multiarch/qemu-user-static",
-            "--reset",
-            "-p",
-            "yes",
-        )
+    # images = docker("images", "--format", "{{ .Repository }}", _out=None, _err=None)
+    # if "multiarch/qemu-user-static" not in images:
+    #     docker(
+    #         "run",
+    #         "--rm",
+    #         "--privileged",
+    #         "multiarch/qemu-user-static",
+    #         "--reset",
+    #         "-p",
+    #         "yes",
+    #     )
 
 
 def arch_slug(arch):
