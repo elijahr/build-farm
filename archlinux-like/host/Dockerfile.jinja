@@ -3,7 +3,7 @@ FROM {{ distro.from_image(host_arch )}}
 
 # Install deps and clear pacman cache
 RUN \
-  pacman -Syu --noconfirm distcc which python grep; \
+  pacman -Syu --noconfirm distcc which python grep core/shadow; \
   pacman -Sc --noconfirm || true;
 
 {% for compiler_arch in host_arch|compiler_archs %}

@@ -2,7 +2,7 @@
 
 set -uxe
 
-useradd --system distcc
+useradd --system distcc || true
 mkdir -p /var/run/distccd
 chown -R distcc:distcc /var/run/distccd
 

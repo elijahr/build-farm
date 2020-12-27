@@ -2,7 +2,6 @@
 
 set -uxe
 
-adduser -S distcc
 mkdir -p /var/run/distccd
 chown -R distcc:distcc /var/run/distccd
 
