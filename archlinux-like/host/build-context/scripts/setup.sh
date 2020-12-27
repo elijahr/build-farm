@@ -2,8 +2,13 @@
 
 set -uxe
 
+useradd distcc
+mkdir -p /var/run/distccd
+chown -R distcc:distcc /var/run/distccd
+
 mkdir -p /usr/lib/gcc-cross
 cd /usr/lib/gcc-cross
+
 for tarball in *.tar.xz
 do
   if [ "$tarball" != "*.tar.xz" ]

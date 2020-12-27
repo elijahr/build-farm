@@ -6,16 +6,11 @@
 
 set -uxe
 
-targets=(
-  "x86_64-linux-gnu" \
-  "i686-linux-gnu" \
-  "arm-linux-gnueabihf" \
-  "aarch64-linux-gnu" \
-  "powerpc64le-linux-gnu" \
-  "s390x-linux-gnu" \
-)
+useradd distcc
+mkdir -p /var/run/distccd
+chown -R distcc:distcc /var/run/distccd
 
-for target in ${targets[@]}
+for target in "$@"
 do
   mkdir -p /usr/local/${target}/bin
   files=("/usr/bin/${target}-"*)

@@ -636,20 +636,9 @@ class DebianLike(Distro):
         "s390x": "s390x-linux-gnu",
         "mips64le": "mipsel-linux-gnu",
     }
-    flags_by_arch = {
-        "amd64": "START_DISTCC_X86_64_LINUX_GNU",
-        "386": "START_DISTCC_I686_LINUX_GNU",
-        "arm/v5": "START_DISTCC_ARM_LINUX_GNUEABI",
-        "arm/v7": "START_DISTCC_ARM_LINUX_GNUEABIHF",
-        "arm64/v8": "START_DISTCC_AARCH64_LINUX_GNU",
-        "ppc64le": "START_DISTCC_PPC64LE_LINUX_GNU",
-        "s390x": "START_DISTCC_S390X_LINUX_GNU",
-        "mips64le": "START_DISTCC_MIPS64LE_LINUX_GNU",
-    }
 
     def __init__(self, **kwargs):
         super(DebianLike, self).__init__(**kwargs)
-        self.env.filters["flag"] = self.flags_by_arch.get
         self.env.filters["apt_pkgs"] = self.get_apt_pkgs
 
     def get_apt_pkgs(self, host_arch):

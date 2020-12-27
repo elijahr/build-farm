@@ -205,7 +205,7 @@ services:
       - 3808:3808
       # ppc64le
       - 3810:3810
-  
+
   build-client-amd64:
     image: elijahru/build-farm-client:alpine-3.12
     platform: linux/amd64
@@ -213,7 +213,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-386:
     image: elijahru/build-farm-client:alpine-3.12
     platform: linux/386
@@ -221,7 +221,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-arm32v6:
     image: elijahru/build-farm-client:alpine-3.12
     platform: linux/arm/v6
@@ -229,7 +229,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-arm32v7:
     image: elijahru/build-farm-client:alpine-3.12
     platform: linux/arm/v7
@@ -237,7 +237,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-arm64v8:
     image: elijahru/build-farm-client:alpine-3.12
     platform: linux/arm64/v8
@@ -245,7 +245,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-ppc64le:
     image: elijahru/build-farm-client:alpine-3.12
     platform: linux/ppc64le
@@ -253,7 +253,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
 ```
 
 ### Advanced example: cross-compiler matrix for all available Arch Linux targets
@@ -275,7 +275,7 @@ services:
       - 3707:3707
       # arm64/v8
       - 3708:3708
-  
+
   build-client-amd64:
     image: elijahru/build-farm-client:archlinux
     platform: linux/amd64
@@ -283,7 +283,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-arm32v5:
     image: elijahru/build-farm-client:archlinux
     platform: linux/arm/v5
@@ -291,7 +291,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-arm32v6:
     image: elijahru/build-farm-client:archlinux
     platform: linux/arm/v6
@@ -299,7 +299,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-arm32v7:
     image: elijahru/build-farm-client:archlinux
     platform: linux/arm/v7
@@ -307,7 +307,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-arm64v8:
     image: elijahru/build-farm-client:archlinux
     platform: linux/arm64/v8
@@ -315,7 +315,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
 ```
 
 ### Advanced example: cross-compiler matrix for all available Debian targets
@@ -343,7 +343,7 @@ services:
       - 3609:3609
       # mips64le
       - 3611:3611
-  
+
   build-client-amd64:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/amd64
@@ -351,7 +351,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-386:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/386
@@ -359,7 +359,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-arm32v5:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/arm/v5
@@ -367,7 +367,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-arm32v7:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/arm/v7
@@ -375,7 +375,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-arm64v8:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/arm64/v8
@@ -383,7 +383,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-ppc64le:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/ppc64le
@@ -391,7 +391,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-s390x:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/s390x
@@ -399,7 +399,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
   build-client-mips64le:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/mips64le
@@ -407,7 +407,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-  
+
 ```
 
 ### Build farm
