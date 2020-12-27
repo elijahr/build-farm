@@ -6,7 +6,7 @@
 
 set -uxe
 
-useradd distcc
+useradd --system distcc
 mkdir -p /var/run/distccd
 chown -R distcc:distcc /var/run/distccd
 
