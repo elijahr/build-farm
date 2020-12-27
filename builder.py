@@ -69,23 +69,25 @@ docker_manifest_args = {
 
 
 def configure_qemu():
-    pass
-    # if not which("qemu-aarch64") and not which("qemu-system-aarch64"):
-    #     raise RuntimeError(
-    #         "QEMU not installed, install missing pkg (apt: qemu,qemu-user-static | pacman: qemu-headless,qemu-headless-arch-extra | brew: qemu)."
-    #     )
+    if not which("qemu-aarch64") and not which("qemu-system-aarch64"):
+        raise RuntimeError(
+            "QEMU not installed, install missing pkg (apt: qemu,qemu-user-static | pacman: qemu-headless,qemu-headless-arch-extra | brew: qemu)."
+        )
 
-    # images = docker("images", "--format", "{{ .Repository }}", _out=None, _err=None)
-    # if "multiarch/qemu-user-static" not in images:
-    #     docker(
-    #         "run",
-    #         "--rm",
-    #         "--privileged",
-    #         "multiarch/qemu-user-static",
-    #         "--reset",
-    #         "-p",
-    #         "yes",
-    #     )
+    images = docker("images", "--format", "{{ .Repository }}", _out=None, _err=None)
+    if "multiarch/qemu-user-static" not in images:
+        docker(
+            "run",
+            "--rm",
+            "--privileged",
+            "multiarch/qemu-user-static",
+            "--reset",
+            "-p",
+            "yes",
+        )
+        print("Configured multiarch/qemu-user-static")
+    else:
+        print("multiarch/qemu-user-static already configured")
 
 
 def arch_slug(arch):
@@ -399,8 +401,6 @@ class Distro(metaclass=abc.ABCMeta):
                 )
 
     def build_host(self, host_arch, version, push=False):
-        configure_qemu()
-
         self.render(version=version)
 
         image = self.host_image_tag(version, host_arch)
@@ -427,8 +427,6 @@ class Distro(metaclass=abc.ABCMeta):
             docker("push", image)
 
     def build_client(self, client_arch, version, host_arch=None, push=False):
-        configure_qemu()
-
         if host_arch is None:
             host_arch = get_current_arch()
 
@@ -459,8 +457,6 @@ class Distro(metaclass=abc.ABCMeta):
             docker("push", image)
 
     def test(self, client_arch, version, host_arch=None):
-        configure_qemu()
-
         with self.run_host(host_arch=host_arch):
             image = self.client_image_tag(version, client_arch)
             docker(
@@ -696,7 +692,7 @@ class XtoolsDistro(Distro):
 
 class ArchLinuxLike(XtoolsDistro):
     template_path = Path("archlinux-like")
-    xtools_release = "strace-20201227"
+    xtools_release = "devel-202012270330"
     host_archs = (
         "amd64",
         "arm/v5",
@@ -747,7 +743,7 @@ class ArchLinuxLike(XtoolsDistro):
 
 class AlpineLike(XtoolsDistro):
     template_path = Path("alpine-like")
-    xtools_release = "strace-20201227"
+    xtools_release = "devel-202012270330"
     host_archs = (
         "386",
         "amd64",
@@ -781,7 +777,7 @@ class AlpineLike(XtoolsDistro):
         "ppc64le": "3810",
     }
     toolchains_by_arch = {
-        "386": "i686-alpine-linux-musl",
+        "386": "i586-alpine-linux-musl",
         "amd64": "x86_64-alpine-linux-musl",
         "arm/v6": "armv6-alpine-linux-musleabihf",
         "arm/v7": "armv7-alpine-linux-musleabihf",
@@ -889,6 +885,9 @@ def make_parser():
     # render-readme
     subparsers.add_parser("render-readme")
 
+    # configure-qemu
+    subparsers.add_parser("configure-qemu")
+
     return parser
 
 
@@ -935,6 +934,9 @@ def main():
 
     elif args.subcommand == "render-readme":
         render_readme()
+
+    elif args.subcommand == "configure-qemu":
+        configure_qemu()
 
     else:
         raise ValueError(f"Unknown subcommand {args.subcommand}")

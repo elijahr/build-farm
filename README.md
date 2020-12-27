@@ -32,6 +32,7 @@ Image: `elijahru/build-farm:alpine-3.12`
 | `linux/amd64` | `linux/amd64` | 3804 |
 | `linux/amd64` | `linux/386` | 3803 |
 | `linux/amd64` | `linux/arm/v6` | 3806 |
+| `linux/amd64` | `linux/arm/v7` | 3807 |
 | `linux/amd64` | `linux/arm64/v8` | 3808 |
 | `linux/amd64` | `linux/ppc64le` | 3810 |
 | `linux/arm/v6` | `linux/arm/v6` | 3806 |
@@ -198,6 +199,8 @@ services:
       - 3803:3803
       # arm/v6
       - 3806:3806
+      # arm/v7
+      - 3807:3807
       # arm64/v8
       - 3808:3808
       # ppc64le
@@ -222,6 +225,14 @@ services:
   build-client-arm32v6:
     image: elijahru/build-farm-client:alpine-3.12
     platform: linux/arm/v6
+    depends_on: [ build-host ]
+    volumes:
+      - .:/code
+    command: ./configure && make
+  
+  build-client-arm32v7:
+    image: elijahru/build-farm-client:alpine-3.12
+    platform: linux/arm/v7
     depends_on: [ build-host ]
     volumes:
       - .:/code
@@ -527,6 +538,9 @@ If you are looking for an idea, contributions for the following are especially w
 * Zeroconf support
 
 ### Changelog
+
+* 2020-12-27
+  * Use latest x-tools, with gdb and strace support.
 
 * 2020-12-25
   * Alpine and Arch Linux now use toolchains from [x-tools](https://github.com/elijahr/x-tools).
