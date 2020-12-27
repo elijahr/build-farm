@@ -695,7 +695,7 @@ class XtoolsDistro(Distro):
 
 class ArchLinuxLike(XtoolsDistro):
     template_path = Path("archlinux-like")
-    xtools_release = "devel-20201224"
+    xtools_release = "devel-20201227"
     host_archs = (
         "amd64",
         "arm/v5",
@@ -746,7 +746,7 @@ class ArchLinuxLike(XtoolsDistro):
 
 class AlpineLike(XtoolsDistro):
     template_path = Path("alpine-like")
-    xtools_release = "devel-20201224"
+    xtools_release = "devel-20201227"
     host_archs = (
         "386",
         "amd64",

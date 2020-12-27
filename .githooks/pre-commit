@@ -2,6 +2,8 @@
 
 set -ue
 
+PATH=/usr/local/bin:$PATH
+
 echo "Checking for .github/workflows/build.yml.jinja changes..."
 
 if [ "$(git diff-index --cached HEAD --name-only)" != "" ]
