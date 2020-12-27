@@ -765,7 +765,7 @@ class AlpineLike(XtoolsDistro):
     )
     compiler_archs_by_host_arch = {
         "386": ("386",),
-        "amd64": ("amd64", "386", "arm/v6", "arm64/v8", "ppc64le"),
+        "amd64": ("amd64", "386", "arm/v6", "arm/v7", "arm64/v8", "ppc64le"),
         "arm/v6": ("arm/v6",),
         "arm/v7": ("arm/v7",),
         "arm64/v8": ("arm64/v8",),
