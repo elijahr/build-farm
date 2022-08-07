@@ -1,39 +1,46 @@
 #!/usr/bin/env python3
 
-"""
-Generate various docker and config files across a matrix of archs/distros.
-"""
+"""Generate various docker and config files across a matrix of
+archs/distros."""
 
 import abc
 import argparse
 import contextlib
-import functools
-import itertools
-import json
 import os
-import pathlib
 import re
+import shlex
 import shutil
 import sys
 import time
 
+import sh
 from jinja2 import (
     Environment,
     StrictUndefined,
 )
-from path import Path
-from ruamel import yaml
-from sh import docker as _docker  # pylint: disable=no-name-in-module
-from sh import docker_compose as _docker_compose  # pylint: disable=no-name-in-module
-from sh import ErrorReturnCode_1  # pylint: disable=no-name-in-module
-from sh import sh  # pylint: disable=no-name-in-module
-from sh import which  # pylint: disable=no-name-in-module
-
-
-docker = functools.partial(_docker, _out=sys.stdout, _err=sys.stderr)
-docker_compose = functools.partial(_docker_compose, _out=sys.stdout, _err=sys.stderr)
+from path import (
+    Path,
+)
+from ruamel import (
+    yaml,
+)
+from sh import (
+    ErrorReturnCode_1,  # pylint: disable=no-name-in-module
+)
 
 PROJECT_DIR = Path(os.path.dirname(os.path.abspath(__file__)))
+
+
+def docker(*args, **kwargs):
+    print("+ docker " + " ".join(map(shlex.quote, args)))
+    # pylint: disable-next-line=no-name-in-module
+    return sh.docker(_out=sys.stdout, _err=sys.stderr, *args, **kwargs)
+
+
+def docker_compose(*args, **kwargs):
+    print("+ docker-compose " + " ".join(map(shlex.quote, args)))
+    # pylint: disable-next-line=no-name-in-module
+    return sh.docker_compose(_out=sys.stdout, _err=sys.stderr, *args, **kwargs)
 
 
 class Dumper(yaml.RoundTripDumper):
@@ -47,7 +54,7 @@ def slugify(string, delim="-", allowed_chars=""):
 
 
 def get_current_arch():
-    return sh(
+    return sh.sh(
         "-c",
         f". {PROJECT_DIR / 'shared-build-context/shared/scripts/functions.sh; normalize_to_docker_arch'}",
     ).strip()
@@ -68,9 +75,10 @@ docker_manifest_args = {
 
 
 def configure_qemu():
-    if not which("qemu-aarch64") and not which("qemu-system-aarch64"):
+    if not sh.which("qemu-aarch64") and not sh.which("qemu-system-aarch64"):
         raise RuntimeError(
-            "QEMU not installed, install missing pkg (apt: qemu,qemu-user-static | pacman: qemu-headless,qemu-headless-arch-extra | brew: qemu)."
+            "QEMU not installed, install missing pkg (apt: qemu,qemu-user-static | pacman:"
+            " qemu-headless,qemu-headless-arch-extra | brew: qemu)."
         )
 
     images = docker("images", "--format", "{{ .Repository }}", _out=None, _err=None)
@@ -131,9 +139,7 @@ class Distro(metaclass=abc.ABCMeta):
     @classmethod
     def get(cls, name):
         if name not in cls.registry:
-            raise ValueError(
-                f'Unsupported distro {name}, choose from {", ".join(cls.registry.keys())}'
-            )
+            raise ValueError(f'Unsupported distro {name}, choose from {", ".join(cls.registry.keys())}')
         return cls.registry[name]
 
     @classmethod
@@ -152,9 +158,7 @@ class Distro(metaclass=abc.ABCMeta):
             for host_arch in distro.host_archs:
                 distro.build_host(host_arch, version=version, push=push)
                 for compiler_arch in distro.compiler_archs_by_host_arch[host_arch]:
-                    distro.build_client(
-                        host_arch, compiler_arch, version=version, push=push
-                    )
+                    distro.build_client(host_arch, compiler_arch, version=version, push=push)
 
     @property
     def context(self):
@@ -218,6 +222,13 @@ class Distro(metaclass=abc.ABCMeta):
                 lines.insert(1, f"# Rendered from {template_path}\n")
             else:
                 lines.insert(0, f"# Rendered from {template_path}\n")
+                if out_path.endswith(".yml"):
+                    lines.insert(1, "\n")
+                    lines.insert(1, "# yamllint disable rule:indentation")
+                    lines.insert(1, "# yamllint disable rule:line-length")
+                    lines.insert(1, "# yamllint disable rule:new-line-at-end-of-file")
+                    lines.insert(1, "# yamllint disable rule:trailing-spaces")
+
             rendered = "\n".join(lines)
 
             with open(out_path, "w") as f:
@@ -370,9 +381,7 @@ class Distro(metaclass=abc.ABCMeta):
                 with self.set_context(host_arch=host_arch, compiler_arch=compiler_arch):
                     self.render_template(
                         self.template_path / "client/Dockerfile.jinja",
-                        self.out_path
-                        / "client"
-                        / f"Dockerfile.{arch_slug(compiler_arch)}",
+                        self.out_path / "client" / f"Dockerfile.{arch_slug(compiler_arch)}",
                     )
 
     def render_docker_compose(self):
@@ -395,8 +404,7 @@ class Distro(metaclass=abc.ABCMeta):
             with self.set_context(host_arch=host_arch):
                 self.render_template(
                     "shared-build-context/host/scripts/run.sh.jinja",
-                    self.out_path
-                    / f"host/build-context/scripts/run-{arch_slug(host_arch)}.sh",
+                    self.out_path / f"host/build-context/scripts/run-{arch_slug(host_arch)}.sh",
                 )
 
     def build_host(self, host_arch, version, push=False):
@@ -499,10 +507,7 @@ class Distro(metaclass=abc.ABCMeta):
     def push_client_manifest(self, version):
         os.environ["DOCKER_CLI_EXPERIMENTAL"] = "enabled"
 
-        images = {
-            compiler_arch: self.client_image_tag(version, compiler_arch)
-            for compiler_arch in self.compiler_archs
-        }
+        images = {compiler_arch: self.client_image_tag(version, compiler_arch) for compiler_arch in self.compiler_archs}
 
         for image in images.values():
             docker("pull", image)
@@ -533,15 +538,17 @@ class Distro(metaclass=abc.ABCMeta):
 
         service_name = f"host-{arch_slug(host_arch)}"
 
-        image_id = lambda: docker(
-            "ps",
-            "--filter",
-            f"name={service_name}",
-            "--format",
-            "{{.ID}}",
-            _out=None,
-            _err=None,
-        ).strip()
+        def image_id():
+            return docker(
+                "ps",
+                "--filter",
+                f"name={service_name}",
+                "--format",
+                "{{.ID}}",
+                _out=None,
+                _err=None,
+            ).strip()
+
         id = image_id()
         if id:
             docker("kill", id, _out=None, _err=None)
@@ -666,9 +673,7 @@ class XtoolsDistro(Distro):
     def get_compiler_path_part(self, compiler_arch):
         if self.context["host_arch"] == compiler_arch:
             return ""
-        return (
-            Path("/usr/lib/gcc-cross") / self.toolchains_by_arch[compiler_arch] / "bin:"
-        )
+        return Path("/usr/lib/gcc-cross") / self.toolchains_by_arch[compiler_arch] / "bin:"
 
     def get_toolchain_url(self, host_arch, compiler_arch):
         os = self.name.replace(":", "")
@@ -784,8 +789,8 @@ debian_buster_slim = DebianLike(
 archlinux = ArchLinuxLike(
     name="archlinux",
 )
-alpine_3_12 = AlpineLike(
-    name="alpine:3.12",
+alpine_3_15 = AlpineLike(
+    name="alpine:3.15",
 )
 
 
@@ -910,9 +915,7 @@ def main():
         Distro.clean_all()
 
     elif args.subcommand == "test":
-        args.distro.test(
-            host_arch=args.host_arch, client_arch=args.client_arch, version=args.version
-        )
+        args.distro.test(host_arch=args.host_arch, client_arch=args.client_arch, version=args.version)
 
     elif args.subcommand == "push-host-manifest":
         args.distro.push_host_manifest(version=args.version)

@@ -4,6 +4,6 @@ cJSON-master/
 /debian-buster/*
 /debian-buster-slim/*
 /archlinux/*
-/alpine-3.12/*
+/alpine-3.15/*
 
 Pipfile*

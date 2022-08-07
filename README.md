@@ -5,7 +5,7 @@
 
 ![archlinux](https://github.com/elijahr/build-farm/workflows/archlinux/badge.svg)
 
-![alpine:3.12](https://github.com/elijahr/build-farm/workflows/alpine%3A3.12/badge.svg)
+![alpine:3.15](https://github.com/elijahr/build-farm/workflows/alpine%3A3.15/badge.svg)
 
 
 # build-farm
@@ -24,7 +24,7 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Alpine Linux
 
-Image: `elijahru/build-farm:alpine-3.12`
+Image: `elijahru/build-farm:alpine-3.15`
 
 | Host platform | Compiler toolchain for platform | Compiler port |
 |---------------|---------------------------------|---------------|
@@ -120,7 +120,7 @@ Windows hasn't been tested. You can install QEMU via https://www.qemu.org/downlo
 
 #### Alpine Linux
 
-Image: `elijahru/build-farm-client:alpine-3.12`
+Image: `elijahru/build-farm-client:alpine-3.15`
 
 | Platform | `DISTCC_HOSTS` |
 |----------|----------------|
@@ -190,7 +190,7 @@ services:
 version: '3'
 services:
   build-host:
-    image: elijahru/build-farm:alpine-3.12
+    image: elijahru/build-farm:alpine-3.15
     platform: linux/amd64
     ports:
       # amd64
@@ -205,55 +205,55 @@ services:
       - 3808:3808
       # ppc64le
       - 3810:3810
-
+  
   build-client-amd64:
-    image: elijahru/build-farm-client:alpine-3.12
+    image: elijahru/build-farm-client:alpine-3.15
     platform: linux/amd64
     depends_on: [ build-host ]
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-386:
-    image: elijahru/build-farm-client:alpine-3.12
+    image: elijahru/build-farm-client:alpine-3.15
     platform: linux/386
     depends_on: [ build-host ]
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-arm32v6:
-    image: elijahru/build-farm-client:alpine-3.12
+    image: elijahru/build-farm-client:alpine-3.15
     platform: linux/arm/v6
     depends_on: [ build-host ]
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-arm32v7:
-    image: elijahru/build-farm-client:alpine-3.12
+    image: elijahru/build-farm-client:alpine-3.15
     platform: linux/arm/v7
     depends_on: [ build-host ]
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-arm64v8:
-    image: elijahru/build-farm-client:alpine-3.12
+    image: elijahru/build-farm-client:alpine-3.15
     platform: linux/arm64/v8
     depends_on: [ build-host ]
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-ppc64le:
-    image: elijahru/build-farm-client:alpine-3.12
+    image: elijahru/build-farm-client:alpine-3.15
     platform: linux/ppc64le
     depends_on: [ build-host ]
     volumes:
       - .:/code
     command: ./configure && make
-
+  
 ```
 
 ### Advanced example: cross-compiler matrix for all available Arch Linux targets
@@ -275,7 +275,7 @@ services:
       - 3707:3707
       # arm64/v8
       - 3708:3708
-
+  
   build-client-amd64:
     image: elijahru/build-farm-client:archlinux
     platform: linux/amd64
@@ -283,7 +283,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-arm32v5:
     image: elijahru/build-farm-client:archlinux
     platform: linux/arm/v5
@@ -291,7 +291,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-arm32v6:
     image: elijahru/build-farm-client:archlinux
     platform: linux/arm/v6
@@ -299,7 +299,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-arm32v7:
     image: elijahru/build-farm-client:archlinux
     platform: linux/arm/v7
@@ -307,7 +307,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-arm64v8:
     image: elijahru/build-farm-client:archlinux
     platform: linux/arm64/v8
@@ -315,7 +315,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
 ```
 
 ### Advanced example: cross-compiler matrix for all available Debian targets
@@ -343,7 +343,7 @@ services:
       - 3609:3609
       # mips64le
       - 3611:3611
-
+  
   build-client-amd64:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/amd64
@@ -351,7 +351,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-386:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/386
@@ -359,7 +359,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-arm32v5:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/arm/v5
@@ -367,7 +367,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-arm32v7:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/arm/v7
@@ -375,7 +375,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-arm64v8:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/arm64/v8
@@ -383,7 +383,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-ppc64le:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/ppc64le
@@ -391,7 +391,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-s390x:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/s390x
@@ -399,7 +399,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
   build-client-mips64le:
     image: elijahru/build-farm-client:debian-buster
     platform: linux/mips64le
@@ -407,7 +407,7 @@ services:
     volumes:
       - .:/code
     command: ./configure && make
-
+  
 ```
 
 ### Build farm
@@ -549,7 +549,7 @@ If you are looking for an idea, contributions for the following are especially w
   * Add cross compilers for Alpine.
 
 * 2020-12-11
-  * Add Alpine 3.12 images.
+  * Add Alpine 3.15 images.
   * Add Arch Linux ARM hosts.
 
 * 2020-12-05

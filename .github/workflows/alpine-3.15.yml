@@ -1,7 +1,12 @@
 # Rendered from .github/workflows/build.yml.jinja
 
-name: alpine:3.12
+# yamllint disable rule:trailing-spaces
+# yamllint disable rule:new-line-at-end-of-file
+# yamllint disable rule:line-length
+# yamllint disable rule:indentation
 
+
+name: alpine:3.15
 on:
   pull_request:
     paths-ignore: ['**.md']
@@ -9,290 +14,240 @@ on:
     branches: ['*']
     tags: ['*']
     paths-ignore: ['**.md']
-
 jobs:
   build-host-386:
     name: |
       host: 386
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --arch 386 \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
   build-host-amd64:
     name: |
       host: amd64
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --arch amd64 \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
   build-host-arm32v6:
     name: |
       host: arm/v6
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --arch arm/v6 \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
   build-host-arm32v7:
     name: |
       host: arm/v7
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --arch arm/v7 \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
   build-host-arm64v8:
     name: |
       host: arm64/v8
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --arch arm64/v8 \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
   build-host-ppc64le:
     name: |
       host: ppc64le
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --arch ppc64le \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
-
-
   build-client-386:
     name: |
       client: 386
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -303,47 +258,40 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --arch 386 \
           --version $(basename ${{ github.event.ref }}) \
           --push
     - name: Test host and client image
       run: |
         ./builder.py test \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --client-arch 386 \
           --version $(basename ${{ github.event.ref }})
-
   build-client-amd64:
     name: |
       client: amd64
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -354,47 +302,40 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --arch amd64 \
           --version $(basename ${{ github.event.ref }}) \
           --push
     - name: Test host and client image
       run: |
         ./builder.py test \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --client-arch amd64 \
           --version $(basename ${{ github.event.ref }})
-
   build-client-arm32v6:
     name: |
       client: arm/v6
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -405,53 +346,45 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --arch arm/v6 \
           --version $(basename ${{ github.event.ref }}) \
           --push
     - name: Test host and client image
       run: |
         ./builder.py test \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --client-arch arm/v6 \
           --version $(basename ${{ github.event.ref }})
-
   build-client-arm32v7:
     name: |
       client: arm/v7
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -462,53 +395,45 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --arch arm/v7 \
           --version $(basename ${{ github.event.ref }}) \
           --push
     - name: Test host and client image
       run: |
         ./builder.py test \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --client-arch arm/v7 \
           --version $(basename ${{ github.event.ref }})
-
   build-client-arm64v8:
     name: |
       client: arm64/v8
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -519,53 +444,45 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --arch arm64/v8 \
           --version $(basename ${{ github.event.ref }}) \
           --push
     - name: Test host and client image
       run: |
         ./builder.py test \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --client-arch arm64/v8 \
           --version $(basename ${{ github.event.ref }})
-
   build-client-ppc64le:
     name: |
       client: ppc64le
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -576,55 +493,46 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --arch ppc64le \
           --version $(basename ${{ github.event.ref }}) \
           --push
     - name: Test host and client image
       run: |
         ./builder.py test \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --client-arch ppc64le \
           --version $(basename ${{ github.event.ref }})
-
-
   push_manifests:
     name: Push manifests
     if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
       }}
-
     runs-on: ubuntu-latest
     needs:
     - build-host-386
@@ -659,37 +567,31 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Push host manifest
       run: |
         ./builder.py push-host-manifest \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --version $(basename ${{ github.event.ref }})
-
     - name: Push client manifest
       run: |-
         ./builder.py push-client-manifest \
-          --distro alpine:3.12 \
+          --distro alpine:3.15 \
           --version $(basename ${{ github.event.ref }})

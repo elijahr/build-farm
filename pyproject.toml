@@ -1,0 +1,100 @@
+# black-compatible configurations for various Python code formatters.
+# Assembled from https://black.readthedocs.io/en/stable/compatible_configs.html
+
+[tool.black]
+line_length = 120
+target_version = ["py39"]
+preview = true
+required_version = "22.3.0"
+
+[tool.autopep8]
+exclude = ".git,__pycache__"
+max-line-length = 120
+ignore = "E203,E501,W6"
+
+[tool.isort]
+profile = "black"
+py_version = "all"
+# line_length is intentionally small, to ensure each imported object gets its
+# own line.
+line_length = 10
+multi_line_output = 3
+include_trailing_comma = true
+
+[tool.pylint.messages_control]
+disable = "all"
+# Messages explained here: https://github.com/janjur/readable-pylint-messages
+# Please:
+# - Add items in alphabetical order
+# - Ensure trailing comma on each line
+enable = """apply-builtin,
+            backtick,
+            bad-python3-import,
+            basestring-builtin,
+            buffer-builtin,
+            cmp-builtin,
+            cmp-method,
+            coerce-builtin,
+            comprehension-escape,
+            delslice-method,
+            deprecated-itertools-function,
+            deprecated-operator-function,
+            deprecated-str-translate-call,
+            deprecated-string-function,
+            deprecated-sys-function,
+            deprecated-urllib-function,
+            deprecated-types-field,
+            dict-items-not-iterating,
+            dict-iter-method,
+            dict-keys-not-iterating,
+            dict-values-not-iterating,
+            dict-view-method,
+            div-method,
+            eq-without-hash,
+            exception-escape,
+            exception-message-attribute,
+            execfile-builtin,
+            file-builtin,
+            filter-builtin-not-iterating,
+            getslice-method,
+            hex-method,
+            idiv-method,
+            import-star-module-level,
+            indexing-exception,
+            input-builtin,
+            intern-builtin,
+            invalid-str-codec,
+            long-builtin,
+            map-builtin-not-iterating,
+            metaclass-assignment,
+            next-method-called,
+            next-method-defined,
+            no-absolute-import,
+            nonzero-method,
+            oct-method,
+            old-division,
+            old-raise-syntax,
+            parameter-unpacking,
+            print-statement,
+            raising-string,
+            range-builtin-not-iterating,
+            raw_input-builtin,
+            rdiv-method,
+            reduce-builtin,
+            reload-builtin,
+            round-builtin,
+            setslice-method,
+            standarderror-builtin,
+            sys-max-int,
+            unichr-builtin,
+            unicode-builtin,
+            unpacking-in-except,
+            unused-import,
+            using-cmp-argument,
+            xrange-builtin,
+            xreadlines-attribute,
+            zip-builtin-not-iterating,
+            """
+
+[tool.pylint.format]
+max-line-length = "120"

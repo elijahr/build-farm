@@ -18,11 +18,11 @@ Each host container runs at least one distccd daemon. Each daemon listens on a d
 
 #### Alpine Linux
 
-Image: `{{ alpine_3_12.host_simple_manifest_tag() }}`
+Image: `{{ alpine_3_15.host_simple_manifest_tag() }}`
 
 | Host platform | Compiler toolchain for platform | Compiler port |
-|---------------|---------------------------------|---------------|{% for host_arch in alpine_3_12.host_archs %}{% for compiler_arch in alpine_3_12.compiler_archs_by_host_arch[host_arch] %}
-| `linux/{{ host_arch }}` | `linux/{{ compiler_arch }}` | {{ alpine_3_12.ports_by_arch[compiler_arch] }} |{% endfor %}{% endfor %}
+|---------------|---------------------------------|---------------|{% for host_arch in alpine_3_15.host_archs %}{% for compiler_arch in alpine_3_15.compiler_archs_by_host_arch[host_arch] %}
+| `linux/{{ host_arch }}` | `linux/{{ compiler_arch }}` | {{ alpine_3_15.ports_by_arch[compiler_arch] }} |{% endfor %}{% endfor %}
 
 #### Arch Linux
 
@@ -68,11 +68,11 @@ Windows hasn't been tested. You can install QEMU via https://www.qemu.org/downlo
 
 #### Alpine Linux
 
-Image: `{{ alpine_3_12.client_simple_manifest_tag() }}`
+Image: `{{ alpine_3_15.client_simple_manifest_tag() }}`
 
 | Platform | `DISTCC_HOSTS` |
-|----------|----------------|{% for compiler_arch in alpine_3_12.compiler_archs %}
-| `linux/{{ compiler_arch }}` | `172.17.0.1:{{ alpine_3_12.ports_by_arch[compiler_arch] }}` |{% endfor %}
+|----------|----------------|{% for compiler_arch in alpine_3_15.compiler_archs %}
+| `linux/{{ compiler_arch }}` | `172.17.0.1:{{ alpine_3_15.ports_by_arch[compiler_arch] }}` |{% endfor %}
 
 #### Arch Linux
 
@@ -122,14 +122,14 @@ services:
 version: '3'
 services:
   build-host:
-    image: {{ alpine_3_12.host_simple_manifest_tag() }}
+    image: {{ alpine_3_15.host_simple_manifest_tag() }}
     platform: linux/amd64
-    ports:{% for compiler_arch in alpine_3_12.compiler_archs_by_host_arch['amd64'] %}
+    ports:{% for compiler_arch in alpine_3_15.compiler_archs_by_host_arch['amd64'] %}
       # {{ compiler_arch }}
-      - {{ alpine_3_12.ports_by_arch[compiler_arch] }}:{{ alpine_3_12.ports_by_arch[compiler_arch] }}{% endfor %}
-  {% for compiler_arch in alpine_3_12.compiler_archs_by_host_arch['amd64'] %}
+      - {{ alpine_3_15.ports_by_arch[compiler_arch] }}:{{ alpine_3_15.ports_by_arch[compiler_arch] }}{% endfor %}
+  {% for compiler_arch in alpine_3_15.compiler_archs_by_host_arch['amd64'] %}
   build-client-{{ compiler_arch|arch_slug }}:
-    image: {{ alpine_3_12.client_simple_manifest_tag() }}
+    image: {{ alpine_3_15.client_simple_manifest_tag() }}
     platform: linux/{{ compiler_arch }}
     depends_on: [ build-host ]
     volumes:
@@ -321,7 +321,7 @@ If you are looking for an idea, contributions for the following are especially w
   * Add cross compilers for Alpine.
 
 * 2020-12-11
-  * Add Alpine 3.12 images.
+  * Add Alpine 3.15 images.
   * Add Arch Linux ARM hosts.
 
 * 2020-12-05

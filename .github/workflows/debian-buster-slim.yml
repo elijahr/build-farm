@@ -1,7 +1,12 @@
 # Rendered from .github/workflows/build.yml.jinja
 
-name: debian:buster-slim
+# yamllint disable rule:trailing-spaces
+# yamllint disable rule:new-line-at-end-of-file
+# yamllint disable rule:line-length
+# yamllint disable rule:indentation
 
+
+name: debian:buster-slim
 on:
   pull_request:
     paths-ignore: ['**.md']
@@ -9,42 +14,35 @@ on:
     branches: ['*']
     tags: ['*']
     paths-ignore: ['**.md']
-
 jobs:
   build-host-amd64:
     name: |
       host: amd64
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
@@ -52,41 +50,34 @@ jobs:
           --arch amd64 \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
   build-host-386:
     name: |
       host: 386
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
@@ -94,47 +85,39 @@ jobs:
           --arch 386 \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
   build-host-arm32v5:
     name: |
       host: arm/v5
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
@@ -142,47 +125,39 @@ jobs:
           --arch arm/v5 \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
   build-host-arm32v7:
     name: |
       host: arm/v7
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
@@ -190,47 +165,39 @@ jobs:
           --arch arm/v7 \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
   build-host-arm64v8:
     name: |
       host: arm64/v8
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
@@ -238,47 +205,39 @@ jobs:
           --arch arm64/v8 \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
   build-host-ppc64le:
     name: |
       host: ppc64le
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
@@ -286,47 +245,39 @@ jobs:
           --arch ppc64le \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
   build-host-s390x:
     name: |
       host: s390x
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
@@ -334,47 +285,39 @@ jobs:
           --arch s390x \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
   build-host-mips64le:
     name: |
       host: mips64le
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build host image
       run: |
         ./builder.py build-host \
@@ -382,13 +325,9 @@ jobs:
           --arch mips64le \
           --version $(basename ${{ github.event.ref }}) \
           --push
-
-
-
   build-client-amd64:
     name: |
       client: amd64
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -399,29 +338,24 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
@@ -435,11 +369,9 @@ jobs:
           --distro debian:buster-slim \
           --client-arch amd64 \
           --version $(basename ${{ github.event.ref }})
-
   build-client-386:
     name: |
       client: 386
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -450,29 +382,24 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
@@ -486,11 +413,9 @@ jobs:
           --distro debian:buster-slim \
           --client-arch 386 \
           --version $(basename ${{ github.event.ref }})
-
   build-client-arm32v5:
     name: |
       client: arm/v5
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -501,35 +426,29 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
@@ -543,11 +462,9 @@ jobs:
           --distro debian:buster-slim \
           --client-arch arm/v5 \
           --version $(basename ${{ github.event.ref }})
-
   build-client-arm32v7:
     name: |
       client: arm/v7
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -558,35 +475,29 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
@@ -600,11 +511,9 @@ jobs:
           --distro debian:buster-slim \
           --client-arch arm/v7 \
           --version $(basename ${{ github.event.ref }})
-
   build-client-arm64v8:
     name: |
       client: arm64/v8
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -615,35 +524,29 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
@@ -657,11 +560,9 @@ jobs:
           --distro debian:buster-slim \
           --client-arch arm64/v8 \
           --version $(basename ${{ github.event.ref }})
-
   build-client-ppc64le:
     name: |
       client: ppc64le
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -672,35 +573,29 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
@@ -714,11 +609,9 @@ jobs:
           --distro debian:buster-slim \
           --client-arch ppc64le \
           --version $(basename ${{ github.event.ref }})
-
   build-client-s390x:
     name: |
       client: s390x
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -729,35 +622,29 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
@@ -771,11 +658,9 @@ jobs:
           --distro debian:buster-slim \
           --client-arch s390x \
           --version $(basename ${{ github.event.ref }})
-
   build-client-mips64le:
     name: |
       client: mips64le
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -786,35 +671,29 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Configure QEMU
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y qemu qemu-user-static
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Build client image
       run: |
         ./builder.py build-client \
@@ -828,13 +707,10 @@ jobs:
           --distro debian:buster-slim \
           --client-arch mips64le \
           --version $(basename ${{ github.event.ref }})
-
-
   push_manifests:
     name: Push manifests
     if: ${{ github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/')
       }}
-
     runs-on: ubuntu-latest
     needs:
     - build-host-amd64
@@ -877,35 +753,29 @@ jobs:
       with:
         fetch-depth: 1
         submodules: recursive
-
     - name: Install apt requirements
       run: |
         sudo apt-get update -q -y
         sudo apt-get -qq install -y python3-setuptools
-
     - name: Install pip requirements
       run: |
         pip3 install -r requirements.txt
-
     - name: Enable Docker experimental features
       run: |
         echo '{"experimental": true}' | sudo tee /etc/docker/daemon.json
         sudo service docker restart
         docker version -f '{{.Server.Experimental}}'
-
     - name: Login to Docker Hub
       uses: docker/login-action@v1
       with:
         registry: docker.io
         username: elijahru
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-
     - name: Push host manifest
       run: |
         ./builder.py push-host-manifest \
           --distro debian:buster-slim \
           --version $(basename ${{ github.event.ref }})
-
     - name: Push client manifest
       run: |-
         ./builder.py push-client-manifest \

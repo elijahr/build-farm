@@ -2,8 +2,8 @@
 
 set -uxe
 
-main () {
-  cd $(dirname $0)
+main() {
+  cd "$(dirname \""$0"\")"
 
   # Assert that distcc wrappers are used
   test "$( (gcc 2>&1 || true) | tail -n 1 | grep distcc)" != ""
