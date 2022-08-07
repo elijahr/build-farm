@@ -18,7 +18,6 @@ import sys
 import time
 
 from jinja2 import (
-    contextfilter,
     Environment,
     StrictUndefined,
 )
